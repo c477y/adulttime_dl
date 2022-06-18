@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "adulttime_dl"
+
+def reload!(print: true)
+  puts "Reloading ..." if print
+  # Main project directory.
+  root_dir = File.expand_path("..", __dir__)
+  # Directories within the project that should be reloaded.
+  reload_dirs = %w[lib]
+  # Loop through and reload every file in all relevant project directories.
+  reload_dirs.each do |dir|
+    Dir.glob("#{root_dir}/#{dir}/**/*.rb").each { |f| load(f) }
+  rescue Dry::Struct::RepeatedAttributeError => e
+    puts "Dry::Struct::RepeatedAttributeError #{e.message}"
+    next
+  end
+  # Return true when complete.
+  true
+end
+
+require "irb"
+IRB.start(__FILE__)
