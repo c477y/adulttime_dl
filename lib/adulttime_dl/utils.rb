@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module AdultTimeDL
   module Utils
-
     # @param [File] file
     # @param [String] key
     def load_yaml!(file, key)

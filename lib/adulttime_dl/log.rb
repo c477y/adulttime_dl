@@ -4,10 +4,9 @@ module AdultTimeDL
   class Log
     attr_accessor :logger
 
-    def initialize(logdev = $stdout, level = "INFO", **opts)
+    def initialize(logdev = $stdout, **opts)
       @logger = Logger.new(logdev)
-      @logger.level = opts[:verbose] ? "DEBUG" : level
-      @logger.level = "DEBUG"
+      @logger.level = opts[:verbose] ? "DEBUG" : "INFO"
       @logger.formatter = proc do |severity, datetime, _progname, msg|
         date_format = datetime.strftime("%H:%M:%S")
         case severity
@@ -21,4 +20,3 @@ module AdultTimeDL
     end
   end
 end
-

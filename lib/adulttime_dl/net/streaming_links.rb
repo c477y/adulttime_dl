@@ -20,6 +20,8 @@ module AdultTimeDL
       def fetch(clip_id)
         path = STREAMING_URL_PATH.gsub("%clip_id%", clip_id.to_s)
         resp = handle_response!(self.class.get(path, headers: headers))
+        return nil if resp == []
+
         resp.transform_keys! { |k| "res_#{k}" }
         Data::StreamingLinks.new(resp)
       end
