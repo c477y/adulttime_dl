@@ -2,7 +2,6 @@
 
 module AdultTimeDL
   class Client
-
     attr_reader :config
 
     # @param [Data::Config] config
