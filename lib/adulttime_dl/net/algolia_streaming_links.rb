@@ -2,21 +2,23 @@
 
 module AdultTimeDL
   module Net
-    class StreamingLinks < Base
+    class AlgoliaStreamingLinks < Base
       include HTTParty
-
-      base_uri "https://members.adulttime.com"
-      logger AdultTimeDL.logger, :debug
 
       STREAMING_URL_PATH = "/media/streamingUrls/%clip_id%"
 
       attr_reader :cookie
 
-      def initialize(cookie)
+      # @param [Data::Config] config
+      def initialize(config, base_url)
         super()
-        @cookie = cookie
+        self.class.base_uri(base_url)
+        self.class.logger AdultTimeDL.logger, :debug
+        @cookie = config.cookie
       end
 
+      # @param [String] clip_id
+      # @return [Data::StreamingLinks, NilClass]
       def fetch(clip_id)
         path = STREAMING_URL_PATH.gsub("%clip_id%", clip_id.to_s)
         resp = handle_response!(self.class.get(path, headers: headers))
@@ -24,6 +26,9 @@ module AdultTimeDL
 
         resp.transform_keys! { |k| "res_#{k}" }
         Data::StreamingLinks.new(resp)
+      rescue NoMethodError => e
+        AdultTimeDL.logger.error "[LINK FETCH ERROR] #{e.message}"
+        nil
       end
 
       private

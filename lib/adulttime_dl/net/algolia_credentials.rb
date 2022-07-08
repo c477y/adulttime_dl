@@ -4,23 +4,33 @@ module AdultTimeDL
   module Net
     class AlgoliaCredentials < Base
       include HTTParty
-      base_uri "https://www.adulttime.com"
-      logger AdultTimeDL.logger, :debug, :xxx
 
-      API_KEY_REGEX = /
+      API_KEY_REGEXES = [
+        /
         {
           "algolia":
             {
-              "apiKey":"(?<api_key>\w*)",
+              "apiKey":"(?<api_key>\w*=*)",
               "applicationID":"(?<application_id>\w*)"
             }
-        }/x.freeze
+        }/x,
+        /
+        {
+          "algolia":
+            {
+              "applicationID":"(?<application_id>\w*)",
+              "apiKey":"(?<api_key>\w*=*)"
+            }
+        }/x
+      ].freeze
 
       attr_reader :algolia_application_id, :algolia_api_key
 
-      def initialize
+      def initialize(site)
+        self.class.base_uri(base_url(site))
+        self.class.logger AdultTimeDL.logger, :debug
         set_algolia_params
-        super
+        super()
       end
 
       private
@@ -33,18 +43,18 @@ module AdultTimeDL
 
       def extract_algolia_credentials!
         js = parse_homepage_script
-        match = js.match(API_KEY_REGEX)
-        raise FatalError, "Unable to fetch algolia credentials" if match.nil?
+        match_regex = API_KEY_REGEXES.select { |x| js.match?(x) }.first
+        raise FatalError, "Unable to fetch algolia credentials" unless match_regex
 
-        match
+        js.match(match_regex)
       end
 
       def parse_homepage_script
-        doc = Nokogiri::HTML(adulttime_homepage)
+        doc = Nokogiri::HTML(homepage)
         doc.search("script").text
       end
 
-      def adulttime_homepage
+      def homepage
         self.class.get("/", headers: default_headers).parsed_response
       end
     end

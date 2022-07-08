@@ -5,72 +5,154 @@ module AdultTimeDL
     class Download
       extend Forwardable
 
-      def_delegators :@config, :download_dir, :store, :performer_file, :parallel, :quality,
-                     :verbose, :skip_studios, :blacklisted_studios
-
       # @param [Data::DownloadStatusDatabase] store
       # @param [Data::Config] config
-      def initialize(store:, config:)
+      def initialize(store:, config:, semaphore:)
         @config = config
         @client = config.downloader
         @store = store
+        @semaphore = semaphore
       end
 
+      #
+      # Download a file using scene_data
+      #
       # @param [Data::AlgoliaScene] scene_data
-      def download(scene_data, link_fetcher)
+      # @return [FalseClass, TrueClass]
+      def download(scene_data)
         if store.downloaded?(scene_data.key)
           AdultTimeDL.logger.info "[ALREADY DOWNLOADED] #{scene_data.file_name}"
-          nil
-        elsif blacklisted_studios.member?(scene_data.network_name.downcase.gsub(/\W+/i, ""))
-          AdultTimeDL.logger.info "[SKIPPING NETWORK #{scene_data.network_name}] #{scene_data.file_name}"
-          nil
-        elsif scene_data.lesbian? && config
-          AdultTimeDL.logger.info "[SKIPPING LESBIAN SCENE] #{scene_data.file_name}"
-          nil
-        elsif (streaming_links = link_fetcher.fetch(scene_data.clip_id))
-          new_scene_data = scene_data.add_streaming_links(streaming_links)
-          start_download(new_scene_data)
-        else
-          AdultTimeDL.logger.error "[NO DOWNLOAD LINK] #{scene_data.file_name}"
-          nil
+          return
         end
+
+        return if config.skip_scene?(scene_data)
+
+        download_using_video_url(scene_data) || download_using_stream(scene_data)
       end
 
       private
 
-      attr_reader :client, :store, :config
+      attr_reader :client, :store, :config, :semaphore
+
+      def_delegators :@config, :streaming_link_fetcher, :download_link_fetcher
+
+      def refresh_data(scene_data)
+        store.save_download(scene_data, is_downloaded: store.downloaded?(scene_data.key))
+      end
 
       # @param [Data::AlgoliaScene] scene_data
-      def start_download(scene_data)
-        command = generate_command(scene_data)
+      def download_using_video_url(scene_data)
+        AdultTimeDL.logger.debug("[ATTEMPT DOWNLOAD USING FILE URL] #{scene_data.file_name}")
+        url = download_link_fetcher.fetch(scene_data)
+        return false if url.nil?
+
+        command = generate_command(scene_data, url)
+        start_download(scene_data, command)
+      rescue APIError => e
+        AdultTimeDL.logger.error("[DIRECT DOWNLOAD FAIL] #{e.message}")
+        false
+      end
+
+      # @param [Data::AlgoliaScene] scene_data
+      def download_using_stream(scene_data)
+        AdultTimeDL.logger.debug("[ATTEMPT DOWNLOAD USING STREAMING URL] #{scene_data.file_name}")
+        streaming_links = streaming_link_fetcher.fetch(scene_data.clip_id)
+        return false if streaming_links.nil?
+
+        scene_data = scene_data.add_streaming_links(streaming_links)
+        url = scene_data.streaming_links.send(config.quality.to_sym)
+        command = generate_command(scene_data, url)
+        start_download(scene_data, command)
+      rescue APIError => e
+        AdultTimeDL.logger.error("[DIRECT DOWNLOAD FAIL] #{e.message}")
+      end
+
+      # @param [Data::AlgoliaScene] scene_data
+      # @return [TrueClass, FalseClass]
+      def start_download(scene_data, command)
         Open3.popen2e(command) do |_, stdout_and_stderr, thread|
-          output = []
+          output = ""
           AdultTimeDL.logger.info "[PID] #{thread.pid} [FILE] #{scene_data.file_name}"
           stdout_and_stderr.each do |line|
-            output << line
+            output = line
             AdultTimeDL.file_logger.info("#{thread.pid} -- #{line}")
           end
 
           exit_status = thread.value
           if exit_status != 0
             store.save_download(scene_data, is_downloaded: false)
-            AdultTimeDL.logger.error "[DOWNLOAD_FAIL] #{scene_data.file_name} -- #{output[-1].strip}"
+            AdultTimeDL.logger.error "[DOWNLOAD_FAIL] #{scene_data.file_name} -- #{output}"
+            false
           else
+            valid_file_size!(scene_data)
             store.save_download(scene_data, is_downloaded: true)
             AdultTimeDL.logger.info "[DOWNLOAD_COMPLETE] #{scene_data.file_name}"
+            true
           end
         end
+      rescue FileSizeTooSmallError => e
+        AdultTimeDL.logger.warn e.message
+        false
       end
 
       # @param [Data::AlgoliaScene] scene_data
+      # @param [String] url
       # @return [String]
-      def generate_command(scene_data)
+      def generate_command(scene_data, url)
         CommandBuilder.new
                       .with_download_client(client)
                       .with_merge_parts(true)
-                      .with_path(scene_data.file_name, download_dir)
-                      .with_url(scene_data.streaming_links.send(quality.to_sym))
-                      .build
+                      .with_path(scene_data.file_name, config.download_dir)
+                      .with_url(url).build
+      end
+
+      # @param [Data::AlgoliaScene] scene_data
+      def valid_file_size!(scene_data)
+        semaphore.synchronize { unsafe_valid_file_size!(scene_data) }
+      end
+
+      #
+      # This method is not thread safe and will raise a runtime error if
+      # called by multiple threads at once
+      #
+      # @param [Data::AlgoliaScene] scene_data
+      def unsafe_valid_file_size!(scene_data)
+        Dir.chdir(config.download_dir) do
+          filename = "#{scene_data.file_name}.mp4"
+          if File.file?(filename) && File.exist?(filename) && File.size?(filename) < 5000
+            size = File.size(filename)
+            ::FileUtils.remove_file(filename)
+            raise FileSizeTooSmallError.new(filename, size)
+          end
+          true
+          #
+          # TODO: Check why this doesn't work
+          #
+          # matching_files = Dir["#{scene_data.file_name}.*"]
+          # filename = matching_files.first
+          #
+          # if matching_files.length > 1
+          #   AdultTimeDL.logger.warn "[EXPECTED SINGLE MATCH #{scene_data.file_name}] #{matching_files}"
+          #   return
+          # end
+          #
+          # return if filename.nil?
+          #
+          # if File.file?(filename) && File.exist?(filename) && File.size?(filename) < 5000
+          #   size = File.size(filename)
+          #   ::FileUtils.remove_file(filename)
+          #   raise FileSizeTooSmallError.new(filename, size)
+          # end
+          #
+          # true
+        end
+      end
+
+      def valid_file_size?(scene_data)
+        valid_file_size!(scene_data)
+      rescue FileSizeTooSmallError => e
+        AdultTimeDL.logger.warn e.message
+        false
       end
     end
   end

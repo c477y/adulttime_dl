@@ -27,7 +27,7 @@ module AdultTimeDL
 
       def save_download(scene_data, is_downloaded: false)
         semaphore.synchronize do
-          AdultTimeDL.logger.debug "[DATABASE_ADD] #{scene_data.file_name}"
+          AdultTimeDL.logger.debug "[DATABASE_ADD] #{scene_data.file_name} : #{is_downloaded}"
           store.transaction do
             new_scene_data = scene_data.mark_downloaded(is_downloaded)
             store[new_scene_data.key] = new_scene_data

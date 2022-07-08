@@ -3,74 +3,61 @@
 module AdultTimeDL
   module Data
     class Config < Base
-      SUPPORTED_DOWNLOAD_CLIENTS = Types::String.default("youtube-dl").enum("youtube-dl", "yt-dlp")
-      QUALITIES = Types::String.default("hd").enum("fhd", "hd", "sd")
+      SUPPORTED_DOWNLOAD_CLIENTS = Types::String.enum("youtube-dl", "yt-dlp")
+      SUPPORTED_SITES = Types::String.enum("adulttime", "ztod")
+      QUALITIES = Types::String.enum("fhd", "hd", "sd")
 
-      attribute :cookie_file, Types::String.default("cookie.txt")
+      attribute :cookie, Types::String
       attribute :downloader, SUPPORTED_DOWNLOAD_CLIENTS
-      attribute :download_dir, Types::String.default(".")
-      attribute :store, Types::String.default("adt_download_status.store")
-      attribute :performer_file, Types::String.default("performers.yml")
-      attribute :parallel, Types::Integer.default(1)
+      attribute :download_dir, Types::String
+      attribute :store, Types::String
+      attribute :performers_l, Types::Array.of(Types::String)
+      attribute :movies_l, Types::Array.of(Types::String)
+      attribute :parallel, Types::Integer
       attribute :quality, QUALITIES
-      attribute :verbose, Types::Bool.default(false)
-      attribute :skip_studios, Types::String.default("skip_studios.yml")
-      attribute :skip_lesbian, Types::Bool.default(false)
+      attribute :verbose, Types::Bool
+      attribute :download_filters_l, DownloadFilters
+      attribute :site, SUPPORTED_SITES
 
-      # TODO: Implement downloading scenes based on movie names or individual scene URLs
-      # attribute :movie_file, Types::String.default("movie.yml")
-      # attribute :scene_file, Types::String.default("scene.yml")
-
-      def skip_lesbian?
-        skip_lesbian
-      end
+      alias performers performers_l
+      alias movies movies_l
+      alias download_filters download_filters_l
 
       def validate_downloader!
         stdout, stderr, status = Open3.capture3("#{downloader} --version")
         raise FatalError, stderr unless status.success?
 
-        AdultTimeDL.logger.info "#{downloader} installed with version #{stdout}"
+        AdultTimeDL.logger.info "#{downloader} installed with version #{stdout.strip}"
         nil
       end
 
-      def blacklisted_studios
-        @blacklisted_studios ||=
-          begin
-            return Set.new unless valid_file?(skip_studios)
-
-            contents = load_yaml!(skip_studios)
-            AdultTimeDL.logger.info "Reading blocked studios from #{skip_studios}"
-            AdultTimeDL.logger.info "\t#{contents.join(", ")}"
-            clean_contents = contents.map(&:downcase).map { |s| s.gsub(/\W+/i, "") }
-            Set.new(clean_contents)
-          end
+      def streaming_link_fetcher
+        case site
+        when "adulttime" then Net::AdultTimeStreamingLinks.new(self)
+        when "ztod" then Net::ZTODStreamingLinks.new(self)
+        else raise FatalError, "received unexpected site name #{site}"
+        end
       end
 
-      def cookie!
-        raise FatalError, "Unable to read cookie file" unless valid_file?(cookie_file)
-
-        File.read(cookie_file).strip
+      def download_link_fetcher
+        case site
+        when "adulttime" then Net::AdultTimeDownloadLinks.new(self)
+        when "ztod" then Net::ZTODDownloadLinks.new(self)
+        else raise FatalError, "received unexpected site name #{site}"
+        end
       end
 
-      def load_performers!
-        raise FatalError, "Unable to find file #{performer_file}" unless valid_file?(performer_file)
-
-        load_yaml!(performer_file)
+      def scenes_index
+        case site
+        when "adulttime" then Net::AdultTimeIndex.new(self)
+        when "ztod" then Net::ZTODIndex.new(self)
+        else raise FatalError, "received unexpected site name #{site}"
+        end
       end
 
-      private
-
-      def valid_file?(file)
-        file && File.file?(file) && File.exist?(file)
-      end
-
-      def load_yaml!(file)
-        contents = YAML.load_file(file)
-        raise FatalError, "#{file}: Invalid YAML format" unless contents
-
-        return contents if contents.is_a?(Array)
-
-        raise FatalError, "#{file}: Invalid YAML contents. Was expecting Array, but received #{contents.class}"
+      # @param [Data::AlgoliaScene] scene
+      def skip_scene?(scene)
+        download_filters.skip?(scene)
       end
     end
   end

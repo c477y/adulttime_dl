@@ -1,51 +1,50 @@
 # frozen_string_literal: true
 
-require "forwardable"
-
 module AdultTimeDL
   class Client
-    extend Forwardable
 
     attr_reader :config
 
     # @param [Data::Config] config
     def initialize(config)
-      AdultTimeDL.logger(verbose: config.verbose)
       @config = config
       config.validate_downloader!
-      config.blacklisted_studios
+      download_status_store
     end
 
     def start!
       AdultTimeDL.logger.info "[PROCESS START]"
-      config.validate_downloader!
       process_performer_file
-
+      process_movies_file
       AdultTimeDL.logger.info "[PROCESS COMPLETE]"
     end
 
     private
 
+    def process_movies_file
+      config.movies.map do |movie|
+        AdultTimeDL.logger.info "[PROCESSING URL] #{movie}".colorize(:cyan)
+        scenes = Processor::MovieProcessor.new(scenes_index, movie).scenes
+        Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
+      end
+    end
+
     def process_performer_file
-      performers = config.load_performers!
-      performers.map do |performer|
-        AdultTimeDL.logger.info "[PROCESSING URL] #{performer}"
+      config.performers.map do |performer|
+        AdultTimeDL.logger.info "[PROCESSING URL] #{performer}".colorize(:cyan)
         scenes = Processor::PerformerProcessor.new(scenes_index, performer).scenes
-        Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data, link_fetcher) }
+        Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
       end
     end
 
     def downloader
       @downloader ||= Downloader::Download.new(store: download_status_store,
-                                               config: config)
+                                               config: config,
+                                               semaphore: semaphore)
     end
 
     def scenes_index
-      @scenes_index ||= Net::ScenesIndex.new
-    end
-
-    def link_fetcher
-      @link_fetcher ||= Net::StreamingLinks.new(config.cookie!)
+      @scenes_index ||= config.scenes_index
     end
 
     def semaphore
