@@ -4,10 +4,10 @@ module AdultTimeDL
   module Data
     class Config < Base
       SUPPORTED_DOWNLOAD_CLIENTS = Types::String.enum("youtube-dl", "yt-dlp")
-      SUPPORTED_SITES = Types::String.enum("adulttime", "ztod")
+      SUPPORTED_SITES = Types::String.enum("adulttime", "ztod", "loveherfilms")
       QUALITIES = Types::String.enum("fhd", "hd", "sd")
 
-      attribute :cookie, Types::String
+      attribute :cookie_file, Types::String
       attribute :downloader, SUPPORTED_DOWNLOAD_CLIENTS
       attribute :download_dir, Types::String
       attribute :store, Types::String
@@ -31,10 +31,17 @@ module AdultTimeDL
         nil
       end
 
+      def cookie
+        jar = HTTP::CookieJar.new
+        jar.load(cookie_file, :cookiestxt)
+        HTTP::Cookie.cookie_value(jar.cookies)
+      end
+
       def streaming_link_fetcher
         case site
         when "adulttime" then Net::AdultTimeStreamingLinks.new(self)
         when "ztod" then Net::ZTODStreamingLinks.new(self)
+        when "loveherfilms" then Net::LoveHerFilmsStreamingLinks.new(self)
         else raise FatalError, "received unexpected site name #{site}"
         end
       end
@@ -43,6 +50,7 @@ module AdultTimeDL
         case site
         when "adulttime" then Net::AdultTimeDownloadLinks.new(self)
         when "ztod" then Net::ZTODDownloadLinks.new(self)
+        when "loveherfilms" then Net::NOOPDownloadLinks.new
         else raise FatalError, "received unexpected site name #{site}"
         end
       end
@@ -51,8 +59,13 @@ module AdultTimeDL
         case site
         when "adulttime" then Net::AdultTimeIndex.new(self)
         when "ztod" then Net::ZTODIndex.new(self)
+        when "loveherfilms" then Net::LoveHerFilmsIndex.new(self)
         else raise FatalError, "received unexpected site name #{site}"
         end
+      end
+
+      def downloader_requires_cookie?
+        ["loveherfilms"].include?(site)
       end
 
       # @param [Data::AlgoliaScene] scene

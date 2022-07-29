@@ -31,6 +31,21 @@ module AdultTimeDL
         self
       end
 
+      def with_quality(using_default_link, max_res = "720")
+        command << " -f 'bestvideo[height<=#{max_res}]+bestaudio/best[height<=#{max_res}]'" if using_default_link
+        self
+      end
+
+      def with_verbosity(verbose)
+        command << " --verbose --dump-pages" if verbose
+        self
+      end
+
+      def with_cookie(file_path, is_required = false) # rubocop:disable Style/OptionalBooleanParameter
+        command << " --cookies #{file_path}" if is_required
+        self
+      end
+
       def with_url(url)
         command << " \"#{url}\""
         self

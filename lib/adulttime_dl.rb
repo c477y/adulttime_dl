@@ -8,6 +8,7 @@ require "dry-validation"
 require "fileutils"
 require "forwardable"
 require "httparty"
+require "http-cookie"
 require "nokogiri"
 require "open3"
 require "parallel"
@@ -19,6 +20,7 @@ require "pry"
 
 module AdultTimeDL
   class FatalError < StandardError; end
+  class SafeExit < StandardError; end
 
   class FileSizeTooSmallError < StandardError
     def initialize(filename, size)
@@ -83,20 +85,24 @@ require_relative "adulttime_dl/data/config"
 require_relative "adulttime_dl/data/download_status_database"
 
 require_relative "adulttime_dl/net/base"
+require_relative "adulttime_dl/net/browser_support"
 # Algolia Configuration
 require_relative "adulttime_dl/net/algolia_client"
 require_relative "adulttime_dl/net/algolia_credentials"
 # Download Links
+require_relative "adulttime_dl/net/noop_download_links"
 require_relative "adulttime_dl/net/algolia_download_links"
 require_relative "adulttime_dl/net/adult_time_download_links"
 require_relative "adulttime_dl/net/ztod_download_links"
 # Streaming Links
 require_relative "adulttime_dl/net/algolia_streaming_links"
 require_relative "adulttime_dl/net/adult_time_streaming_links"
+require_relative "adulttime_dl/net/love_her_films_streaming_links"
 require_relative "adulttime_dl/net/ztod_streaming_links"
-# Algolia Index
+# Index
 require_relative "adulttime_dl/net/adulttime_index"
 require_relative "adulttime_dl/net/ztod_index"
+require_relative "adulttime_dl/net/love_her_films_index"
 
 require_relative "adulttime_dl/downloader/command_builder"
 require_relative "adulttime_dl/downloader/download"

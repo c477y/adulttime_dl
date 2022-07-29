@@ -20,7 +20,7 @@ module AdultTimeDL
       # @param [Data::AlgoliaScene] scene_data
       # @return [FalseClass, TrueClass]
       def download(scene_data)
-        if store.downloaded?(scene_data.key)
+        if store.downloaded?(scene_data.key) || file_exists?(scene_data)
           AdultTimeDL.logger.info "[ALREADY DOWNLOADED] #{scene_data.file_name}"
           return
         end
@@ -40,13 +40,22 @@ module AdultTimeDL
         store.save_download(scene_data, is_downloaded: store.downloaded?(scene_data.key))
       end
 
+      def file_exists?(scene_data)
+        complete_fn = "#{scene_data.file_name}.mp4"
+        if File.file?(complete_fn) && File.exist?(complete_fn)
+          store.save_download(scene_data, is_downloaded: true)
+          return true
+        end
+        false
+      end
+
       # @param [Data::AlgoliaScene] scene_data
       def download_using_video_url(scene_data)
-        AdultTimeDL.logger.debug("[ATTEMPT DOWNLOAD USING FILE URL] #{scene_data.file_name}")
         url = download_link_fetcher.fetch(scene_data)
         return false if url.nil?
 
         command = generate_command(scene_data, url)
+        AdultTimeDL.logger.debug("[ATTEMPT DOWNLOAD USING FILE URL] #{scene_data.file_name}")
         start_download(scene_data, command)
       rescue APIError => e
         AdultTimeDL.logger.error("[DIRECT DOWNLOAD FAIL] #{e.message}")
@@ -55,13 +64,13 @@ module AdultTimeDL
 
       # @param [Data::AlgoliaScene] scene_data
       def download_using_stream(scene_data)
-        AdultTimeDL.logger.debug("[ATTEMPT DOWNLOAD USING STREAMING URL] #{scene_data.file_name}")
-        streaming_links = streaming_link_fetcher.fetch(scene_data.clip_id)
+        streaming_links = streaming_link_fetcher.fetch(scene_data)
         return false if streaming_links.nil?
 
         scene_data = scene_data.add_streaming_links(streaming_links)
         url = scene_data.streaming_links.send(config.quality.to_sym)
         command = generate_command(scene_data, url)
+        AdultTimeDL.logger.debug("[ATTEMPT DOWNLOAD USING STREAMING URL] #{scene_data.file_name}")
         start_download(scene_data, command)
       rescue APIError => e
         AdultTimeDL.logger.error("[DIRECT DOWNLOAD FAIL] #{e.message}")
@@ -70,6 +79,7 @@ module AdultTimeDL
       # @param [Data::AlgoliaScene] scene_data
       # @return [TrueClass, FalseClass]
       def start_download(scene_data, command)
+        AdultTimeDL.logger.debug command
         Open3.popen2e(command) do |_, stdout_and_stderr, thread|
           output = ""
           AdultTimeDL.logger.info "[PID] #{thread.pid} [FILE] #{scene_data.file_name}"
@@ -103,7 +113,11 @@ module AdultTimeDL
                       .with_download_client(client)
                       .with_merge_parts(true)
                       .with_path(scene_data.file_name, config.download_dir)
+                      .with_quality(!scene_data.streaming_links.default.nil?, "720")
+                      .with_verbosity(config.verbose)
+                      .with_cookie(config.cookie_file, config.downloader_requires_cookie?)
                       .with_url(url).build
+        # .with_quality(!scene_data.streaming_links.default.nil?, "720")
       end
 
       # @param [Data::AlgoliaScene] scene_data

@@ -7,7 +7,7 @@ module AdultTimeDL
       MOVIE_INDEX_NAME = "all_movies"
       ACTOR_INDEX_NAME = "all_actors"
 
-      def search_by_actor(actor_id, actor_name, retry_count: 0)
+      def search_by_actor(actor_id, actor_name, retry_count: 0, **opts)
         if retry_count > 5
           raise FatalError, "[RETRY EXCEEDED] #{self.class.name} ran search_by_actor more than #{retry_count} times"
         end
@@ -19,10 +19,10 @@ module AdultTimeDL
       rescue Algolia::AlgoliaHttpError => e
         AdultTimeDL.logger.error "[ALGOLIA ERROR] #{e.message}"
         refresh_algolia
-        search_by_actor(actor_id, actor_name, retry_count: retry_count + 1)
+        search_by_actor(actor_id, actor_name, retry_count: retry_count + 1, **opts)
       end
 
-      def search_by_movie(movie_id, movie_name, retry_count: 0)
+      def search_by_movie(movie_id, movie_name, retry_count: 0, **opts)
         if retry_count > 5
           raise FatalError, "[RETRY EXCEEDED] #{self.class.name} ran search_by_movie more than #{retry_count} times"
         end
@@ -33,7 +33,7 @@ module AdultTimeDL
       rescue Algolia::AlgoliaHttpError => e
         AdultTimeDL.logger.error "[ALGOLIA ERROR] #{e.message}"
         refresh_algolia
-        search_by_movie(movie_id, movie_name, retry_count: retry_count + 1)
+        search_by_movie(movie_id, movie_name, retry_count: retry_count + 1, **opts)
       end
 
       private

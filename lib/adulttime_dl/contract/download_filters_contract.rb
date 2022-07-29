@@ -5,8 +5,13 @@ class DownloadFiltersContract < Dry::Validation::Contract
     required(:skip_studios).maybe(array[:string])
     required(:skip_performers).maybe(array[:string])
     required(:skip_lesbian).value(:bool)
-    # required(:use_database).value(:bool)
-    # required(:performers).maybe(array[:string])
-    # required(:movies).maybe(array[:string])
+    required(:cookie_file).value(:string)
+    required(:store).value(:string)
+    required(:downloader).value(:string)
+    required(:quality).value(:string)
+  end
+
+  rule(:cookie_file) do
+    key.failure("file does not exist or cannot be read") unless File.file?(value) && File.exist?(value)
   end
 end

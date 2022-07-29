@@ -19,16 +19,19 @@ module AdultTimeDL
       attribute? :streaming_links, StreamingLinks
       attribute :is_downloaded, Types::Bool.default(false)
       attribute :is_streamable, Types::Bool.default(true)
+      attribute? :video_link, Types::String
 
       def key
-        clip_id.to_s
+        clip_id == -1 ? title : clip_id.to_s
       end
 
+      # @param [Boolean] value
       # @return [AlgoliaScene]
       def mark_downloaded(value)
         AlgoliaScene.new(to_hash.merge(is_downloaded: value))
       end
 
+      # @param [Data::StreamingLinks] links
       # @return [AlgoliaScene]
       def add_streaming_links(links)
         AlgoliaScene.new(to_hash.merge(streaming_links: links))
@@ -56,6 +59,14 @@ module AdultTimeDL
         actors.select { |x| x.gender == "male" }.map(&:name).sort
       end
 
+      def all_actors
+        actors.map(&:name).sort
+      end
+
+      def actor_gender_unknown?
+        actors.select { |x| x.gender == "unknown" }.any?
+      end
+
       def lesbian?
         male_actors.empty?
       end
@@ -70,14 +81,13 @@ module AdultTimeDL
 
       def file_name
         initial_name = "#{title} [C] #{network_name}"
-        with_female = safely_add_actors(initial_name, female_actors, prefix: "[F]")
-        with_male = safely_add_actors(with_female, male_actors, prefix: "[M]")
-        clean(with_male)
-
-        # name = "#{title} [C] #{network_name} [F] #{female_actors.join(", ")}"
-        # name += " [M] #{male_actors.join(", ")}" if male_actors.length.positive?
-        # name.gsub(/[^\s\w\[\].,\-_]+/i, "").gsub(/\s{2,}/, " ")
-        # name.strip
+        if actor_gender_unknown?
+          final = safely_add_actors(initial_name, all_actors, prefix: "[A]")
+        else
+          with_female = safely_add_actors(initial_name, female_actors, prefix: "[F]")
+          final = safely_add_actors(with_female, male_actors, prefix: "[M]")
+        end
+        clean(final)
       end
 
       private

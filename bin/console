@@ -13,7 +13,7 @@ def reload!(print: true)
   # Loop through and reload every file in all relevant project directories.
   reload_dirs.each do |dir|
     Dir.glob("#{root_dir}/#{dir}/**/*.rb").each { |f| load(f) }
-  rescue Dry::Struct::RepeatedAttributeError => e
+  rescue Dry::Struct::RepeatedAttributeError, Dry::Validation::DuplicateSchemaError => e
     puts "Dry::Struct::RepeatedAttributeError #{e.message}"
     next
   end

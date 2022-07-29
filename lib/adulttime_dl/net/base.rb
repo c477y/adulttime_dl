@@ -12,10 +12,11 @@ module AdultTimeDL
         }
       end
 
+      # rubocop:disable Metrics/CyclomaticComplexity
       # @param [HTTParty::Response] response
-      def handle_response!(response)
+      def handle_response!(response, return_raw: false)
         case response.code
-        when 200 then response.parsed_response
+        when 200 then return_raw ? response : response.parsed_response
         when 400 then raise api_error(BadRequestError, response)
         when 401 then raise api_error(UnauthorizedError, response)
         when 403 then raise api_error(ForbiddenError, response)
@@ -24,6 +25,7 @@ module AdultTimeDL
         else raise api_error(UnhandledError, response)
         end
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
 
       private
 

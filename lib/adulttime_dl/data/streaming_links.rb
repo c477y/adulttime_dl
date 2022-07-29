@@ -8,9 +8,10 @@ module AdultTimeDL
       attribute? :res_576p, Types::String
       attribute? :res_480p, Types::String
       attribute? :res_432p, Types::String
+      attribute? :default, Types::Array.of(Types::String).default([].freeze)
 
       def sd
-        res_480p || res_432p || nil
+        res_480p || res_432p || default.first || nil
       end
 
       def hd
