@@ -19,7 +19,7 @@ module AdultTimeDL
       attr_reader :config
 
       def make_scene_data(doc)
-        Data::AlgoliaScene.new(
+        Data::Scene.new(
           clip_id: -1,
           title: title(doc),
           actors: actors(doc),
@@ -50,7 +50,7 @@ module AdultTimeDL
         doc.css(".information")
            .css("a")
            .map { |x| x.text.strip.gsub(",", "") }
-           .map { |x| Data::AlgoliaActor.new(name: x, gender: "unknown") }
+           .map { |x| Data::Actor.new(name: x, gender: "unknown") }
       end
 
       def fetch(actor_page)

@@ -17,7 +17,7 @@ module AdultTimeDL
         @cookie = config.cookie
       end
 
-      # @param [Data::AlgoliaScene] scene_data
+      # @param [Data::Scene] scene_data
       # @return [Data::StreamingLinks, NilClass]
       def fetch(scene_data)
         path = STREAMING_URL_PATH.gsub("%clip_id%", scene_data.clip_id.to_s)

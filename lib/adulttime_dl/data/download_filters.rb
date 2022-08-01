@@ -7,7 +7,7 @@ module AdultTimeDL
       attribute :skip_performers, Types::CustomSet
       attribute :skip_lesbian, Types::Bool
 
-      # @param [AlgoliaScene] scene
+      # @param [Scene] scene
       def skip?(scene)
         if scene.lesbian? && skip_lesbian?
           AdultTimeDL.logger.info "[SKIP_LESBIAN] #{scene.file_name}"

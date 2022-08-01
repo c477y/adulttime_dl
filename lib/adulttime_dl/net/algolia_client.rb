@@ -24,7 +24,7 @@ module AdultTimeDL
 
       def make_struct(hits)
         hits.map do |hit|
-          Data::AlgoliaScene.new(hit)
+          Data::Scene.new(hit)
         rescue Dry::Struct::Error => e
           AdultTimeDL.logger.error "Unable to parse record due to #{e.message}"
           AdultTimeDL.logger.debug hit
@@ -34,7 +34,7 @@ module AdultTimeDL
 
       def default_options
         {
-          # attributesToRetrieve: attributes,
+          attributesToRetrieve: attributes,
           hitsPerPage: 1000
         }
       end

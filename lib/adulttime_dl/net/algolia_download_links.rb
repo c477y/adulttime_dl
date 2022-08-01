@@ -14,7 +14,7 @@ module AdultTimeDL
         super()
       end
 
-      # @param [Data::AlgoliaScene] scene_data
+      # @param [Data::Scene] scene_data
       # @return [String, NilClass]
       def fetch(scene_data)
         path = SCENE_DOWNLOAD_LINK

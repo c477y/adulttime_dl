@@ -17,7 +17,7 @@ module AdultTimeDL
       #
       # Download a file using scene_data
       #
-      # @param [Data::AlgoliaScene] scene_data
+      # @param [Data::Scene] scene_data
       # @return [FalseClass, TrueClass]
       def download(scene_data)
         if store.downloaded?(scene_data.key) || file_exists?(scene_data)
@@ -49,7 +49,7 @@ module AdultTimeDL
         false
       end
 
-      # @param [Data::AlgoliaScene] scene_data
+      # @param [Data::Scene] scene_data
       def download_using_video_url(scene_data)
         url = download_link_fetcher.fetch(scene_data)
         return false if url.nil?
@@ -62,7 +62,7 @@ module AdultTimeDL
         false
       end
 
-      # @param [Data::AlgoliaScene] scene_data
+      # @param [Data::Scene] scene_data
       def download_using_stream(scene_data)
         streaming_links = streaming_link_fetcher.fetch(scene_data)
         return false if streaming_links.nil?
@@ -76,7 +76,7 @@ module AdultTimeDL
         AdultTimeDL.logger.error("[DIRECT DOWNLOAD FAIL] #{e.message}")
       end
 
-      # @param [Data::AlgoliaScene] scene_data
+      # @param [Data::Scene] scene_data
       # @return [TrueClass, FalseClass]
       def start_download(scene_data, command)
         AdultTimeDL.logger.debug command
@@ -105,7 +105,7 @@ module AdultTimeDL
         false
       end
 
-      # @param [Data::AlgoliaScene] scene_data
+      # @param [Data::Scene] scene_data
       # @param [String] url
       # @return [String]
       def generate_command(scene_data, url)
@@ -120,7 +120,7 @@ module AdultTimeDL
         # .with_quality(!scene_data.streaming_links.default.nil?, "720")
       end
 
-      # @param [Data::AlgoliaScene] scene_data
+      # @param [Data::Scene] scene_data
       def valid_file_size!(scene_data)
         semaphore.synchronize { unsafe_valid_file_size!(scene_data) }
       end
@@ -129,7 +129,7 @@ module AdultTimeDL
       # This method is not thread safe and will raise a runtime error if
       # called by multiple threads at once
       #
-      # @param [Data::AlgoliaScene] scene_data
+      # @param [Data::Scene] scene_data
       def unsafe_valid_file_size!(scene_data)
         Dir.chdir(config.download_dir) do
           filename = "#{scene_data.file_name}.mp4"

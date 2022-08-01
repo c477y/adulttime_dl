@@ -2,19 +2,19 @@
 
 module AdultTimeDL
   module Data
-    class AlgoliaScene < Base
+    class Scene < Base
       RESOLUTION_MAP = {
         "sd" => %w[480p 360p 240p 160p],
         "hd" => %w[720p 576p],
         "fhd" => %w[1080p]
       }.freeze
 
-      attribute :clip_id, Types::Integer
+      attribute :clip_id, Types::Integer.default(-1)
       attribute :title, Types::String
-      attribute :actors, Types::Array.of(AlgoliaActor)
-      attribute :release_date, Types::String
-      attribute :network_name, Types::String.default("AdultTime")
-      attribute :movie_title, Types::String
+      attribute :actors, Types::Array.of(Actor).default([].freeze)
+      attribute :release_date, Types::String.optional
+      attribute :network_name, Types::String.optional
+      attribute? :movie_title, Types::String
       attribute :download_sizes, Types::Array.of(Types::String)
       attribute? :streaming_links, StreamingLinks
       attribute :is_downloaded, Types::Bool.default(false)
@@ -26,19 +26,23 @@ module AdultTimeDL
       end
 
       # @param [Boolean] value
-      # @return [AlgoliaScene]
+      # @return [Scene]
       def mark_downloaded(value)
-        AlgoliaScene.new(to_hash.merge(is_downloaded: value))
+        new(is_downloaded: value)
+        # Scene.new(to_hash.merge(is_downloaded: value))
       end
 
       # @param [Data::StreamingLinks] links
-      # @return [AlgoliaScene]
+      # @return [Scene]
       def add_streaming_links(links)
-        AlgoliaScene.new(to_hash.merge(streaming_links: links))
+        new(streaming_links: links)
+        # Scene.new(to_hash.merge(streaming_links: links))
       end
 
+      # @return [Scene]
       def non_streamable
-        AlgoliaScene.new(to_hash.merge(is_streamable: false))
+        new(is_streamable: false)
+        # Scene.new(to_hash.merge(is_streamable: false))
       end
 
       # @param [String] quality: one of "sd", "hd" or "fhd"
@@ -99,9 +103,6 @@ module AdultTimeDL
         return name if name.length < max_len
 
         safely_add_actors(fixed_str, actors[0...-1], prefix: prefix)
-      rescue SystemStackError
-        AdultTimeDL.logger.error "[SystemStackError] #{fixed_str} - #{actors}"
-        fixed_str
       end
 
       def clean(str)

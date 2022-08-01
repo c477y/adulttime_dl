@@ -2,7 +2,7 @@
 
 module AdultTimeDL
   module Data
-    class AlgoliaActor < Base
+    class Actor < Base
       GENDERS = Types::String.enum("male", "female", "unknown")
 
       attribute :name, Types::String
