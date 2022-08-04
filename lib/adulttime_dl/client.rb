@@ -21,25 +21,25 @@ module AdultTimeDL
     private
 
     def process_movies
-      config.movies.map do |movie|
-        AdultTimeDL.logger.info "[PROCESSING URL] #{movie}".colorize(:cyan)
-        scenes = Processor::MovieProcessor.new(scenes_index, movie).scenes
+      config.movies.map do |url|
+        AdultTimeDL.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
+        scenes = scenes_index.search_by_movie(url)
         Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
       end
     end
 
     def process_performer
-      config.performers.map do |performer|
-        AdultTimeDL.logger.info "[PROCESSING URL] #{performer}".colorize(:cyan)
-        scenes = Processor::PerformerProcessor.new(scenes_index, performer).scenes
+      config.performers.map do |url|
+        AdultTimeDL.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
+        scenes = scenes_index.search_by_actor(url)
         Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
       end
     end
 
     def process_all_scenes
-      config.all_scenes.map do |link|
-        AdultTimeDL.logger.info "[PROCESSING URL] #{link}".colorize(:cyan)
-        scenes = scenes_index.search_by_all_scenes(link)
+      config.all_scenes.map do |url|
+        AdultTimeDL.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
+        scenes = scenes_index.search_by_all_scenes(url)
         Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
       end
     end

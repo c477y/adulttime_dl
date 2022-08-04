@@ -85,12 +85,8 @@ module AdultTimeDL
 
       def file_name
         initial_name = "#{title} [C] #{network_name}"
-        if actor_gender_unknown?
-          final = safely_add_actors(initial_name, all_actors, prefix: "[A]")
-        else
-          with_female = safely_add_actors(initial_name, female_actors, prefix: "[F]")
-          final = safely_add_actors(with_female, male_actors, prefix: "[M]")
-        end
+        with_female = safely_add_actors(initial_name, female_actors, prefix: "[F]")
+        final = safely_add_actors(with_female, male_actors, prefix: "[M]")
         clean(final)
       end
 

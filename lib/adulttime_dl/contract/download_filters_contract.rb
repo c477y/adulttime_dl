@@ -4,7 +4,7 @@ module Contract
   class DownloadFiltersContract < Dry::Validation::Contract
     include AdultTimeDL::Utils
 
-    SUPPORTED_SITES = %w[adulttime ztod loveherfilms pornve].freeze
+    SUPPORTED_SITES = %w[adulttime ztod loveherfilms pornve blowpass].freeze
     SUPPORTED_DOWNLOADERS = %w[youtube-dl yt-dlp].freeze
     COOKIE_REQUIRED_SITES = %w[adulttime ztod loveherfilms].freeze
     AVAILABLE_QUALITIES = %w[fhd hd sd].freeze
@@ -21,6 +21,12 @@ module Contract
       required(:quality).value(:string)
       required(:parallel).value(:integer)
       required(:verbose).value(:bool)
+      optional(:site_config).hash do
+        optional(:blowpass).hash do
+          optional(:algolia_application_id).maybe(:string)
+          optional(:algolia_api_key).maybe(:string)
+        end
+      end
       required(:urls).hash do
         optional(:all_scenes).value(array[:string])
         optional(:performers).value(array[:string])

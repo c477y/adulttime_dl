@@ -9,6 +9,8 @@ module AdultTimeDL
 
       attr_reader :cookie
 
+      follow_redirects false
+
       # @param [Data::Config] config
       def initialize(config, base_url)
         super()

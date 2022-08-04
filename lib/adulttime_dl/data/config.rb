@@ -6,13 +6,14 @@ module AdultTimeDL
       extend Forwardable
 
       SUPPORTED_DOWNLOAD_CLIENTS = Types::String.enum("youtube-dl", "yt-dlp")
-      SUPPORTED_SITES = Types::String.enum("adulttime", "ztod", "loveherfilms", "pornve")
+      SUPPORTED_SITES = Types::String.enum("adulttime", "ztod", "loveherfilms", "pornve", "blowpass")
       QUALITIES = Types::String.enum("fhd", "hd", "sd")
       MODULE_NAME = {
         "adulttime" => "AdultTime",
         "ztod" => "ZTOD",
         "loveherfilms" => "LoveHerFilms",
-        "pornve" => "PornVE"
+        "pornve" => "PornVE",
+        "blowpass" => "BlowPass"
       }.freeze
       STREAMING_LINKS_SUFFIX = "StreamingLinks"
       DOWNLOAD_LINKS_SUFFIX = "DownloadLinks"
@@ -28,6 +29,12 @@ module AdultTimeDL
       attribute :parallel, Types::Integer
       attribute :verbose, Types::Bool
       attribute :urls, URLs
+      attribute? :site_config do
+        attribute? :blowpass do
+          attribute? :algolia_application_id, Types::String.optional
+          attribute? :algolia_api_key, Types::String.optional
+        end
+      end
 
       def_delegators :urls, :all_scenes, :performers, :movies, :scenes
 
@@ -60,6 +67,26 @@ module AdultTimeDL
       # @param [Data::Scene] scene
       def skip_scene?(scene)
         download_filters.skip?(scene)
+      end
+
+      def to_pretty_h
+        to_h.tap do |hash|
+          urls = {
+            all_scenes: "#{all_scenes.length} items",
+            performers: "#{performers.length} items",
+            movies: "#{movies.length} items",
+            scenes: "#{scenes.length} items"
+          }
+          hash[:urls] = urls
+        end
+      end
+
+      def inspect
+        to_pretty_h.inspect
+      end
+
+      def current_site_config
+        to_h.dig(:site_config, site.to_sym)
       end
 
       private

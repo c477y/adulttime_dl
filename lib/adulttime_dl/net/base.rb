@@ -17,6 +17,7 @@ module AdultTimeDL
       def handle_response!(response, return_raw: false)
         case response.code
         when 200 then return_raw ? response : response.parsed_response
+        when 302 then raise api_error(RedirectedError, response)
         when 400 then raise api_error(BadRequestError, response)
         when 401 then raise api_error(UnauthorizedError, response)
         when 403 then raise api_error(ForbiddenError, response)
@@ -33,7 +34,9 @@ module AdultTimeDL
       # @param [HTTParty::Response] response
       # @return [AdultTimeDL::APIError]
       def api_error(klass, response)
-        klass.new(endpoint: response.request.path, code: response.code, body: response.parsed_response)
+        endpoint = "#{response.request.base_uri}#{response.request.path}"
+        klass.new(endpoint: endpoint, code: response.code,
+                  body: response.parsed_response, headers: response.headers)
       end
     end
   end

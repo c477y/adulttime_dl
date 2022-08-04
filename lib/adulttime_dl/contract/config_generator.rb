@@ -20,6 +20,12 @@ module Contract
         "performers" => [],
         "movies" => [],
         "scenes" => []
+      },
+      "site_config" => {
+        "blowpass" => {
+          "algolia_application_id" => nil,
+          "algolia_api_key" => nil
+        }
       }
     }.freeze
     DEFAULT_CONFIG_FILE = "config.yml"
@@ -43,7 +49,7 @@ module Contract
       end
 
       config = AdultTimeDL::Data::Config.new(valid_config)
-      AdultTimeDL.logger.debug(config.to_h)
+      AdultTimeDL.logger.debug(config.to_pretty_h)
       config
     end
 

@@ -74,6 +74,9 @@ module AdultTimeDL
         start_download(scene_data, command)
       rescue APIError => e
         AdultTimeDL.logger.error("[DIRECT DOWNLOAD FAIL] #{e.message}")
+        if e.is_a?(AdultTimeDL::RedirectedError)
+          raise FatalError, "Redirection suggests possible cookie/token expiry. Regenerate token and try again."
+        end
       end
 
       # @param [Data::Scene] scene_data
@@ -91,7 +94,7 @@ module AdultTimeDL
           exit_status = thread.value
           if exit_status != 0
             store.save_download(scene_data, is_downloaded: false)
-            AdultTimeDL.logger.error "[DOWNLOAD_FAIL] #{scene_data.file_name} -- #{output}"
+            AdultTimeDL.logger.error "[DOWNLOAD_FAIL] #{scene_data.file_name} -- #{output.strip}"
             false
           else
             valid_file_size!(scene_data)
@@ -109,15 +112,15 @@ module AdultTimeDL
       # @param [String] url
       # @return [String]
       def generate_command(scene_data, url)
+        using_default_link = !scene_data.streaming_links&.default.nil?
         CommandBuilder.new
                       .with_download_client(client)
                       .with_merge_parts(true)
                       .with_path(scene_data.file_name, config.download_dir)
-                      .with_quality(!scene_data.streaming_links.default.nil?, "720")
+                      .with_quality(using_default_link, "720")
                       .with_verbosity(config.verbose)
                       .with_cookie(config.cookie_file, config.downloader_requires_cookie?)
                       .with_url(url).build
-        # .with_quality(!scene_data.streaming_links.default.nil?, "720")
       end
 
       # @param [Data::Scene] scene_data

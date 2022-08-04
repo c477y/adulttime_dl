@@ -8,7 +8,7 @@ module AdultTimeDL
         super()
       end
 
-      def search_by_actor(_entity_id, _entity_name, url:)
+      def search_by_actor(url)
         doc = fetch(url)
         doc.css(".latest-scene .item-episode")
            .map { |x| make_scene_data(x) }
@@ -19,7 +19,7 @@ module AdultTimeDL
       attr_reader :config
 
       def make_scene_data(doc)
-        Data::Scene.new(
+        Data::UnknownActorGenderScene.new(
           clip_id: -1,
           title: title(doc),
           actors: actors(doc),

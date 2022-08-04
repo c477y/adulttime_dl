@@ -32,3 +32,6 @@ Metrics/BlockLength:
   Exclude:
     - spec/**/*
     - adulttime_dl.gemspec
+
+Style/OptionalBooleanParameter:
+  Enabled: false

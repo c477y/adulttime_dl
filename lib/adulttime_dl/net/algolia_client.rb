@@ -3,6 +3,8 @@
 module AdultTimeDL
   module Net
     class AlgoliaClient < Base
+      include AlgoliaLinkParser
+
       attr_reader :client_config
 
       # @param [Data::Config] client_config
@@ -12,7 +14,7 @@ module AdultTimeDL
       end
 
       # @return [Algolia::Search::Client]
-      def client(refresh = false) # rubocop:disable Style/OptionalBooleanParameter
+      def client(refresh = false)
         if refresh
           @client = Algolia::Search::Client.new(config(true), logger: AdultTimeDL.logger)
         else
@@ -20,7 +22,71 @@ module AdultTimeDL
         end
       end
 
+      def search_by_actor(url)
+        actor_name = self.class.entity_name(url)
+        with_retry(actor_name) do |m_actor_name|
+          query = default_scene_options.merge(filters: "actors.name:'#{m_actor_name}'")
+          resp = scenes_index.search("", query)
+          AdultTimeDL.logger.error("[EMPTY RESULT] #{m_actor_name}") if resp[:hits].empty?
+          make_struct(resp[:hits])
+        end
+      end
+
+      def get_actor_id(actor_name)
+        with_retry(actor_name) do |m_actor_name|
+          query = actor_attr_opts
+          resp = actor_index.search(m_actor_name, query)
+          resp[:hits].first&.[](:actor_id)
+        end
+      end
+
+      def search_by_movie(url)
+        movie_id = self.class.entity_id(url)
+        movie_name = self.class.entity_name(url)
+        with_retry(movie_id, movie_name) do |m_movie_id, m_movie_name|
+          query = default_scene_options.merge(filters: "movie_id:#{m_movie_id}")
+          resp = scenes_index.search("", query)
+          AdultTimeDL.logger.error("[EMPTY RESULT] #{m_movie_name}") if resp[:hits].empty?
+          make_struct(resp[:hits])
+        end
+      end
+
       private
+
+      def with_retry(*parameters, current_attempt: 1, max_attempts: 5, &block)
+        if current_attempt > max_attempts
+          raise FatalError, "[RETRY EXCEEDED] #{self.class.name} ran exceeded retry attempts #{max_attempts}"
+        end
+
+        block.call(*parameters)
+      rescue Algolia::AlgoliaHttpError => e
+        AdultTimeDL.logger.error "[ALGOLIA ERROR] #{e.message}"
+        refresh_algolia
+        with_retry(*parameters, current_attempt: current_attempt + 1, max_attempts: max_attempts, &block)
+      end
+
+      def movie_index
+        raise FatalError, "#{self.class.name} does not implement movie_index"
+      end
+
+      def actor_index
+        raise FatalError, "#{self.class.name} does not implement actor_index"
+      end
+
+      def scenes_index
+        raise FatalError, "#{self.class.name} does not implement scenes_index"
+      end
+
+      def refresh_algolia
+        raise FatalError, "#{self.class.name} does not implement refresh_algolia"
+      end
+
+      def actor_attr_opts
+        {
+          attributesToRetrieve: %w[actor_id name gender url_name],
+          hitsPerPage: 1
+        }
+      end
 
       def make_struct(hits)
         hits.map do |hit|
@@ -32,9 +98,9 @@ module AdultTimeDL
         end.compact
       end
 
-      def default_options
+      def default_scene_options
         {
-          attributesToRetrieve: attributes,
+          # attributesToRetrieve: attributes,
           hitsPerPage: 1000
         }
       end
@@ -48,7 +114,7 @@ module AdultTimeDL
       end
 
       # @return [Algolia::Search::Config]
-      def config(refresh = false) # rubocop:disable Style/OptionalBooleanParameter
+      def config(refresh = false)
         if refresh
           @config = begin
             app_id, api_key = algolia_credentials
@@ -70,14 +136,29 @@ module AdultTimeDL
         case site
         when "adulttime" then "#{Constants::ADULTTIME_BASE_URL}/"
         when "ztod" then "#{Constants::ZTOD_BASE_URL}/"
+        when "blowpass" then "#{Constants::BLOW_PASS_BASE_URL}/"
         else raise FatalError, "received unexpected site name #{site}"
         end
       end
 
       # @return [[String, String]]
       def algolia_credentials
-        credentials = Net::AlgoliaCredentials.new(client_config.site)
+        credentials = case client_config.site
+                      when "blowpass"
+                        fetch_from_config? ||
+                        Net::AlgoliaCredentialsBrowser.new(client_config, Constants::BLOW_PASS_BASE_URL)
+                      else Net::AlgoliaCredentials.new(client_config.site)
+                      end
         [credentials.algolia_application_id, credentials.algolia_api_key]
+      end
+
+      AlgoliaCredentials = Struct.new(:algolia_application_id, :algolia_api_key)
+
+      def fetch_from_config?
+        site_config = client_config.current_site_config
+        return nil if !client_config.site || site_config[:algolia_application_id].nil? || site_config[:algolia_api_key].nil?
+
+        AlgoliaCredentials.new(site_config[:algolia_application_id], site_config[:algolia_api_key])
       end
     end
   end
