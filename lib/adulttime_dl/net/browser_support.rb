@@ -81,6 +81,7 @@ module AdultTimeDL
         default_options[:cookie].each_pair do |key, value|
           driver.manage.add_cookie(name: key, value: value)
         end
+        AdultTimeDL.logger.debug "[ADD COOKIE] #{default_options[:url]}"
       end
 
       def cookie_set?

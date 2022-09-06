@@ -13,7 +13,7 @@ module AdultTimeDL
         self
       end
 
-      def with_merge_parts(merge_parts = false) # rubocop:disable Style/OptionalBooleanParameter
+      def with_merge_parts(merge_parts = false)
         merge_parts ? command << " --merge-output-format mkv" : command
         self
       end
@@ -41,7 +41,7 @@ module AdultTimeDL
         self
       end
 
-      def with_cookie(file_path, is_required = false) # rubocop:disable Style/OptionalBooleanParameter
+      def with_cookie(file_path, is_required = false)
         command << " --cookies #{file_path}" if is_required
         self
       end

@@ -16,5 +16,10 @@ module AdultTimeDL
       else raise FatalError, "received unexpected site name #{site}"
       end
     end
+
+    def hostname(url)
+      uri = URI.parse(url)
+      "#{uri.scheme}://#{uri.host}"
+    end
   end
 end

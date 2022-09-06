@@ -2,12 +2,7 @@
 
 module AdultTimeDL
   module Net
-    class PornVEIndex < Base
-      def initialize(config)
-        @config = config
-        super()
-      end
-
+    class PornVEIndex < BaseIndex
       def search_by_all_scenes(url)
         doc = fetch(url)
         doc.css(".box_bodzy .vid_bloczk")
@@ -15,8 +10,6 @@ module AdultTimeDL
       end
 
       private
-
-      attr_reader :config
 
       def make_scene_data(doc)
         Data::PornVEScene.new(

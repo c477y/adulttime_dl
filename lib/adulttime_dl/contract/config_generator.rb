@@ -15,8 +15,8 @@ module Contract
       "quality" => "hd",
       "parallel" => 1,
       "verbose" => false,
+      "dry_run" => false,
       "urls" => {
-        "all_scenes" => [],
         "performers" => [],
         "movies" => [],
         "scenes" => []
@@ -90,13 +90,8 @@ module Contract
       end
     end
 
-    # def download_filters
-    #   raw_config_hash.slice("skip_studios", "skip_performers", "skip_lesbian")
-    # end
-
     def override_urls
       {
-        "all_scenes" => override_all_movies,
         "performers" => override_performers,
         "movies" => override_movies,
         "scenes" => override_scenes
@@ -115,12 +110,8 @@ module Contract
       @override_movies ||= AdultTimeDL::FileUtils.read_yaml(options["movies"], nil, Array)
     end
 
-    def override_all_movies
-      @override_all_movies ||= AdultTimeDL::FileUtils.read_yaml(options["all_scenes"], nil, Array)
-    end
-
     def override_scenes
-      @override_scenes ||= AdultTimeDL::FileUtils.read_yaml(options["all_scenes"], nil, Array)
+      @override_scenes ||= AdultTimeDL::FileUtils.read_yaml(options["scenes"], nil, Array)
     end
 
     attr_reader :site, :options

@@ -3,12 +3,6 @@
 module AdultTimeDL
   module FileUtils
     class << self
-      def read_file(file, default = "")
-        read_file(file)
-      rescue FatalError
-        default
-      end
-
       def read_file!(file)
         return File.read(file).strip if file && File.file?(file) && File.exist?(file)
 

@@ -2,12 +2,7 @@
 
 module AdultTimeDL
   module Net
-    class LoveHerFilmsIndex < Base
-      def initialize(config)
-        @config = config
-        super()
-      end
-
+    class LoveHerFilmsIndex < BaseIndex
       def search_by_actor(url)
         doc = fetch(url)
         doc.css(".latest-scene .item-episode")
@@ -15,8 +10,6 @@ module AdultTimeDL
       end
 
       private
-
-      attr_reader :config
 
       def make_scene_data(doc)
         Data::UnknownActorGenderScene.new(

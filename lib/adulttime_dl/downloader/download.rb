@@ -55,8 +55,11 @@ module AdultTimeDL
         return false if url.nil?
 
         command = generate_command(scene_data, url)
-        AdultTimeDL.logger.debug("[ATTEMPT DOWNLOAD USING FILE URL] #{scene_data.file_name}")
-        start_download(scene_data, command)
+        if config.dry_run?
+          AdultTimeDL.logger.info "WILL DOWNLOAD #{command}"
+        else
+          start_download(scene_data, command)
+        end
       rescue APIError => e
         AdultTimeDL.logger.error("[DIRECT DOWNLOAD FAIL] #{e.message}")
         false
@@ -70,8 +73,11 @@ module AdultTimeDL
         scene_data = scene_data.add_streaming_links(streaming_links)
         url = scene_data.streaming_links.send(config.quality.to_sym)
         command = generate_command(scene_data, url)
-        AdultTimeDL.logger.debug("[ATTEMPT DOWNLOAD USING STREAMING URL] #{scene_data.file_name}")
-        start_download(scene_data, command)
+        if config.dry_run?
+          AdultTimeDL.logger.info "WILL DOWNLOAD #{command}"
+        else
+          start_download(scene_data, command)
+        end
       rescue APIError => e
         AdultTimeDL.logger.error("[DIRECT DOWNLOAD FAIL] #{e.message}")
         if e.is_a?(AdultTimeDL::RedirectedError)
@@ -112,15 +118,20 @@ module AdultTimeDL
       # @param [String] url
       # @return [String]
       def generate_command(scene_data, url)
-        using_default_link = !scene_data.streaming_links&.default.nil?
-        CommandBuilder.new
-                      .with_download_client(client)
-                      .with_merge_parts(true)
-                      .with_path(scene_data.file_name, config.download_dir)
-                      .with_quality(using_default_link, "720")
-                      .with_verbosity(config.verbose)
-                      .with_cookie(config.cookie_file, config.downloader_requires_cookie?)
-                      .with_url(url).build
+        case config.site
+        when "julesjordan" then JulesJordanCommand.build(config, scene_data, url)
+        when "archangel" then ArchAngelCommand.build(config, scene_data, url)
+        else
+          using_default_link = !scene_data.streaming_links&.default.nil?
+          CommandBuilder.new
+                        .with_download_client(client)
+                        .with_merge_parts(true)
+                        .with_path(scene_data.file_name, config.download_dir)
+                        .with_quality(using_default_link, "720")
+                        .with_verbosity(config.verbose)
+                        .with_cookie(config.cookie_file, config.downloader_requires_cookie?)
+                        .with_url(url).build
+        end
       end
 
       # @param [Data::Scene] scene_data

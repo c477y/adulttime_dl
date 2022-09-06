@@ -2,16 +2,8 @@
 
 module AdultTimeDL
   module Net
-    class AlgoliaClient < Base
+    class AlgoliaClient < BaseIndex
       include AlgoliaLinkParser
-
-      attr_reader :client_config
-
-      # @param [Data::Config] client_config
-      def initialize(client_config)
-        @client_config = client_config
-        super()
-      end
 
       # @return [Algolia::Search::Client]
       def client(refresh = false)
@@ -29,14 +21,6 @@ module AdultTimeDL
           resp = scenes_index.search("", query)
           AdultTimeDL.logger.error("[EMPTY RESULT] #{m_actor_name}") if resp[:hits].empty?
           make_struct(resp[:hits])
-        end
-      end
-
-      def get_actor_id(actor_name)
-        with_retry(actor_name) do |m_actor_name|
-          query = actor_attr_opts
-          resp = actor_index.search(m_actor_name, query)
-          resp[:hits].first&.[](:actor_id)
         end
       end
 
@@ -119,7 +103,7 @@ module AdultTimeDL
           @config = begin
             app_id, api_key = algolia_credentials
             c = Algolia::Search::Config.new(application_id: app_id, api_key: api_key)
-            c.set_extra_header("Referer", referrer(client_config.site))
+            c.set_extra_header("Referer", referrer(config.site))
             c
           end
 
@@ -143,11 +127,11 @@ module AdultTimeDL
 
       # @return [[String, String]]
       def algolia_credentials
-        credentials = case client_config.site
+        credentials = case config.site
                       when "blowpass"
                         fetch_from_config? ||
-                        Net::AlgoliaCredentialsBrowser.new(client_config, Constants::BLOW_PASS_BASE_URL)
-                      else Net::AlgoliaCredentials.new(client_config.site)
+                        Net::AlgoliaCredentialsBrowser.new(config, Constants::BLOW_PASS_BASE_URL)
+                      else Net::AlgoliaCredentials.new(config.site)
                       end
         [credentials.algolia_application_id, credentials.algolia_api_key]
       end
@@ -155,8 +139,8 @@ module AdultTimeDL
       AlgoliaCredentials = Struct.new(:algolia_application_id, :algolia_api_key)
 
       def fetch_from_config?
-        site_config = client_config.current_site_config
-        return nil if !client_config.site || site_config[:algolia_application_id].nil? || site_config[:algolia_api_key].nil?
+        site_config = config.current_site_config
+        return nil if !config.site || site_config[:algolia_application_id].nil? || site_config[:algolia_api_key].nil?
 
         AlgoliaCredentials.new(site_config[:algolia_application_id], site_config[:algolia_api_key])
       end

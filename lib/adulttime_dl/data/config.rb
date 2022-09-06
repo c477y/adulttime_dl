@@ -6,29 +6,44 @@ module AdultTimeDL
       extend Forwardable
 
       SUPPORTED_DOWNLOAD_CLIENTS = Types::String.enum("youtube-dl", "yt-dlp")
-      SUPPORTED_SITES = Types::String.enum("adulttime", "ztod", "loveherfilms", "pornve", "blowpass")
-      QUALITIES = Types::String.enum("fhd", "hd", "sd")
+      QUALITY = Types::String.enum("fhd", "hd", "sd")
       MODULE_NAME = {
         "adulttime" => "AdultTime",
-        "ztod" => "ZTOD",
+        "archangel" => "ArchAngel",
+        "blowpass" => "BlowPass",
+        "julesjordan" => "JulesJordan",
         "loveherfilms" => "LoveHerFilms",
+        "manuelferrara" => "JulesJordan",
         "pornve" => "PornVE",
-        "blowpass" => "BlowPass"
+        "scoregroup" => "ScoreGroup",
+        "sxyporn" => "SxyPorn",
+        "ztod" => "ZTOD"
       }.freeze
       STREAMING_LINKS_SUFFIX = "StreamingLinks"
       DOWNLOAD_LINKS_SUFFIX = "DownloadLinks"
       INDEX_SUFFIX = "Index"
+      STREAMING_UNSUPPORTED_SITE = %w[
+        archangel
+        julesjordan
+        manuelferrara
+        scoregroup
+      ].freeze
+      DOWNLOADING_UNSUPPORTED_SITE = %w[
+        loveherfilms
+        pornve
+      ].freeze
 
-      attribute :site, SUPPORTED_SITES
+      attribute :site, Types::String
       attribute :download_filters, DownloadFilters
       attribute :cookie_file, Types::String.optional
       attribute :store, Types::String
       attribute :downloader, SUPPORTED_DOWNLOAD_CLIENTS
       attribute :download_dir, Types::String
-      attribute :quality, QUALITIES
+      attribute :quality, QUALITY
       attribute :parallel, Types::Integer
       attribute :verbose, Types::Bool
-      attribute :urls, URLs
+      attribute? :dry_run, Types::Bool.optional
+      attribute? :urls, URLs
       attribute? :site_config do
         attribute? :blowpass do
           attribute? :algolia_application_id, Types::String.optional
@@ -36,7 +51,7 @@ module AdultTimeDL
         end
       end
 
-      def_delegators :urls, :all_scenes, :performers, :movies, :scenes
+      def_delegators :urls, :performers, :movies, :scenes
 
       def cookie
         jar = HTTP::CookieJar.new
@@ -44,16 +59,20 @@ module AdultTimeDL
         HTTP::Cookie.cookie_value(jar.cookies)
       end
 
+      def dry_run?
+        dry_run == true
+      end
+
       def streaming_link_fetcher
+        return Net::NOOPDownloadLinks.new if STREAMING_UNSUPPORTED_SITE.include?(site)
+
         generate_class(site, STREAMING_LINKS_SUFFIX)
       end
 
       def download_link_fetcher
-        case site
-        when "loveherfilms" then Net::NOOPDownloadLinks.new
-        when "pornve" then Net::NOOPDownloadLinks.new
-        else generate_class(site, DOWNLOAD_LINKS_SUFFIX)
-        end
+        return Net::NOOPDownloadLinks.new if DOWNLOADING_UNSUPPORTED_SITE.include?(site)
+
+        generate_class(site, DOWNLOAD_LINKS_SUFFIX)
       end
 
       def scenes_index
@@ -72,7 +91,6 @@ module AdultTimeDL
       def to_pretty_h
         to_h.tap do |hash|
           urls = {
-            all_scenes: "#{all_scenes.length} items",
             performers: "#{performers.length} items",
             movies: "#{movies.length} items",
             scenes: "#{scenes.length} items"
@@ -85,6 +103,7 @@ module AdultTimeDL
         to_pretty_h.inspect
       end
 
+      # Get the site-specific configuration for the current site
       def current_site_config
         to_h.dig(:site_config, site.to_sym)
       end

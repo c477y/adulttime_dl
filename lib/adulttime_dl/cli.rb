@@ -43,5 +43,25 @@ module AdultTimeDL
       AdultTimeDL.logger.debug "\t#{e.backtrace.join("\n\t")}"
       exit 1
     end
+
+    desc "generate", "Fetch the list of actors/movies from a site"
+    long_desc <<~LONGDESC
+      Accepts a sitename and fetches all the actors or movies listed down in the site.
+    LONGDESC
+    option :cookie_file, default: "cookies.txt", aliases: :c, desc: "Path to the file where the cookie is stored"
+    option :verbose, type: :boolean, default: false, aliases: :v, desc: "Flag to print verbose logs"
+    def generate(site, object)
+      AdultTimeDL.logger(verbose: options["verbose"])
+      config = Data::GeneratorConfig.new({ site: site, object: object }.merge(options))
+      GenerateClient.new(config).start!
+    rescue Interrupt
+      say "Exiting...", :green
+    rescue SafeExit
+      nil
+    rescue StandardError, FatalError => e
+      AdultTimeDL.logger.fatal "#{e.class} - #{e.message}"
+      AdultTimeDL.logger.debug "\t#{e.backtrace.join("\n\t")}"
+      exit 1
+    end
   end
 end

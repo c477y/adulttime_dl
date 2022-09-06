@@ -18,11 +18,13 @@ module AdultTimeDL
         elsif (performer = blocked_performers(scene))
           AdultTimeDL.logger.info "[SKIPPING PERFORMER #{performer}] #{scene.file_name}"
           true
+        else
+          false
         end
       end
 
       def blocked_performers(scene)
-        scene.male_actors.select { |performer| blocked_performer?(performer) }.first
+        scene.all_actors.select { |performer| blocked_performer?(performer) }.first
       end
 
       def blocked_performer?(performer)

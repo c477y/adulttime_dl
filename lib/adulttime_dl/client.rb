@@ -14,7 +14,7 @@ module AdultTimeDL
       AdultTimeDL.logger.info "[PROCESS START]"
       process_performer
       process_movies
-      process_all_scenes
+      process_scenes
       AdultTimeDL.logger.info "[PROCESS COMPLETE]"
     end
 
@@ -36,8 +36,8 @@ module AdultTimeDL
       end
     end
 
-    def process_all_scenes
-      config.all_scenes.map do |url|
+    def process_scenes
+      config.scenes.map do |url|
         AdultTimeDL.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_all_scenes(url)
         Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }

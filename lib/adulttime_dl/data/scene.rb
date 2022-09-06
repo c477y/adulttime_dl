@@ -12,10 +12,10 @@ module AdultTimeDL
       attribute :clip_id, Types::Integer.default(-1)
       attribute :title, Types::String
       attribute :actors, Types::Array.of(Actor).default([].freeze)
-      attribute :release_date, Types::String.optional
+      attribute? :release_date, Types::String.optional
       attribute :network_name, Types::String.optional
       attribute? :movie_title, Types::String
-      attribute :download_sizes, Types::Array.of(Types::String)
+      attribute? :download_sizes, Types::Array.of(Types::String)
       attribute? :streaming_links, StreamingLinks
       attribute :is_downloaded, Types::Bool.default(false)
       attribute :is_streamable, Types::Bool.default(true)
