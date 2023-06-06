@@ -23,6 +23,14 @@ module AdultTimeDL
       private
 
       attr_reader :config
+
+      def placeholder_scene_hash
+        {
+          title: "PLACEHOLDER",
+          actors: [],
+          network_name: "PLACEHOLDER"
+        }
+      end
     end
   end
 end

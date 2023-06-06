@@ -17,9 +17,12 @@ module AdultTimeDL
       attribute? :movie_title, Types::String
       attribute? :download_sizes, Types::Array.of(Types::String)
       attribute? :streaming_links, StreamingLinks
+      attribute? :downloading_links, StreamingLinks
+      attribute :collection_tag, Types::String.default("C")
       attribute :is_downloaded, Types::Bool.default(false)
       attribute :is_streamable, Types::Bool.default(true)
       attribute? :video_link, Types::String
+      attribute? :refresher, Types.Instance(Class)
 
       def key
         clip_id == -1 ? title : clip_id.to_s
@@ -43,6 +46,14 @@ module AdultTimeDL
       def non_streamable
         new(is_streamable: false)
         # Scene.new(to_hash.merge(is_streamable: false))
+      end
+
+      def refresh_required?
+        title == "PLACEHOLDER"
+      end
+
+      def refresh
+        refresher.nil? ? self : refresher.new(video_link).process
       end
 
       # @param [String] quality: one of "sd", "hd" or "fhd"
@@ -84,9 +95,13 @@ module AdultTimeDL
       end
 
       def file_name
-        initial_name = "#{title} [C] #{network_name}"
-        with_female = safely_add_actors(initial_name, female_actors, prefix: "[F]")
-        final = safely_add_actors(with_female, male_actors, prefix: "[M]")
+        initial_name = "#{title} [#{collection_tag}] #{network_name}"
+        if actor_gender_unknown?
+          final = safely_add_actors(initial_name, all_actors, prefix: "[A]")
+        else
+          with_female = safely_add_actors(initial_name, female_actors, prefix: "[F]")
+          final = safely_add_actors(with_female, male_actors, prefix: "[M]")
+        end
         clean(final)
       end
 
