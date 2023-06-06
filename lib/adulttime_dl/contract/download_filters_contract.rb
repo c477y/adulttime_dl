@@ -8,6 +8,7 @@ module Contract
       adulttime
       archangel
       blowpass
+      goodporn
       julesjordan
       loveherfilms
       manuelferrara
@@ -16,6 +17,8 @@ module Contract
       sxyporn
       ztod
     ].freeze
+    SUPPORTED_SITES_SPELL_CHECKER = DidYouMean::SpellChecker.new(dictionary: SUPPORTED_SITES)
+
     SUPPORTED_DOWNLOADERS = %w[youtube-dl yt-dlp].freeze
     COOKIE_REQUIRED_SITES = %w[adulttime ztod loveherfilms archangel].freeze
     AVAILABLE_QUALITIES = %w[fhd hd sd].freeze
@@ -33,6 +36,7 @@ module Contract
       required(:parallel).value(:integer)
       optional(:verbose).value(:bool)
       optional(:dry_run).value(:bool)
+      optional(:downloader_flags).maybe(:string)
       optional(:site_config).hash do
         optional(:blowpass).hash do
           optional(:algolia_application_id).maybe(:string)
@@ -49,7 +53,12 @@ module Contract
 
     rule(:site) do
       unless SUPPORTED_SITES.include?(value)
-        key.failure("#{value} is not supported. Provide one of #{SUPPORTED_SITES.join(", ")}")
+        possible_sites = SUPPORTED_SITES_SPELL_CHECKER.correct(value)
+        if possible_sites.length == 1
+          key.failure("#{value} is not a valid site. Did you mean #{possible_sites.first}?")
+        else
+          key.failure("#{value} is not supported. Provide one of #{SUPPORTED_SITES.join(", ")}")
+        end
       end
     end
 
