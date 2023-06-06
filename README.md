@@ -45,7 +45,6 @@ these sites:
 * [manuelferrara](https://manuelferrara.com/trial/)
 * [pornve](https://pornve.com) _(very limited support)_
 * [scoregroup](https://score-group.com/)
-* [sxyporn](https://sxyprn.com) _(very limited support)_
 * [ztod](https://www.zerotolerancefilms.com/en) (Zero Tolerance Films)
 
 The CLI will look for a config file whenever it's run. For first run, you can
