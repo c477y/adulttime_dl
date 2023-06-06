@@ -1,118 +1,132 @@
 # AdultTimeDL
 
-Download videos from [adulttime.com](https://members.adulttime.com)
+Bulk download porn videos from premium websites
 
 ## Installation
 
+This library is not exported to [RubyGems](https://rubygems.org) and has to be
+run locally. Clone the repository and build the project.
+
+You need to install ruby to build the project. Check the version you need in
+[.ruby-version](.ruby-version) and install the appropriate version.
+
+Run the below snippet to clone the project
+
 ```shell
-$ gem install adulttime_dl
+git clone https://github.com/c477y/adulttime_dl.git
+cd adulttime_dl
+```
+
+Then, fetch all dependencies
+
+```shell
+bundle install
+```
+
+Finally, run the CLI using the executable
+
+```shell
+./exe/adulttime_dl help
 ```
 
 ## Download Usage
 
+When I started the project, only downloads from
+[members.adulttime.com](https://members.adulttime.com) was supported. Overtime,
+support for multiple sites was added and currently supports downloading from
+these sites:
+
+* [adulttime](https://members.adulttime.com)
+* [archangel](https://www.archangelvideo.com/)
+* [blowpass](https://www.blowpass.com/en)
+* [goodporn](https://goodporn.to/)
+* [julesjordan](https://www.julesjordan.com/trial/)
+* [loveherfilms](https://www.loveherfilms.com/tour/)
+* [manuelferrara](https://manuelferrara.com/trial/)
+* [pornve](https://pornve.com) _(very limited support)_
+* [scoregroup](https://score-group.com/)
+* [sxyporn](https://sxyprn.com) _(very limited support)_
+* [ztod](https://www.zerotolerancefilms.com/en) (Zero Tolerance Films)
+
+The CLI will look for a config file whenever it's run. For first run, you can
+generate a new config file by just running the command and don't pass the
+`--config` flag. The CLI will create a config file for you.
+
 ```shell
-$ adulttime_dl download --help
+$ adulttime_dl download julesjordan
+[INFO ] ----------------------------------------------------------------------------------------------------
+[INFO ] Config option not passed to app and no config file detected in the current directory.
+[INFO ] Generating a blank configuration file to config.yml This app will now exit.
+[INFO ] Check the contents of the file and run the app again to start downloading.
+[INFO ] ----------------------------------------------------------------------------------------------------
 ```
 
 ```shell
 Usage:
-  adulttime_dl download
+  adulttime_dl download _site_
 
 Options:
-      [--help], [--no-help]
-  c, [--cookie-file=COOKIE_FILE]             # Path to the file where the cookie is stored
-      [--downloader=DOWNLOADER]              # Name of the client to use to download. Can be either 'youtube-dl'(default) or 'yt-dlp'
-  d, [--download-dir=DOWNLOAD_DIR]           # Directory where the files should be downloaded
-      [--store=STORE]                        # Path to the .store file which tracks which files have been downloaded
-  p, [--performer-file=PERFORMER_FILE]       # Path to a YAML file with list of pages of performers
-      [--parallel=N]                         # Number of parallel downloads to perform
-      [--quality=QUALITY]                    # Quality of video to download. Allows 'sd', 'hd' or 'fhd'
-      [--verbose], [--no-verbose]            # Flag to print verbose logs
-      [--skip-studios=SKIP_STUDIOS]          # List of studios to skip downloading
-      [--skip-lesbian], [--no-skip-lesbian]  # Enable to skip downloading lesbian scenes
+     [--help], [--no-help]
+     [--cookie-file=COOKIE_FILE]    # Path to the file where the cookie is stored
+     [--downloader=DOWNLOADER]      # Name of the client to use to download. Can be either 'youtube-dl'(default) or 'yt-dlp'
+     [--download-dir=DOWNLOAD_DIR]  # Directory where the files should be downloaded
+     [--store=STORE]                # Path to the .store file which tracks which files have been downloaded
+  p, [--parallel=N]                 # Number of parallel downloads to perform
+                                    # Default: 1
+     [--quality=QUALITY]            # Quality of video to download. Allows 'sd', 'hd' or 'fhd'
+  c, [--config=CONFIG]              # Path to YAML file with download filters
+                                    # Default: config.yml
+  v, [--verbose], [--no-verbose]    # Flag to print verbose logs
 
 Description:
-  Download scenes from https://members.adulttime.com.
+  Acceptable site names: adulttime, archangel, blowpass, goodporn, julesjordan, loveherfilms, manuelferrara, pornve, scoregroup, sxyporn, ztod
 ```
 
 ### Options
 
 #### --cookie-file=COOKIE_FILE
 
-Before downloading you would need to get your session cookie. Open developer tools in
-your browser and look for requests being made to "members.adulttime.com". Under the
-request section, you should see the cookie. Copy the cookie and paste it to a file and
-save it.
-By default, the CLI looks for a file called `cookie.txt` in the directory where it is
-invoked in.
-
-#### --performer-file=PERFORMER_FILE
-
-You need to tell adulttime_dl which scenes you want to download. Currently, the CLI only
-supports downloading scenes from a particular performer. To list the performers you need
-to download, create a YAML file and store the performers URL there. e.g.
-
-```{yaml}
----
-- https://members.adulttime.com/en/pornstar/view/Adriana-Chechik/32257
-- https://members.adulttime.com/en/pornstar/view/Riley-Reid/17712
-```
-By default, the CLI looks for a file called `performers.yml` in the directory where it is
-invoked in.
+Before downloading you would need to get your session cookie. Open developer
+tools in your browser and look for requests being made to
+"members.adulttime.com". Under the request section, you should see the cookie.
+Copy the cookie and paste it to a file and save it. By default, the CLI looks
+for a file called `cookie.txt` in the directory where it is invoked in.
 
 #### --downloader=DOWNLOADER
-The CLI uses external tools to download videos. Currently it supports `youtube-dl` or#{" "}
-`yt-dlp`. Download youtube-dl from https://youtube-dl.org/ or download `yt-dlp` from
-https://github.com/yt-dlp/yt-dlp. You need to ensure that the tool is available in your
-$PATH. One way to verify is executing `which youtube-dl` in your shell. If you don't see
-an error, you're all set. Also ensure that you have the dependencies required by the
-downloaders (usually ffmpeg and ffprobe). This is required to decrypt HLS streams.
-By default, the CLI will use youtube-dl.
+
+The CLI uses external tools to download videos. Currently it supports
+`youtube-dl` or#{" "} `yt-dlp`. Download youtube-dl from
+[https://youtube-dl.org/](https://youtube-dl.org/) or download `yt-dlp` from
+[https://github.com/yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp). You need
+to ensure that the tool is available in your $PATH. One way to verify is
+executing `which youtube-dl` in your shell. If you don't see an error, you're
+all set. Also ensure that you have the dependencies required by the downloader
+(usually ffmpeg and ffprobe). This is required to decrypt HLS streams. By
+default, the CLI will use youtube-dl.
 
 #### --download-dir=DOWNLOAD_DIR
-The directory where you want to download the scenes. By default, the CLI will download videos
-in the current working directory.
+
+The directory where you want to download the scenes. By default, the CLI will
+download videos in the current working directory.
 
 #### --store=STORE
-The CLI tracks all downloads in a file called `adt_download_status.store`. DO NOT edit this file
-and preferably don't delete it as well. This is used to prevent downloading duplicate scenes.
-By default, the CLI will look for this file in the current directory and will create one if it's
-not present.
+
+The CLI tracks all downloads in a file called `adt_download_status.store`. DO
+NOT edit this file and preferably don't delete it as well. This is used to
+prevent downloading duplicate scenes. By default, the CLI will look for this
+file in the current directory and will create one if it's not present.
 
 #### --parallel=N
-Support parallel downloads to speed up the process. By default this value is 1. Do not increase
-this to a high number or the adulttime API will rate limit you.
+
+Support parallel downloads to speed up the process. By default this value is 1.
+Do not increase this to a high number or the adulttime API will rate limit you.
 
 #### --quality=QUALITY
-Quality of videos to download. Accepts `fhd`, `hd` or `sd`. If a higher resolution video is not
-available, the CLI will download the next available resolution. Defaults to `hd`,
+
+Quality of videos to download. Accepts `fhd`, `hd` or `sd`. If a higher
+resolution video is not available, the CLI will download the next available
+resolution. Defaults to `hd`,
 
 #### --verbose
+
 Print verbose logs. Useful for debugging.
-
-#### --skip-studios=SKIP_STUDIOS
-Adulttime website has scenes from many studios. Add all studios in a deny list to skip downloading
-them. This deny list is expected to be in a YAML file.
-By default, the CLI will look for a file called `skip_studios.yml`. If the file is not present,
-all scenes will be downloaded.
-
-#### --skip-lesbian
-Pass this flag to skip downloading lesbian scenes.
-
-Examples:
-
-```{shell}
-# To print help
-$ adulttime_dl download --help
-
-# Passing all options
-$ adulttime_dl download --cookie-file=cookie.txt \
-                        --performer-file="./performers.yml" \
-                        --skip-studios="./skip_studios.yml" \
-                        --downloader="youtube-dl" \
-                        --download-dir=. \
-                        --parallel=1 \
-                        --quality=fhd \
-                        --skip-lesbian
-                        --verbose
-```
