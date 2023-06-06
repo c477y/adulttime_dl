@@ -16,19 +16,20 @@ module AdultTimeDL
       # @return [String, NilClass]
       def fetch(scene_data)
         doc = fetch_webpage(scene_data.video_link)
-        url_element = doc.css("#download_select option")
+        url_element = doc.css(".download-container #download-selector .download-item")
                          .find { |x| matches_resolution?(x.text.strip) }
         if url_element.nil?
           AdultTimeDL.logger.warn "Unable to extract link from #{scene_data.title}"
           nil
         else
-          url_element.attr("value")
+          url_element.attr("data-video-path")
         end
       end
 
       private
 
-      RESOLUTION_STR = /-\s+-\s(?<resolution>\w+)\s-\sSCENE/x.freeze
+      # RESOLUTION_STR = /-\s+-\s(?<resolution>\w+)\s-\sSCENE/x.freeze
+      RESOLUTION_STR = /.*(4k|1080p|720p|480p|360p|mobile).*/i.freeze
       RES_MAP = {
         "4k" => "4k",
         "1080p" => "fhd",
@@ -42,13 +43,13 @@ module AdultTimeDL
       def matches_resolution?(res)
         match = RESOLUTION_STR.match(res)
 
-        return false if ["", "Choose Format"].include?(res)
+        return false if ["", "choose format", "trailer"].include?(res.downcase)
 
         if match.nil?
           AdultTimeDL.logger.debug "julesjordan: no resolution extracted from: #{res} "
           false
         else
-          res = match[:resolution].downcase
+          res = match[1].downcase
           return true if config.quality == RES_MAP[res]
         end
         false

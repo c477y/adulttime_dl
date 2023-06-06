@@ -10,6 +10,12 @@ module AdultTimeDL
       attribute? :res_432p, Types::String
       attribute? :default, Types::Array.of(Types::String).default([].freeze)
 
+      def self.with_single_url(url)
+        hash = {}
+        hash["default"] = [url]
+        new(hash)
+      end
+
       def sd
         res_480p || res_432p || default.first || nil
       end

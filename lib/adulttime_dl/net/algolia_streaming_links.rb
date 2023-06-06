@@ -26,10 +26,20 @@ module AdultTimeDL
         resp = handle_response!(self.class.get(path, headers: headers))
         return nil if resp == []
 
-        resp.transform_keys! { |k| "res_#{k}" }
-        Data::StreamingLinks.new(resp)
+        if resp.is_a?(Array) && resp.first&.keys&.sort == %w[format url]
+          transformed_resp = {}
+          resp.each do |r|
+            key = "res_#{r["format"]}"
+            transformed_resp[key] = r["url"]
+          end
+          Data::StreamingLinks.new(transformed_resp)
+        elsif resp.is_a?(Hash)
+          resp.transform_keys! { |k| "res_#{k}" }
+          Data::StreamingLinks.new(resp)
+        end
       rescue NoMethodError => e
-        AdultTimeDL.logger.error "[LINK FETCH ERROR] #{e.message}"
+        AdultTimeDL.logger.warn "[LINK FETCH ERROR] #{e.message}"
+        AdultTimeDL.logger.warn "PLEASE OPEN AN ISSUE ON GITHUB WITH THE ABOVE ERROR MESSAGE"
         nil
       end
 

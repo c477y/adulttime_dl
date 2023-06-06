@@ -10,6 +10,10 @@ module Contract
       "skip_studios" => [],
       c02: "[List] Skip performers based on name",
       "skip_performers" => [],
+      c002: "[List] Skip keywords in scene title",
+      "skip_keywords" => [],
+      c003: "[Integer] Oldest scene year to allow downloading",
+      "oldest_year" => 2010,
       c03: "[Boolean] Skip downloading scenes with only female actors",
       c04: "This only works with certain sites that provide gender information for performers",
       "skip_lesbian" => false,
@@ -35,7 +39,8 @@ module Contract
       "dry_run" => false,
       c17: "[String] Arguments to pass to external downloader",
       c18: "Check the documentation of youtube-dl or yt-dlp for details",
-      "downloader_flags" => "",
+      c19: "e.g. this accelerates downloads using aria2",
+      "downloader_flags" => "--external-downloader aria2c --external-downloader-args \"-j 8 -s 8 -x 8 -k 5M\"",
       "urls" => {
         c00: "[List] URLs of performer names that will be downloaded",
         "performers" => [],
@@ -44,13 +49,21 @@ module Contract
         c02: "[List] URLs of scene names that will be downloaded",
         "scenes" => []
       },
-      c19: "[OPTIONAL] These are site specific configuration only needed for some sites",
+      c21: "[OPTIONAL] These are site specific configuration only needed for some sites",
       "site_config" => {
         "blowpass" => {
           c00: "Get Algolia credentials from Web Console",
           "algolia_application_id" => nil,
           "algolia_api_key" => nil
         }
+      },
+      c22: "Configuration for stash app to prevent downloading duplicate scenes",
+      "stash_app" => {
+        c00: "[String] URL path where your Stash App is hosted",
+        c01: "e.g. http://localhost:9999",
+        "url" => nil,
+        c02: "[String] Optional token if your Stash App is password protected",
+        "api_token" => nil
       }
     }.freeze
     DEFAULT_CONFIG_FILE = "config.yml"
@@ -70,7 +83,7 @@ module Contract
       config_with_overridden_flags = override_flags_from_options(raw_config_from_file)
       valid_config = validate_download_filters!(config_with_overridden_flags)
       valid_config.tap do |hash|
-        hash["download_filters"] = valid_config.slice("skip_studios", "skip_performers", "skip_lesbian")
+        hash["download_filters"] = valid_config.slice("skip_studios", "skip_performers", "skip_lesbian", "skip_keywords", "oldest_year")
       end
 
       config = AdultTimeDL::Data::Config.new(valid_config)

@@ -40,12 +40,11 @@ these sites:
 * [archangel](https://www.archangelvideo.com/)
 * [blowpass](https://www.blowpass.com/en)
 * [goodporn](https://goodporn.to/)
+* [houseofyre](https://houseofyre.com/)
 * [julesjordan](https://www.julesjordan.com/trial/)
 * [loveherfilms](https://www.loveherfilms.com/tour/)
 * [manuelferrara](https://manuelferrara.com/trial/)
-* [pornve](https://pornve.com) _(very limited support)_
 * [scoregroup](https://score-group.com/)
-* [sxyporn](https://sxyprn.com) _(very limited support)_
 * [ztod](https://www.zerotolerancefilms.com/en) (Zero Tolerance Films)
 
 The CLI will look for a config file whenever it's run. For first run, you can
@@ -69,37 +68,42 @@ Options:
      [--help], [--no-help]
      [--cookie-file=COOKIE_FILE]    # Path to the file where the cookie is stored
      [--downloader=DOWNLOADER]      # Name of the client to use to download. Can be either 'youtube-dl'(default) or 'yt-dlp'
-     [--download-dir=DOWNLOAD_DIR]  # Directory where the files should be downloaded
-     [--store=STORE]                # Path to the .store file which tracks which files have been downloaded
-  p, [--parallel=N]                 # Number of parallel downloads to perform
+     [--download-dir=DOWNLOAD_DIR]  # Directory where the files should be downloaded. Defaults to current directory
+     [--store=STORE]                # Path to the .store file which tracks which files have been downloaded. If not provided, a store file will be created by the CLI
+  p, [--parallel=N]                 # Number of parallel downloads to perform. For optimal performance, do not set this to more than 5
                                     # Default: 1
      [--quality=QUALITY]            # Quality of video to download. Allows 'sd', 'hd' or 'fhd'
-  c, [--config=CONFIG]              # Path to YAML file with download filters
+  c, [--config=CONFIG]              # Path to YAML file with download filters Defaults to config.yml in the current directory
                                     # Default: config.yml
-  v, [--verbose], [--no-verbose]    # Flag to print verbose logs
+  v, [--verbose], [--no-verbose]    # Flag to print verbose logs. Useful for debugging
 
 Description:
-  Acceptable site names: adulttime, archangel, blowpass, goodporn, julesjordan, loveherfilms, manuelferrara, pornve, scoregroup, sxyporn, ztod
+  Acceptable _site_ names: adulttime, archangel, blowpass, cumlouder, goodporn, houseofyre, julesjordan, loveherfilms, manuelferrara, pornve, scoregroup, sxyporn, ztod
 ```
 
 ### Options
 
 #### --cookie-file=COOKIE_FILE
 
-Before downloading you would need to get your session cookie. Open developer
-tools in your browser and look for requests being made to
-"members.adulttime.com". Under the request section, you should see the cookie.
-Copy the cookie and paste it to a file and save it. By default, the CLI looks
-for a file called `cookie.txt` in the directory where it is invoked in.
+If you want to download from a premium website (one that requires a membership),
+you would need to get your session cookie. If you use Mozilla Firefox, you can
+use the extension[
+cookies.txt](https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/) to
+store your session cookies to a text file. Login to the website using your
+credentials and use the extension to download your cookies to a file (preferably
+named `cookies.txt`). When you can the CLI, it will look for the cookie file in
+the current directory. Alternatively, you can pass in your cookie file by
+passing the parameter `--cookie=../path/to/cookie/file.txt`
 
 #### --downloader=DOWNLOADER
 
 The CLI uses external tools to download videos. Currently it supports
-`youtube-dl` or#{" "} `yt-dlp`. Download youtube-dl from
+`youtube-dl` or `yt-dlp`. Download youtube-dl from
 [https://youtube-dl.org/](https://youtube-dl.org/) or download `yt-dlp` from
-[https://github.com/yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp). You need
-to ensure that the tool is available in your $PATH. One way to verify is
-executing `which youtube-dl` in your shell. If you don't see an error, you're
+[https://github.com/yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp).
+
+You need to ensure that the tool is available in your $PATH. One way to verify
+is executing `which youtube-dl` in your shell. If you don't see an error, you're
 all set. Also ensure that you have the dependencies required by the downloader
 (usually ffmpeg and ffprobe). This is required to decrypt HLS streams. By
 default, the CLI will use youtube-dl.
@@ -130,3 +134,15 @@ resolution. Defaults to `hd`,
 #### --verbose
 
 Print verbose logs. Useful for debugging.
+
+## Ran into an error?
+
+The CLI has no tests as it's not possible to test behavior for sites that
+require membership without having an actual membership. Changes to existing site
+clients are extremely rare but if you run into an error, create an issue with
+the stacktrace. If it's something breaking on CLI backend, it can be fixed.
+However, if the error happens inside the site indexer (example, when a site
+changed it's web layout and the site indexer uses HTML parsing), it won't be
+easy to fix the issue and you might need to do some debugging on your own.
+However, you should open an issue as it will allow other contributors to look
+into the issue.

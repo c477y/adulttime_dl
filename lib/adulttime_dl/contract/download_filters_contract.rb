@@ -8,7 +8,9 @@ module Contract
       adulttime
       archangel
       blowpass
+      cumlouder
       goodporn
+      houseofyre
       julesjordan
       loveherfilms
       manuelferrara
@@ -20,13 +22,15 @@ module Contract
     SUPPORTED_SITES_SPELL_CHECKER = DidYouMean::SpellChecker.new(dictionary: SUPPORTED_SITES)
 
     SUPPORTED_DOWNLOADERS = %w[youtube-dl yt-dlp].freeze
-    COOKIE_REQUIRED_SITES = %w[adulttime ztod loveherfilms archangel].freeze
+    COOKIE_REQUIRED_SITES = %w[adulttime ztod loveherfilms archangel houseofyre].freeze
     AVAILABLE_QUALITIES = %w[fhd hd sd].freeze
 
     json do
       required(:site).value(:string)
       optional(:skip_studios).maybe(array[:string]) # Download Filters
       optional(:skip_performers).maybe(array[:string]) # Download Filters
+      optional(:skip_keywords).maybe(array[:string]) # Download Filters
+      optional(:oldest_year).maybe(:integer) # Download Filters
       optional(:skip_lesbian).maybe(:bool) # Download Filters
       optional(:cookie_file).maybe(:string)
       optional(:store).maybe(:string)
@@ -42,6 +46,10 @@ module Contract
           optional(:algolia_application_id).maybe(:string)
           optional(:algolia_api_key).maybe(:string)
         end
+      end
+      optional(:stash_app).hash do
+        optional(:url).maybe(:string)
+        optional(:api_token).maybe(:string)
       end
       required(:urls).hash do
         optional(:all_scenes).value(array[:string])

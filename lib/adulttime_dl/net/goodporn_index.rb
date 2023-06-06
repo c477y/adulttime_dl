@@ -1,18 +1,30 @@
 # frozen_string_literal: true
 
 require "adulttime_dl/data/good_porn_scene"
+require "active_support/core_ext/string/inflections"
 
 module AdultTimeDL
   module Net
     class GoodPornIndex < BaseIndex
       def search_by_actor(url)
-        all_scenes = fetch_all_scenes(url) do |doc|
+        all_scenes = fetch_all_scenes(convert_name_to_url(url)) do |doc|
           doc.css(".list-videos .item .thumb-link").map { |x| x["href"] }.compact
         end
         process_scenes(all_scenes)
       end
 
+      # @param [String] url
+      def actor_name(url)
+        convert_name_to_url(url).gsub(%r{/$}, "").split("/").last&.titleize
+      end
+
       private
+
+      def convert_name_to_url(name)
+        with_dash = name.downcase.gsub(" ", "-")
+        with_slash = with_dash.end_with?("/") ? "#{with_dash}/" : with_dash
+        "https://www.goodporn.to/tags/#{with_slash}" unless with_slash.start_with?("https://www.goodporn.to/tags/")
+      end
 
       def fetch_all_scenes(url, &block)
         scene_links = []
@@ -46,7 +58,8 @@ module AdultTimeDL
       end
 
       def fetch!(url, page = 1)
-        http_resp = HTTParty.get(url, query: { from: page }, headers: default_headers)
+        http_resp = HTTParty.get(url, query: { from: page }, headers: default_headers, logger: AdultTimeDL.logger,
+                                      log_level: :debug)
         resp = handle_response!(http_resp, return_raw: true)
         Nokogiri::HTML(resp.body)
       end

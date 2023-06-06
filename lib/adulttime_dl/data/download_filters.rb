@@ -6,6 +6,8 @@ module AdultTimeDL
       attribute :skip_studios, Types::CustomSet
       attribute :skip_performers, Types::CustomSet
       attribute :skip_lesbian, Types::Bool
+      attribute :skip_keywords, Types::CustomArray
+      attribute? :oldest_year, Types::Integer.optional
 
       # @param [Scene] scene
       def skip?(scene)
@@ -18,8 +20,23 @@ module AdultTimeDL
         elsif (performer = blocked_performers(scene))
           AdultTimeDL.logger.info "[SKIPPING PERFORMER #{performer}] #{scene.file_name}"
           true
+        elsif (kw = blocked_keywords(scene))
+          AdultTimeDL.logger.info "[SKIPPING KEYWORD #{kw}] #{scene.file_name}"
+          true
+        elsif oldest_year && scene.release_date
+          time = Time.strptime(scene.release_date, "%Y-%m-%d")
+          if time.year < oldest_year
+            AdultTimeDL.logger.info "[SKIPPING OLDEST_YEAR #{time.year} < #{oldest_year}] #{scene.file_name}"
+            true
+          end
         else
           false
+        end
+      end
+
+      def blocked_keywords(scene)
+        skip_keywords.find do |kw|
+          [scene.title, scene.network_name].find { |x| x.downcase.gsub(/\W+/i, "").include?(kw) }
         end
       end
 

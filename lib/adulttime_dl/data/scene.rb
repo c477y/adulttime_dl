@@ -52,8 +52,8 @@ module AdultTimeDL
         title == "PLACEHOLDER"
       end
 
-      def refresh
-        refresher.nil? ? self : refresher.new(video_link).process
+      def refresh(cookie)
+        refresher.nil? ? self : refresher.new(video_link, cookie).process
       end
 
       # @param [String] quality: one of "sd", "hd" or "fhd"
@@ -95,7 +95,11 @@ module AdultTimeDL
       end
 
       def file_name
-        initial_name = "#{title} [#{collection_tag}] #{network_name}"
+        initial_name = if release_date.presence
+                         "#{release_date} [T] #{title} [#{collection_tag}] #{network_name}"
+                       else
+                         "#{title} [#{collection_tag}] #{network_name}"
+                       end
         if actor_gender_unknown?
           final = safely_add_actors(initial_name, all_actors, prefix: "[A]")
         else

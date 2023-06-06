@@ -11,7 +11,9 @@ module AdultTimeDL
         "adulttime" => "AdultTime",
         "archangel" => "ArchAngel",
         "blowpass" => "BlowPass",
+        "cumlouder" => "CumLouder",
         "goodporn" => "GoodPorn",
+        "houseofyre" => "HouseOFyre",
         "julesjordan" => "JulesJordan",
         "loveherfilms" => "LoveHerFilms",
         "manuelferrara" => "JulesJordan",
@@ -25,6 +27,7 @@ module AdultTimeDL
       INDEX_SUFFIX = "Index"
       STREAMING_UNSUPPORTED_SITE = %w[
         archangel
+        cumlouder
         goodporn
         julesjordan
         manuelferrara
@@ -34,6 +37,11 @@ module AdultTimeDL
         loveherfilms
         pornve
       ].freeze
+
+      def initialize(attributes)
+        attributes[:cookie_file] = File.expand_path(attributes[:cookie_file]) if attributes[:cookie_file]
+        super(attributes)
+      end
 
       attribute :site, Types::String
       attribute :download_filters, DownloadFilters
@@ -53,10 +61,16 @@ module AdultTimeDL
           attribute? :algolia_api_key, Types::String.optional
         end
       end
+      attribute? :stash_app do
+        attribute? :url,                   Types::String.optional
+        attribute? :api_token,             Types::String.optional
+      end
 
       def_delegators :urls, :performers, :movies, :scenes
 
       def cookie
+        return unless File.exist?(cookie_file)
+
         jar = HTTP::CookieJar.new
         jar.load(cookie_file, :cookiestxt)
         HTTP::Cookie.cookie_value(jar.cookies)

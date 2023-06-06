@@ -20,12 +20,14 @@ module AdultTimeDL
       # @param [Data::Scene] scene_data
       # @return [FalseClass, TrueClass]
       def download(scene_data)
-        scene_data = scene_data.refresh if scene_data.refresh_required?
+        scene_data = scene_data.refresh(config.cookie) if scene_data.refresh_required?
 
-        if store.downloaded?(scene_data.key) || file_exists?(scene_data)
+        if store.downloaded?(scene_data.key)
           AdultTimeDL.logger.info "[ALREADY DOWNLOADED] #{scene_data.file_name}"
           return
         end
+
+        return if file_exists?(scene_data)
 
         return if config.skip_scene?(scene_data)
 
@@ -47,8 +49,28 @@ module AdultTimeDL
         if File.file?(complete_fn) && File.exist?(complete_fn)
           store.save_download(scene_data, is_downloaded: true)
           return true
+        elsif (scene = stash_app&.scene(scene_data))
+          store.save_download(scene_data, is_downloaded: true)
+          AdultTimeDL.logger.info "[STASH: FILE EXISTS] #{scene_data.title}"
+          AdultTimeDL.logger.debug "TITLE: #{scene["title"]}"
+          AdultTimeDL.logger.debug "PATH: #{scene["files"]&.first&.[]("path")}"
+          return true
         end
         false
+      end
+
+      def stash_app
+        return @stash_app if defined?(@stash_app)
+
+        @stash_app ||=
+          begin
+            return nil if config.stash_app&.url.nil?
+
+            require "adulttime_dl/net/stash_app"
+            app = Net::StashApp.new(config)
+            app.setup_credentials!
+            app
+          end
       end
 
       # @param [Data::Scene] scene_data
@@ -93,7 +115,7 @@ module AdultTimeDL
         AdultTimeDL.logger.debug command
         Open3.popen2e(command) do |_, stdout_and_stderr, thread|
           output = ""
-          AdultTimeDL.logger.info "[PID] #{thread.pid} [FILE] #{scene_data.file_name}"
+          AdultTimeDL.logger.info "[PID] #{thread.pid} [FILE] #{scene_data.file_name.to_s.colorize(:green)}"
           stdout_and_stderr.each do |line|
             output = line
             AdultTimeDL.file_logger.info("#{thread.pid} -- #{line}")
@@ -130,7 +152,6 @@ module AdultTimeDL
                         .with_download_client(client)
                         .with_merge_parts(false)
                         .with_path(scene_data.file_name, config.download_dir)
-                        .with_quality(using_default_link, "720")
                         .with_external_flags(config.downloader_flags)
                         .with_verbosity(config.verbose)
                         .with_cookie(config.cookie_file, config.downloader_requires_cookie?)
@@ -149,35 +170,38 @@ module AdultTimeDL
       #
       # @param [Data::Scene] scene_data
       def unsafe_valid_file_size!(scene_data)
-        Dir.chdir(config.download_dir) do
-          filename = "#{scene_data.file_name}.mp4"
-          if File.file?(filename) && File.exist?(filename) && File.size?(filename) < 5000
-            size = File.size(filename)
-            ::FileUtils.remove_file(filename)
-            raise FileSizeTooSmallError.new(filename, size)
-          end
-          true
-          #
-          # TODO: Check why this doesn't work
-          #
-          # matching_files = Dir["#{scene_data.file_name}.*"]
-          # filename = matching_files.first
-          #
-          # if matching_files.length > 1
-          #   AdultTimeDL.logger.warn "[EXPECTED SINGLE MATCH #{scene_data.file_name}] #{matching_files}"
-          #   return
-          # end
-          #
-          # return if filename.nil?
-          #
-          # if File.file?(filename) && File.exist?(filename) && File.size?(filename) < 5000
-          #   size = File.size(filename)
-          #   ::FileUtils.remove_file(filename)
-          #   raise FileSizeTooSmallError.new(filename, size)
-          # end
-          #
-          # true
+        # Dir.chdir(config.download_dir) do
+        filename = "#{scene_data.file_name}.mp4"
+        unless File.file?(filename) && File.exist?(filename)
+          AdultTimeDL.logger.warn "[FILENAME RESOLUTION FAILURE] #{File.join(Dir.pwd, filename)}"
         end
+        if File.file?(filename) && File.exist?(filename) && File.size?(filename) < 20_000
+          size = File.size(filename)
+          ::FileUtils.remove_file(filename)
+          raise FileSizeTooSmallError.new(filename, size)
+        end
+        true
+        #
+        # TODO: Check why this doesn't work
+        #
+        # matching_files = Dir["#{scene_data.file_name}.*"]
+        # filename = matching_files.first
+        #
+        # if matching_files.length > 1
+        #   AdultTimeDL.logger.warn "[EXPECTED SINGLE MATCH #{scene_data.file_name}] #{matching_files}"
+        #   return
+        # end
+        #
+        # return if filename.nil?
+        #
+        # if File.file?(filename) && File.exist?(filename) && File.size?(filename) < 5000
+        #   size = File.size(filename)
+        #   ::FileUtils.remove_file(filename)
+        #   raise FileSizeTooSmallError.new(filename, size)
+        # end
+        #
+        # true
+        # end
       end
 
       def valid_file_size?(scene_data)

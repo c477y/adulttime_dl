@@ -8,9 +8,9 @@ module AdultTimeDL
       # @return [Algolia::Search::Client]
       def client(refresh = false)
         if refresh
-          @client = Algolia::Search::Client.new(config(true), logger: AdultTimeDL.logger)
+          @client = Algolia::Search::Client.new(algolia_config(true), logger: AdultTimeDL.logger)
         else
-          @client ||= Algolia::Search::Client.new(config, logger: AdultTimeDL.logger)
+          @client ||= Algolia::Search::Client.new(algolia_config, logger: AdultTimeDL.logger)
         end
       end
 
@@ -33,6 +33,10 @@ module AdultTimeDL
           AdultTimeDL.logger.error("[EMPTY RESULT] #{m_movie_name}") if resp[:hits].empty?
           make_struct(resp[:hits])
         end
+      end
+
+      def actor_name(url)
+        self.class.entity_name(url).titleize
       end
 
       private
@@ -74,6 +78,7 @@ module AdultTimeDL
 
       def make_struct(hits)
         hits.map do |hit|
+
           Data::Scene.new(hit)
         rescue Dry::Struct::Error => e
           AdultTimeDL.logger.error "Unable to parse record due to #{e.message}"
@@ -98,9 +103,9 @@ module AdultTimeDL
       end
 
       # @return [Algolia::Search::Config]
-      def config(refresh = false)
+      def algolia_config(refresh = false)
         if refresh
-          @config = begin
+          @algolia_config = begin
             app_id, api_key = algolia_credentials
             c = Algolia::Search::Config.new(application_id: app_id, api_key: api_key)
             c.set_extra_header("Referer", referrer(config.site))
@@ -108,9 +113,9 @@ module AdultTimeDL
           end
 
         else
-          return @config if @config
+          return @algolia_config if @algolia_config
 
-          config(true)
+          algolia_config(true)
         end
       end
 

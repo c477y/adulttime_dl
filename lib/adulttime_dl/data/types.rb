@@ -13,6 +13,14 @@ module AdultTimeDL
           Set.new([])
         end
       end
+
+      CustomArray = Types.Constructor(Array) do |values|
+        if values
+          values.map(&:downcase).map { |s| s.gsub(/\W+/i, "") }
+        else
+          []
+        end
+      end
     end
   end
 end

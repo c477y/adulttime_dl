@@ -7,15 +7,20 @@ module AdultTimeDL
 
       include HTTParty
 
-      TITLE_REGEX = %r{
-        ^                                # Start of String
-        (?<network_name>[\w\s_'"!?]+)    # Network Name
-        \s-\s                            # Separator
-        (?<title>[\w\s_'"!?]+)           # Title
-        \s-\s                            # Separator
-        (?<date>\d{2}/\d{2}/\d{4})       # Release Date MM/DD/YYYY
-        #                                # End of String
-        }x.freeze
+      # TITLE_REGEX = %r{
+      #   (?<network_name>[\w\s_'"!?():]+)    # Network Name
+      #   \s-\s                            # Separator
+      #   (?<title>[\w\s_'"!?.#-]+)        # Title
+      #   \s-\s                            # Separator
+      #   (?<date>\d{2}/\d{2}/\d{4})       # Release Date MM/DD/YYYY
+      #   }x.freeze
+      #
+      # TITLE_REGEX_2 = %r{
+      #   -\s                              # Separator
+      #   (?<title>[\w\s_'"!?.#-():]+)        # Title
+      #   \s-\s                            # Separator
+      #   (?<date>\d{2}/\d{2}/\d{4})       # Release Date
+      # }x.freeze
 
       # EXAMPLE:
       # MP4 1080p, 752.36 Mb
@@ -31,14 +36,14 @@ module AdultTimeDL
         (?<size>\w+)                     # File size
         /x.freeze
 
-      def initialize(url)
+      def initialize(url, _cookie)
         @url = url
         self.class.logger AdultTimeDL.logger, :debug
         super()
       end
 
       def process
-        resp = handle_response!(self.class.get(url, headers: default_headers), return_raw: true)
+        resp = handle_response_v2!(return_raw: true) { self.class.get(url, headers: default_headers) }
         @doc = Nokogiri::HTML(resp.body)
         scene = {}.tap do |h|
           h[:title] = title
@@ -57,7 +62,7 @@ module AdultTimeDL
 
       # @return [String]
       def title
-        title_text_re&.[]("title")&.strip || doc.css(".content .headline h1").text.strip
+        title_text_hash["title"]
       end
 
       # @return [Array[String]]
@@ -74,15 +79,12 @@ module AdultTimeDL
 
       # @return [String]
       def release_date?
-        date = title_text_re&.[]("date")
-        return if date.nil?
-
-        Time.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d")
+        title_text_hash["date"].presence
       end
 
       # @return [String]
       def network_name
-        title_text_re&.[]("network_name") || "GoodPorn"
+        title_text_hash["network_name"]
       end
 
       # @return [Array[String]]
@@ -115,9 +117,24 @@ module AdultTimeDL
         doc.css(".info .item").select { |x| x.text.strip.start_with?("Download:") }.first
       end
 
-      # @return [MatchData]
-      def title_text_re
-        @title_text_re ||= doc.css(".content .headline h1").text.match(TITLE_REGEX)
+      def title_text_hash
+        @title_text_hash ||=
+          begin
+            split_text = doc.css(".content .headline h1").text.strip.split("-")
+
+            hash = {}
+            hash["network_name"] = split_text.first.strip.presence || "GoodPorn"
+            hash["date"] = case split_text.last
+                           when %r{\d{2}/\d{2}/\d{4}}
+                             Time.strptime(split_text.last.strip, "%m/%d/%Y").strftime("%Y-%m-%d")
+                           when /\d{8}/
+                             Time.strptime(split_text.last, "%m%d%Y").strftime("%Y-%m-%d")
+                           else
+                             nil
+                           end
+            hash["title"] = split_text[1..-2].join("-").strip
+            hash
+          end
       end
     end
   end

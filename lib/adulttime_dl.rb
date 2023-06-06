@@ -15,11 +15,14 @@ require "parallel"
 require "set"
 require "thor"
 require "yaml"
+require "active_support"
+require "active_support/core_ext/object/blank"
 
 require "pry"
 
 module AdultTimeDL
   class FatalError < StandardError; end
+
   class SafeExit < StandardError; end
 
   class FileSizeTooSmallError < StandardError
@@ -51,26 +54,40 @@ module AdultTimeDL
 
     def message
       "API Failure:\n" \
-      "\tURL: #{endpoint}\n" \
-      "\tRESPONSE CODE: #{code}\n" \
-      "\tERROR MESSAGE: #{fetch_error_message}"
+        "\tURL: #{endpoint}\n" \
+        "\tRESPONSE CODE: #{code}\n" \
+        "\tERROR MESSAGE: #{fetch_error_message}"
     end
   end
 
   class NotFoundError < APIError; end
+
   class ForbiddenError < APIError; end
+
   class RedirectedError < APIError; end
+
   class BadRequestError < APIError; end
+
   class BadGatewayError < APIError; end
+
   class UnhandledError < APIError; end
+
   class UnauthorizedError < APIError; end
+
+  class TooManyRequestsError < APIError; end
+
+  class InternalServerError < APIError; end
 
   def self.logger(**opts)
     @logger ||= AdultTimeDL::Log.new(**opts).logger
   end
 
   def self.file_logger
-    @file_logger ||= Logger.new("downloader.log", "daily")
+    @file_logger ||= begin
+      path = File.expand_path(File.join(Dir.pwd, "downloader.log"))
+      AdultTimeDL.logger.info "[DOWNLOAD LOGS GENERATED TO] #{path}"
+      Logger.new(path, "daily")
+    end
   end
 end
 
@@ -122,7 +139,9 @@ require_relative "adulttime_dl/net/algolia_download_links"
 require_relative "adulttime_dl/net/adult_time_download_links"
 require_relative "adulttime_dl/net/arch_angel_download_links"
 require_relative "adulttime_dl/net/blowpass_download_links"
+require_relative "adulttime_dl/net/cum_louder_download_links"
 require_relative "adulttime_dl/net/goodporn_download_links"
+require_relative "adulttime_dl/net/house_o_fyre_download_links"
 require_relative "adulttime_dl/net/jules_jordan_download_links"
 require_relative "adulttime_dl/net/score_group_download_links"
 require_relative "adulttime_dl/net/ztod_download_links"
@@ -141,12 +160,13 @@ require_relative "adulttime_dl/net/arch_angel_video_index"
 require_relative "adulttime_dl/net/arch_angel_world_index"
 require_relative "adulttime_dl/net/arch_angel_index"
 require_relative "adulttime_dl/net/blowpass_index"
+require_relative "adulttime_dl/net/cum_louder_index"
 require_relative "adulttime_dl/net/goodporn_index"
+require_relative "adulttime_dl/net/house_o_fyre_index"
 require_relative "adulttime_dl/net/jules_jordan_index"
 require_relative "adulttime_dl/net/score_group_index"
 require_relative "adulttime_dl/net/love_her_films_index"
 require_relative "adulttime_dl/net/pornve_index"
-require_relative "adulttime_dl/net/sxyporn_index"
 require_relative "adulttime_dl/net/ztod_index"
 
 require_relative "adulttime_dl/downloader/command_builder"
