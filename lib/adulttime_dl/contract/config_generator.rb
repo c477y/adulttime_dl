@@ -5,24 +5,49 @@ module Contract
     include AdultTimeDL::Utils
 
     DEFAULT_CONFIG = {
+      c00: "[List] Skip studios based on name",
+      c01: "If any scene belongs to that studio, the scene will be skipped",
       "skip_studios" => [],
+      c02: "[List] Skip performers based on name",
       "skip_performers" => [],
+      c03: "[Boolean] Skip downloading scenes with only female actors",
+      c04: "This only works with certain sites that provide gender information for performers",
       "skip_lesbian" => false,
+      c05: "[String] Path to a cookie file. Used only for sites that require membership",
+      c06: "information. Use a browser extension to get a cookie file",
+      c07: "If you are on mozilla, you can use https://addons.mozilla.org/en-GB/firefox/addon/cookies-txt/",
       "cookie_file" => "cookies.txt",
+      c08: "[String] Name of file that tracks list of downloaded scenes",
       "store" => "adt_download_status.store",
+      c09: "[String] Name of downloader tool to use. Currently supports youtube-dl",
+      c10: "and yt-dlp",
+      c11: "Ensure that the downloader is available in your $PATH",
       "downloader" => "youtube-dl",
+      c12: "[String] Directory to download scenes. '.' means current directory",
       "download_dir" => ".",
+      c13: "[String] Resolution of scene to download. Accepts one of 'sd', 'hd', and 'fhd'",
       "quality" => "hd",
+      c14: "[Number] Number of parallel download jobs",
       "parallel" => 1,
+      c15: "[Boolean] Enable/Disable verbose logging",
       "verbose" => false,
+      c16: "[Boolean] Just log to console, doesn't download anything",
       "dry_run" => false,
+      c17: "[String] Arguments to pass to external downloader",
+      c18: "Check the documentation of youtube-dl or yt-dlp for details",
+      "downloader_flags" => "",
       "urls" => {
+        c00: "[List] URLs of performer names that will be downloaded",
         "performers" => [],
+        c01: "[List] URLs of movie names that will be downloaded",
         "movies" => [],
+        c02: "[List] URLs of scene names that will be downloaded",
         "scenes" => []
       },
+      c19: "[OPTIONAL] These are site specific configuration only needed for some sites",
       "site_config" => {
         "blowpass" => {
+          c00: "Get Algolia credentials from Web Console",
           "algolia_application_id" => nil,
           "algolia_api_key" => nil
         }
@@ -128,7 +153,18 @@ module Contract
       end
 
       File.open(DEFAULT_CONFIG_FILE, "w") do |file|
-        file.write DEFAULT_CONFIG.to_yaml
+        YAML.dump(DEFAULT_CONFIG).each_line do |l|
+          if l.match(/:c(\d+)?:/)
+            # Removes hash key(c00) from the string
+            # Adds a # in front of the string
+            l.sub!(/:c(\d+)?:/, "#")
+            # Removes " from the beginning of the line
+            l.sub!(/(^\s*# )["']/, '\1')
+            # Removes " from the end of the line
+            l.sub!(/["']\s*$/, "")
+          end
+          file.puts l
+        end
       end
     end
   end

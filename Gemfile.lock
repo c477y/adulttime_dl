@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    adulttime_dl (0.1.2)
+    adulttime_dl (0.2.2)
       algolia
       colorize (~> 0.8.1)
       dry-schema (~> 1.9)
@@ -171,6 +171,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-darwin-22
 
 DEPENDENCIES
   adulttime_dl!

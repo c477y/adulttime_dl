@@ -18,6 +18,13 @@ module AdultTimeDL
         self
       end
 
+      # Extra arguments for the downloader. Example
+      # --external-downloader aria2c --external-downloader-args '-x 7'
+      def with_external_flags(flag)
+        command << " #{flag}"
+        self
+      end
+
       def with_parallism(parallel = 1)
         return self if download_client == "youtube-dl"
 
@@ -25,9 +32,9 @@ module AdultTimeDL
         self
       end
 
-      def with_path(filename, path = "")
+      def with_path(filename, path = "", ext = "%(ext)s")
         complete_path = File.join(path, filename)
-        command << " -o '#{complete_path}.%(ext)s'"
+        command << " -o '#{complete_path}.#{ext}'"
         self
       end
 

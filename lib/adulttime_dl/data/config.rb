@@ -11,6 +11,7 @@ module AdultTimeDL
         "adulttime" => "AdultTime",
         "archangel" => "ArchAngel",
         "blowpass" => "BlowPass",
+        "goodporn" => "GoodPorn",
         "julesjordan" => "JulesJordan",
         "loveherfilms" => "LoveHerFilms",
         "manuelferrara" => "JulesJordan",
@@ -24,6 +25,7 @@ module AdultTimeDL
       INDEX_SUFFIX = "Index"
       STREAMING_UNSUPPORTED_SITE = %w[
         archangel
+        goodporn
         julesjordan
         manuelferrara
         scoregroup
@@ -43,6 +45,7 @@ module AdultTimeDL
       attribute :parallel, Types::Integer
       attribute :verbose, Types::Bool
       attribute? :dry_run, Types::Bool.optional
+      attribute :downloader_flags, Types::String.default("")
       attribute? :urls, URLs
       attribute? :site_config do
         attribute? :blowpass do
