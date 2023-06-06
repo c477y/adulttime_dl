@@ -130,3 +130,15 @@ resolution. Defaults to `hd`,
 #### --verbose
 
 Print verbose logs. Useful for debugging.
+
+## Ran into an error?
+
+The CLI has no tests as it's not possible to test behavior for sites that
+require membership without having an actual membership. Changes to existing site
+clients are extremely rare but if you run into an error, create an issue with
+the stacktrace. If it's something breaking on CLI backend, it can be fixed.
+However, if the error happens inside the site indexer (example, when a
+site changed it's web layout and the site indexer uses HTML parsing), it won't
+be easy to fix the issue and you might need to do some debugging on your own.
+However, you should open an issue as it will allow other contributors to look
+into the issue.
