@@ -20,6 +20,8 @@ module AdultTimeDL
       # @param [Data::Scene] scene_data
       # @return [FalseClass, TrueClass]
       def download(scene_data)
+        scene_data = scene_data.refresh if scene_data.refresh_required?
+
         if store.downloaded?(scene_data.key) || file_exists?(scene_data)
           AdultTimeDL.logger.info "[ALREADY DOWNLOADED] #{scene_data.file_name}"
           return
@@ -121,13 +123,15 @@ module AdultTimeDL
         case config.site
         when "julesjordan" then JulesJordanCommand.build(config, scene_data, url)
         when "archangel" then ArchAngelCommand.build(config, scene_data, url)
+        when "goodporn" then GoodPornCommand.build(config, scene_data, url)
         else
           using_default_link = !scene_data.streaming_links&.default.nil?
           CommandBuilder.new
                         .with_download_client(client)
-                        .with_merge_parts(true)
+                        .with_merge_parts(false)
                         .with_path(scene_data.file_name, config.download_dir)
                         .with_quality(using_default_link, "720")
+                        .with_external_flags(config.downloader_flags)
                         .with_verbosity(config.verbose)
                         .with_cookie(config.cookie_file, config.downloader_requires_cookie?)
                         .with_url(url).build
