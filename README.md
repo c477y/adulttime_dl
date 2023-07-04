@@ -40,6 +40,7 @@ these sites:
 * [archangel](https://www.archangelvideo.com/)
 * [blowpass](https://www.blowpass.com/en)
 * [goodporn](https://goodporn.to/)
+* [houseofyre](https://houseofyre.com/)
 * [julesjordan](https://www.julesjordan.com/trial/)
 * [loveherfilms](https://www.loveherfilms.com/tour/)
 * [manuelferrara](https://manuelferrara.com/trial/)
