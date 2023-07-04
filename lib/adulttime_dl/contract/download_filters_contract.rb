@@ -9,6 +9,7 @@ module Contract
       archangel
       blowpass
       goodporn
+      houseofyre
       julesjordan
       loveherfilms
       manuelferrara
@@ -20,7 +21,7 @@ module Contract
     SUPPORTED_SITES_SPELL_CHECKER = DidYouMean::SpellChecker.new(dictionary: SUPPORTED_SITES)
 
     SUPPORTED_DOWNLOADERS = %w[youtube-dl yt-dlp].freeze
-    COOKIE_REQUIRED_SITES = %w[adulttime ztod loveherfilms archangel].freeze
+    COOKIE_REQUIRED_SITES = %w[adulttime ztod loveherfilms archangel houseofyre].freeze
     AVAILABLE_QUALITIES = %w[fhd hd sd].freeze
 
     json do

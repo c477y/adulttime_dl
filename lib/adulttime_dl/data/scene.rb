@@ -52,8 +52,8 @@ module AdultTimeDL
         title == "PLACEHOLDER"
       end
 
-      def refresh
-        refresher.nil? ? self : refresher.new(video_link).process
+      def refresh(cookie)
+        refresher.nil? ? self : refresher.new(video_link, cookie).process
       end
 
       # @param [String] quality: one of "sd", "hd" or "fhd"

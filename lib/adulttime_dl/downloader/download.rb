@@ -20,7 +20,7 @@ module AdultTimeDL
       # @param [Data::Scene] scene_data
       # @return [FalseClass, TrueClass]
       def download(scene_data)
-        scene_data = scene_data.refresh if scene_data.refresh_required?
+        scene_data = scene_data.refresh(config.cookie) if scene_data.refresh_required?
 
         if store.downloaded?(scene_data.key) || file_exists?(scene_data)
           AdultTimeDL.logger.info "[ALREADY DOWNLOADED] #{scene_data.file_name}"

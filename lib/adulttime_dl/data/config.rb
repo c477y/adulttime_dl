@@ -12,6 +12,7 @@ module AdultTimeDL
         "archangel" => "ArchAngel",
         "blowpass" => "BlowPass",
         "goodporn" => "GoodPorn",
+        "houseofyre" => "HouseOFyre",
         "julesjordan" => "JulesJordan",
         "loveherfilms" => "LoveHerFilms",
         "manuelferrara" => "JulesJordan",

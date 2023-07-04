@@ -31,7 +31,7 @@ module AdultTimeDL
         (?<size>\w+)                     # File size
         /x.freeze
 
-      def initialize(url)
+      def initialize(url, _cookie)
         @url = url
         self.class.logger AdultTimeDL.logger, :debug
         super()
