@@ -11,6 +11,7 @@ module AdultTimeDL
         "adulttime" => "AdultTime",
         "archangel" => "ArchAngel",
         "blowpass" => "BlowPass",
+        "cumlouder" => "CumLouder",
         "goodporn" => "GoodPorn",
         "houseofyre" => "HouseOFyre",
         "julesjordan" => "JulesJordan",
@@ -26,6 +27,7 @@ module AdultTimeDL
       INDEX_SUFFIX = "Index"
       STREAMING_UNSUPPORTED_SITE = %w[
         archangel
+        cumlouder
         goodporn
         julesjordan
         manuelferrara
@@ -58,6 +60,8 @@ module AdultTimeDL
       def_delegators :urls, :performers, :movies, :scenes
 
       def cookie
+        return unless File.exist?(cookie_file)
+
         jar = HTTP::CookieJar.new
         jar.load(cookie_file, :cookiestxt)
         HTTP::Cookie.cookie_value(jar.cookies)

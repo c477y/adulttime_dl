@@ -35,6 +35,8 @@ module Contract
       "dry_run" => false,
       c17: "[String] Arguments to pass to external downloader",
       c18: "Check the documentation of youtube-dl or yt-dlp for details",
+      c19: "eg. --external-downloader aria2c --external-downloader-args ",
+      c20: "\"-j 8 -s 8 -x 8 -k 5M\"",
       "downloader_flags" => "",
       "urls" => {
         c00: "[List] URLs of performer names that will be downloaded",
@@ -44,7 +46,7 @@ module Contract
         c02: "[List] URLs of scene names that will be downloaded",
         "scenes" => []
       },
-      c19: "[OPTIONAL] These are site specific configuration only needed for some sites",
+      c21: "[OPTIONAL] These are site specific configuration only needed for some sites",
       "site_config" => {
         "blowpass" => {
           c00: "Get Algolia credentials from Web Console",

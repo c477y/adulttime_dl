@@ -8,6 +8,7 @@ module Contract
       adulttime
       archangel
       blowpass
+      cumlouder
       goodporn
       houseofyre
       julesjordan
