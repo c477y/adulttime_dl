@@ -15,6 +15,8 @@ require "parallel"
 require "set"
 require "thor"
 require "yaml"
+require "active_support"
+require "active_support/core_ext/object/blank"
 
 require "pry"
 
@@ -64,6 +66,8 @@ module AdultTimeDL
   class BadGatewayError < APIError; end
   class UnhandledError < APIError; end
   class UnauthorizedError < APIError; end
+  class TooManyRequestsError < APIError; end
+  class InternalServerError < APIError; end
 
   def self.logger(**opts)
     @logger ||= AdultTimeDL::Log.new(**opts).logger

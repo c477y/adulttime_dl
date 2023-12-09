@@ -38,7 +38,7 @@ module AdultTimeDL
       nil
     rescue StandardError, FatalError => e
       AdultTimeDL.logger.fatal "#{e.class} - #{e.message}"
-      AdultTimeDL.logger.debug "\t#{e.backtrace.join("\n\t")}"
+      AdultTimeDL.logger.fatal "\t#{e.backtrace.join("\n\t")}"
       exit 1
     end
 

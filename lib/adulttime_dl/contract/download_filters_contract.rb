@@ -29,6 +29,8 @@ module Contract
       required(:site).value(:string)
       optional(:skip_studios).maybe(array[:string]) # Download Filters
       optional(:skip_performers).maybe(array[:string]) # Download Filters
+      optional(:skip_keywords).maybe(array[:string]) # Download Filters
+      optional(:oldest_year).maybe(:integer) # Download Filters
       optional(:skip_lesbian).maybe(:bool) # Download Filters
       optional(:cookie_file).maybe(:string)
       optional(:store).maybe(:string)
@@ -44,6 +46,10 @@ module Contract
           optional(:algolia_application_id).maybe(:string)
           optional(:algolia_api_key).maybe(:string)
         end
+      end
+      optional(:stash_app).hash do
+        optional(:url).maybe(:string)
+        optional(:api_token).maybe(:string)
       end
       required(:urls).hash do
         optional(:all_scenes).value(array[:string])

@@ -28,7 +28,7 @@ module AdultTimeDL
           Data::UnknownActorGenderScene.new(
             title: title(doc),
             actors: actors(doc),
-            release_date: nil,
+            release_date: release_date(doc),
             network_name: "JulesJordan",
             download_sizes: [], # exclusive to algolia scenes
             is_streamable: false,
@@ -39,15 +39,23 @@ module AdultTimeDL
         private
 
         def title(doc)
-          doc.css(".title_bar_hilite").text.strip
+          doc.css(".movie_title").text.strip
         end
 
         def actors(doc)
-          # doc.css(".content_img div .update_models a")
-          doc.css(".backgroundcolor_info .update_models a")
+          doc.css(".player-scene-description .update_models a")
              .map(&:text)
              .map(&:strip)
              .map { |x| Data::Actor.new(name: x, gender: "unknown") }
+        end
+
+        def release_date(doc)
+          date = doc.css(".player-scene-description")
+                        .find { |x| x.text.strip.downcase.start_with?("date") }
+          return unless date
+
+          date = date.text.downcase.gsub("date:", "").strip
+          Time.strptime(date, "%D").strftime("%Y-%m-%d")
         end
       end
 

@@ -56,6 +56,10 @@ module AdultTimeDL
           attribute? :algolia_api_key, Types::String.optional
         end
       end
+      attribute? :stash_app do
+        attribute? :url,                   Types::String.optional
+        attribute? :api_token,             Types::String.optional
+      end
 
       def_delegators :urls, :performers, :movies, :scenes
 

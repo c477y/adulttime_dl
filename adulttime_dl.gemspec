@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "typeprof", "~> 0.21.2"
 
   spec.add_runtime_dependency "algolia"
+  spec.add_runtime_dependency "activesupport"
   spec.add_runtime_dependency "colorize", "~> 0.8.1"
   spec.add_runtime_dependency "dry-schema", "~> 1.9"
   spec.add_runtime_dependency "dry-struct", "~> 1.4"

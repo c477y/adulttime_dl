@@ -20,6 +20,10 @@ module AdultTimeDL
         raise NotImplementedError, "#{self.class.name} does not implement search_by_actor"
       end
 
+      def actor_name(_url)
+        raise NotImplementedError, "#{self.class.name} does not implement actor_name"
+      end
+
       private
 
       attr_reader :config
