@@ -22,6 +22,7 @@ require "pry"
 
 module AdultTimeDL
   class FatalError < StandardError; end
+
   class SafeExit < StandardError; end
 
   class FileSizeTooSmallError < StandardError
@@ -53,20 +54,28 @@ module AdultTimeDL
 
     def message
       "API Failure:\n" \
-      "\tURL: #{endpoint}\n" \
-      "\tRESPONSE CODE: #{code}\n" \
-      "\tERROR MESSAGE: #{fetch_error_message}"
+        "\tURL: #{endpoint}\n" \
+        "\tRESPONSE CODE: #{code}\n" \
+        "\tERROR MESSAGE: #{fetch_error_message}"
     end
   end
 
   class NotFoundError < APIError; end
+
   class ForbiddenError < APIError; end
+
   class RedirectedError < APIError; end
+
   class BadRequestError < APIError; end
+
   class BadGatewayError < APIError; end
+
   class UnhandledError < APIError; end
+
   class UnauthorizedError < APIError; end
+
   class TooManyRequestsError < APIError; end
+
   class InternalServerError < APIError; end
 
   def self.logger(**opts)
@@ -74,7 +83,11 @@ module AdultTimeDL
   end
 
   def self.file_logger
-    @file_logger ||= Logger.new("downloader.log", "daily")
+    @file_logger ||= begin
+      path = File.expand_path(File.join(Dir.pwd, "downloader.log"))
+      AdultTimeDL.logger.info "[DOWNLOAD LOGS GENERATED TO] #{path}"
+      Logger.new(path, "daily")
+    end
   end
 end
 

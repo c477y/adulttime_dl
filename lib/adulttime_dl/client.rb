@@ -42,7 +42,7 @@ module AdultTimeDL
         scenes = scenes_index.search_by_actor(url)
         Dir.chdir(path) do
           Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
-          cleanup_logs
+          # cleanup_logs
         end
 
         Dir.rmdir(dir_name) if Dir.empty?(dir_name)

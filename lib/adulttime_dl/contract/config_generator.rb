@@ -61,9 +61,9 @@ module Contract
       "stash_app" => {
         c00: "[String] URL path where your Stash App is hosted",
         c01: "e.g. http://localhost:9999",
-        "url" => "",
+        "url" => nil,
         c02: "[String] Optional token if your Stash App is password protected",
-        "api_token" => ""
+        "api_token" => nil
       }
     }.freeze
     DEFAULT_CONFIG_FILE = "config.yml"

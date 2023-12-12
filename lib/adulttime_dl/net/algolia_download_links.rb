@@ -22,7 +22,7 @@ module AdultTimeDL
                .gsub("%resolution%", scene_data.available_resolution(config.quality))
         response = self.class.get(path, follow_redirects: false, headers: headers)
         case response.code
-        when 302 then response.headers["location"]
+        when 302 then check_download_link!(response)
         when 404 then nil
         else handle_response!(response)
         end
@@ -41,6 +41,18 @@ module AdultTimeDL
             "Cookie" => cookie
           }
         )
+      end
+
+      def check_download_link!(response)
+        if response.headers["location"].include?("/login")
+          endpoint = "#{response.request.base_uri}#{response.request.path}"
+          raise RedirectedError.new(endpoint: endpoint,
+                                    code: response.code,
+                                    body: response.parsed_response,
+                                    headers: response.headers)
+        else
+          response.headers["location"]
+        end
       end
     end
   end

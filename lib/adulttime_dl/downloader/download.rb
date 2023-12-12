@@ -152,7 +152,6 @@ module AdultTimeDL
                         .with_download_client(client)
                         .with_merge_parts(false)
                         .with_path(scene_data.file_name, config.download_dir)
-                        .with_quality(using_default_link, "720")
                         .with_external_flags(config.downloader_flags)
                         .with_verbosity(config.verbose)
                         .with_cookie(config.cookie_file, config.downloader_requires_cookie?)

@@ -38,6 +38,11 @@ module AdultTimeDL
         pornve
       ].freeze
 
+      def initialize(attributes)
+        attributes[:cookie_file] = File.expand_path(attributes[:cookie_file]) if attributes[:cookie_file]
+        super(attributes)
+      end
+
       attribute :site, Types::String
       attribute :download_filters, DownloadFilters
       attribute :cookie_file, Types::String.optional
