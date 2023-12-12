@@ -15,20 +15,24 @@ module AdultTimeDL
 
     desc "download _site_", "Bulk download files"
     long_desc <<~LONGDESC
-      Acceptable site names: adulttime, archangel, blowpass, goodporn, julesjordan, loveherfilms, manuelferrara, 
-      pornve, scoregroup, sxyporn, ztod
+      Acceptable _site_ names: #{Data::Config::MODULE_NAME.keys.join(", ")}
     LONGDESC
     option :help, alias: :h, type: :boolean, default: false
     option :cookie_file, desc: "Path to the file where the cookie is stored"
     option :downloader, desc: "Name of the client to use to download. Can be either 'youtube-dl'(default) or 'yt-dlp'"
-    option :download_dir, desc: "Directory where the files should be downloaded"
-    option :store, desc: "Path to the .store file which tracks which files have been downloaded"
-    option :parallel, type: :numeric, default: 1, aliases: :p, desc: "Number of parallel downloads to perform"
+    option :download_dir, desc: "Directory where the files should be downloaded. Defaults to current directory"
+    option :store, desc: "Path to the .store file which tracks which files have been downloaded. " \
+      "If not provided, a store file will be created by the CLI"
+    option :parallel, type: :numeric, default: 1, aliases: :p, desc: "Number of parallel downloads to perform. " \
+      "For optimal performance, do not set this to more than 5"
     option :quality, desc: "Quality of video to download. Allows 'sd', 'hd' or 'fhd'"
-    option :config, aliases: :c, default: "config.yml", desc: "Path to YAML file with download filters"
-    option :verbose, type: :boolean, default: false, aliases: :v, desc: "Flag to print verbose logs"
+    option :config, aliases: :c, default: "config.yml", desc: "Path to YAML file with download filters " \
+      "Defaults to config.yml in the current directory"
+    option :verbose, type: :boolean, default: false, aliases: :v, desc: "Flag to print verbose logs. " \
+      "Useful for debugging"
     def download(site)
       AdultTimeDL.logger(verbose: options["verbose"])
+      AdultTimeDL.file_logger
       config = Contract::ConfigGenerator.new(site, options).generate
       client = Client.new(config)
       client.start!
