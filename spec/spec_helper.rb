@@ -12,4 +12,12 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.around(:each, type: :file_support) do |example|
+    Dir.mktmpdir("support", Dir.pwd) do |dir|
+      Dir.chdir(dir) do
+        example.run
+      end
+    end
+  end
 end

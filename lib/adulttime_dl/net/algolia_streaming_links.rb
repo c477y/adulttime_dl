@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class AlgoliaStreamingLinks < Base
       include HTTParty
@@ -15,7 +15,7 @@ module AdultTimeDL
       def initialize(config, base_url)
         super()
         self.class.base_uri(base_url)
-        self.class.logger AdultTimeDL.logger, :debug
+        self.class.logger XXXDownload.logger, :debug
         @cookie = config.cookie
       end
 
@@ -38,8 +38,8 @@ module AdultTimeDL
           Data::StreamingLinks.new(resp)
         end
       rescue NoMethodError => e
-        AdultTimeDL.logger.warn "[LINK FETCH ERROR] #{e.message}"
-        AdultTimeDL.logger.warn "PLEASE OPEN AN ISSUE ON GITHUB WITH THE ABOVE ERROR MESSAGE"
+        XXXDownload.logger.warn "[LINK FETCH ERROR] #{e.message}"
+        XXXDownload.logger.warn "PLEASE OPEN AN ISSUE ON GITHUB WITH THE ABOVE ERROR MESSAGE"
         nil
       end
 

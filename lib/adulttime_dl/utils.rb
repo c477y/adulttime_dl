@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Utils
     def valid_file?(file)
       file && File.file?(file) && File.exist?(file)

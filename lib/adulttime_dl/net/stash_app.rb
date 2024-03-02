@@ -6,7 +6,7 @@ require "base64"
 # require "xxx_rename/integrations/base"
 # require "xxx_rename/file_utilities"
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class StashAPIError < StandardError
       def initialize(errors)
@@ -38,7 +38,7 @@ module AdultTimeDL
         self.class.default_options.update(verify: false)
         self.class.base_uri(config.stash_app.url)
         self.class.headers("Content-Type" => "application/json")
-        self.class.logger(AdultTimeDL.logger, :debug)
+        self.class.logger(XXXDownload.logger, :debug)
         self.class.default_timeout(10)
         self.class.open_timeout(10)
         self.class.read_timeout(10)

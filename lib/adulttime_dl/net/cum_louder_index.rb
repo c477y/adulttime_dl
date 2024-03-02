@@ -2,7 +2,7 @@
 
 require "adulttime_dl/data/cum_louder_scene"
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class CumLouderIndex < BaseIndex
       def search_by_actor(url)
@@ -23,10 +23,10 @@ module AdultTimeDL
         scene_links = []
         page = 1
         loop do
-          AdultTimeDL.logger.info "[FETCH PAGE] #{page}"
+          XXXDownload.logger.info "[FETCH PAGE] #{page}"
           doc = fetch?(url, page)
           if doc.nil?
-            AdultTimeDL.logger.debug "[REACHED END OF PAGES]"
+            XXXDownload.logger.debug "[REACHED END OF PAGES]"
             break
           end
 
@@ -44,7 +44,7 @@ module AdultTimeDL
 
       def fetch?(url, page = 1)
         fetch!(url, page)
-      rescue AdultTimeDL::NotFoundError
+      rescue XXXDownload::NotFoundError
         nil
       end
 

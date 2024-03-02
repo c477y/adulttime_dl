@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   class GenerateClient
     def initialize(config)
       @config = config
@@ -10,7 +10,7 @@ module AdultTimeDL
       actors = config.generator.send(config.object.to_sym)
       file = filename(config.object)
       File.open(file, "w") { |f| f.write(actors.to_yaml) }
-      AdultTimeDL.logger.info "#{config.object} data generated to #{file}"
+      XXXDownload.logger.info "#{config.object} data generated to #{file}"
     end
 
     private

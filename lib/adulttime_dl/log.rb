@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   class Log
     attr_accessor :logger
 

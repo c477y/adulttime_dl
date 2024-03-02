@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module FileUtils
     class << self
       def read_file!(file)

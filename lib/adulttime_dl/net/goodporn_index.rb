@@ -3,7 +3,7 @@
 require "adulttime_dl/data/good_porn_scene"
 require "active_support/core_ext/string/inflections"
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class GoodPornIndex < BaseIndex
       def search_by_actor(url)
@@ -11,6 +11,14 @@ module AdultTimeDL
           doc.css(".list-videos .item .thumb-link").map { |x| x["href"] }.compact
         end
         process_scenes(all_scenes)
+      end
+
+      def search_by_movie(url)
+        all_scenes = fetch_all_scenes(url) do |doc|
+          doc.css(".list-videos .item .thumb-link").map { |x| x["href"] }.compact
+        end
+        process_scenes(all_scenes)
+
       end
 
       # @param [String] url

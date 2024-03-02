@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class AlgoliaClient < BaseIndex
       include AlgoliaLinkParser
@@ -8,9 +8,9 @@ module AdultTimeDL
       # @return [Algolia::Search::Client]
       def client(refresh = false)
         if refresh
-          @client = Algolia::Search::Client.new(algolia_config(true), logger: AdultTimeDL.logger)
+          @client = Algolia::Search::Client.new(algolia_config(true), logger: XXXDownload.logger)
         else
-          @client ||= Algolia::Search::Client.new(algolia_config, logger: AdultTimeDL.logger)
+          @client ||= Algolia::Search::Client.new(algolia_config, logger: XXXDownload.logger)
         end
       end
 
@@ -19,7 +19,7 @@ module AdultTimeDL
         with_retry(actor_name) do |m_actor_name|
           query = default_scene_options.merge(filters: "actors.name:'#{m_actor_name}'")
           resp = scenes_index.search("", query)
-          AdultTimeDL.logger.error("[EMPTY RESULT] #{m_actor_name}") if resp[:hits].empty?
+          XXXDownload.logger.error("[EMPTY RESULT] #{m_actor_name}") if resp[:hits].empty?
           make_struct(resp[:hits])
         end
       end
@@ -30,7 +30,7 @@ module AdultTimeDL
         with_retry(movie_id, movie_name) do |m_movie_id, m_movie_name|
           query = default_scene_options.merge(filters: "movie_id:#{m_movie_id}")
           resp = scenes_index.search("", query)
-          AdultTimeDL.logger.error("[EMPTY RESULT] #{m_movie_name}") if resp[:hits].empty?
+          XXXDownload.logger.error("[EMPTY RESULT] #{m_movie_name}") if resp[:hits].empty?
           make_struct(resp[:hits])
         end
       end
@@ -48,7 +48,7 @@ module AdultTimeDL
 
         block.call(*parameters)
       rescue Algolia::AlgoliaHttpError => e
-        AdultTimeDL.logger.error "[ALGOLIA ERROR] #{e.message}"
+        XXXDownload.logger.error "[ALGOLIA ERROR] #{e.message}"
         refresh_algolia
         with_retry(*parameters, current_attempt: current_attempt + 1, max_attempts: max_attempts, &block)
       end
@@ -81,8 +81,8 @@ module AdultTimeDL
 
           Data::Scene.new(hit)
         rescue Dry::Struct::Error => e
-          AdultTimeDL.logger.error "Unable to parse record due to #{e.message}"
-          AdultTimeDL.logger.debug hit
+          XXXDownload.logger.error "Unable to parse record due to #{e.message}"
+          XXXDownload.logger.debug hit
           nil
         end.compact
       end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   class Client
     attr_reader :config
 
@@ -11,18 +11,18 @@ module AdultTimeDL
     end
 
     def start!
-      AdultTimeDL.logger.info "[PROCESS START]"
+      XXXDownload.logger.info "[PROCESS START]"
       process_performer
       process_movies
       process_scenes
-      AdultTimeDL.logger.info "[PROCESS COMPLETE]"
+      XXXDownload.logger.info "[PROCESS COMPLETE]"
     end
 
     private
 
     def process_movies
       config.movies.map do |url|
-        AdultTimeDL.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
+        XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_movie(url)
         Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
         cleanup_logs
@@ -31,7 +31,7 @@ module AdultTimeDL
 
     def process_performer
       config.performers.map do |url|
-        AdultTimeDL.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
+        XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         dir_name = dir_name(url).presence
         path = if dir_name.present?
                  Dir.mkdir(dir_name) unless Dir.exist?(dir_name)
@@ -52,13 +52,13 @@ module AdultTimeDL
     def dir_name(url)
       scenes_index.actor_name(url).presence
     rescue NotImplementedError => e
-      AdultTimeDL.logger.warn e.message
+      XXXDownload.logger.warn e.message
       nil
     end
 
     def process_scenes
       config.scenes.map do |url|
-        AdultTimeDL.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
+        XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_all_scenes(url)
         Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
         cleanup_logs

@@ -4,14 +4,14 @@ require_relative "lib/adulttime_dl/version"
 
 Gem::Specification.new do |spec|
   spec.name = "adulttime_dl"
-  spec.version = AdultTimeDL::VERSION
+  spec.version = XXXDownload::VERSION
   spec.authors = ["c477y"]
   spec.email = ["c477y@pm.me"]
 
   spec.summary = "Gem to downloader videos from adulttime.com"
   spec.description = spec.summary
   spec.homepage = "https://www.github.com/c477y/adulttime_dl"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.1.2"
 
   spec.metadata["homepage_uri"] = spec.homepage
 
@@ -33,17 +33,18 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop", "~> 1.21"
   spec.add_development_dependency "typeprof", "~> 0.21.2"
 
-  spec.add_runtime_dependency "algolia"
   spec.add_runtime_dependency "activesupport"
-  spec.add_runtime_dependency "colorize", "~> 0.8.1"
+  spec.add_runtime_dependency "algolia"
+  spec.add_runtime_dependency "colorize", "~> 0.8"
   spec.add_runtime_dependency "dry-schema", "~> 1.9"
   spec.add_runtime_dependency "dry-struct", "~> 1.4"
   spec.add_runtime_dependency "dry-types", "~> 1.5"
   spec.add_runtime_dependency "dry-validation", "~> 1.8"
-  spec.add_runtime_dependency "httparty", "~> 0.20.0"
+  spec.add_runtime_dependency "httparty", "~> 0.20"
   spec.add_runtime_dependency "http-cookie", "~> 1.0"
   spec.add_runtime_dependency "nokogiri", "~> 1.13"
   spec.add_runtime_dependency "parallel", "~> 1.22"
+  spec.add_runtime_dependency "require_all", "~> 3.0"
   spec.add_runtime_dependency "selenium-devtools", "~> 0.103.1"
   spec.add_runtime_dependency "selenium-webdriver", "~> 4.3"
   spec.add_runtime_dependency "thor", "~> 1.2"

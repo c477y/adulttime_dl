@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module ResolutionHelper
     FOUR_K_EXP = /\b(4K|2160p?)\b/i.freeze
     FHD_EXP = /\b(HD|1080p?)\b/i.freeze

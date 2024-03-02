@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class BlowPassIndex < AlgoliaClient
       SCENES_INDEX_NAME = "all_scenes"
@@ -9,7 +9,7 @@ module AdultTimeDL
       private
 
       def refresh_algolia
-        AdultTimeDL.logger.info "[REFRESH ALGOLIA TOKEN]"
+        XXXDownload.logger.info "[REFRESH ALGOLIA TOKEN]"
         client(true)
         @actor_index = client.init_index(ACTOR_INDEX_NAME)
         @scenes_index = client.init_index(SCENES_INDEX_NAME)

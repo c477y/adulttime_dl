@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class BaseIndex < Base
       def initialize(config)

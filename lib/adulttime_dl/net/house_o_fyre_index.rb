@@ -2,7 +2,7 @@
 
 require_relative "../data/house_o_fyre_scene"
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class HouseOFyreIndex < BaseIndex
       MEMBERS_URL = "https://houseofyre.elxcomplete.com/access/"
@@ -28,19 +28,19 @@ module AdultTimeDL
       private
 
       def fetch_all_scenes(url, accumulator = [])
-        AdultTimeDL.logger.info "[FETCH URL] #{url}"
+        XXXDownload.logger.info "[FETCH URL] #{url}"
         doc = fetch(url)
 
         doc.css(".category_listing_block .category_listing_wrapper_updates").map do |m_doc|
           next if paid_scene?(m_doc)
 
           scene = m_doc.css("a").map { |x| x["href"] }.first
-          AdultTimeDL.logger.debug "[ADD URL] #{scene}"
+          XXXDownload.logger.debug "[ADD URL] #{scene}"
           accumulator << scene
         end
 
         if reached_end_of_pagination?(doc)
-          AdultTimeDL.logger.debug "[REACHED END OF PAGES]"
+          XXXDownload.logger.debug "[REACHED END OF PAGES]"
           accumulator
         else
           next_page = next_page(doc)

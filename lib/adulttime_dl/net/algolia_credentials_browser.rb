@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class AlgoliaCredentialsBrowser < Base
       include BrowserSupport
@@ -26,7 +26,7 @@ module AdultTimeDL
         match = extract_algolia_credentials!
         @algolia_application_id = match[:application_id]
         @algolia_api_key = match[:api_key]
-        AdultTimeDL.logger.debug "Extracted Algolia Params: " \
+        XXXDownload.logger.debug "Extracted Algolia Params: " \
           "Application ID: #{algolia_application_id}, API Key: #{algolia_api_key}"
       end
 
@@ -53,7 +53,7 @@ module AdultTimeDL
               continue.call(request)
             end
           end
-          AdultTimeDL.logger.debug "Requesting webpage #{@site}"
+          XXXDownload.logger.debug "Requesting webpage #{@site}"
           driver.get(@site)
           wait.until { !javascript.nil? }
         end

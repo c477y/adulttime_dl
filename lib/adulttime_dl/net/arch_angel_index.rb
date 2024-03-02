@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class ArchAngelIndex < BaseIndex
       ARCH_ANGEL_VIDEO = "archangelvideo.com"
@@ -24,7 +24,7 @@ module AdultTimeDL
           end
           scenes
         else
-          AdultTimeDL.logger.error "UNHANDLED URL #{url}"
+          XXXDownload.logger.error "UNHANDLED URL #{url}"
           []
         end
       end

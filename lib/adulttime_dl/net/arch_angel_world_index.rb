@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class ArchAngelWorldIndex
       class << self
@@ -12,7 +12,7 @@ module AdultTimeDL
 
           all.reject! { |x| x == current_url }
           all.pop(2)
-          AdultTimeDL.logger.debug "Detected #{all.length} pages in #{current_url}"
+          XXXDownload.logger.debug "Detected #{all.length} pages in #{current_url}"
           all
         end
 

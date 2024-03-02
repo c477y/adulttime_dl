@@ -3,7 +3,7 @@
 require "net/protocol"
 require "openssl"
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class Base
       include Utils
@@ -61,14 +61,14 @@ module AdultTimeDL
         raise e if current_attempt > max_attempts
 
         if e.instance_of?(TooManyRequestsError)
-          AdultTimeDL.logger.error "[RATE LIMIT EXCEEDED] Sleeping for 3 minutes. "\
+          XXXDownload.logger.error "[RATE LIMIT EXCEEDED] Sleeping for 3 minutes. "\
                                    "Cancel to run the app at a different time."
           6.times do |counter|
             sleep(30)
-            AdultTimeDL.logger.info "[SLEEP ELAPSED] #{counter * 30}s"
+            XXXDownload.logger.info "[SLEEP ELAPSED] #{counter * 30}s"
           end
         else
-          AdultTimeDL.logger.error "#{e.class}: message:#{e.message}"
+          XXXDownload.logger.error "#{e.class}: message:#{e.message}"
         end
         handle_response_v2!(return_raw: return_raw, current_attempt: current_attempt + 1, max_attempts: max_attempts,
 &block)
@@ -77,9 +77,9 @@ module AdultTimeDL
 
       private
 
-      # @param [Class<AdultTimeDL::APIError>] klass
+      # @param [Class<XXXDownload::APIError>] klass
       # @param [HTTParty::Response] response
-      # @return [AdultTimeDL::APIError]
+      # @return [XXXDownload::APIError]
       def api_error(klass, response)
         endpoint = "#{response.request.base_uri}#{response.request.path}"
         klass.new(endpoint: endpoint, code: response.code,

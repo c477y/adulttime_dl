@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class ZTODDownloadLinks < AlgoliaDownloadLinks
       BASE_URL = Constants::ZTOD_BASE_URL

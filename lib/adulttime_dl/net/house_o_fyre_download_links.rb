@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class HouseOFyreDownloadLinks < Base
       # @param [Data::Config] config

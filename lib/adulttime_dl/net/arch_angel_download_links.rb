@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class ArchAngelDownloadLinks < Base
       include HTTParty
@@ -12,7 +12,7 @@ module AdultTimeDL
       # @param [Data::Config] config
       def initialize(config)
         @config = config
-        self.class.logger AdultTimeDL.logger, :debug
+        self.class.logger XXXDownload.logger, :debug
         super()
       end
 

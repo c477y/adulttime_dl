@@ -3,7 +3,7 @@
 require "selenium-webdriver"
 require "webdrivers/chromedriver"
 
-module AdultTimeDL
+module XXXDownload
   module Net
     module BrowserSupport
       def cookie(url, cookie_str)
@@ -29,7 +29,7 @@ module AdultTimeDL
             links << request.url if uri.path.end_with?(ext)
             continue.call(request)
           rescue Selenium::WebDriver::Error::WebDriverError => e
-            AdultTimeDL.logger.error "[INTERCEPTOR ERROR] #{e}"
+            XXXDownload.logger.error "[INTERCEPTOR ERROR] #{e}"
           end
           AdultTimeDL.logger.debug "PROCESSING URL #{video_link}"
 

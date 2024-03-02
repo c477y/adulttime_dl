@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class AlgoliaDownloadLinks < Base
       include HTTParty
@@ -10,7 +10,7 @@ module AdultTimeDL
         @cookie = config.cookie
         @config = config
         self.class.base_uri(base_uri)
-        self.class.logger AdultTimeDL.logger, :debug
+        self.class.logger XXXDownload.logger, :debug
         super()
       end
 

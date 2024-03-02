@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "open3"
+
 module Contract
   class DownloadFiltersContract < Dry::Validation::Contract
     include AdultTimeDL::Utils

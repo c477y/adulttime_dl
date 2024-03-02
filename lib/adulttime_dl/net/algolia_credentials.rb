@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class AlgoliaCredentials < Base
       include HTTParty
@@ -28,7 +28,7 @@ module AdultTimeDL
 
       def initialize(site)
         self.class.base_uri(base_url(site))
-        self.class.logger AdultTimeDL.logger, :debug
+        self.class.logger XXXDownload.logger, :debug
         set_algolia_params
         super()
       end

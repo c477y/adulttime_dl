@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AdultTimeDL
+module XXXDownload
   module Net
     class PornVEIndex < BaseIndex
       def search_by_all_scenes(url)
