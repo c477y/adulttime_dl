@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    adulttime_dl (0.2.3)
+    xxx_download (0.2.3)
       activesupport
       algolia
       colorize (~> 0.8)
@@ -13,11 +13,11 @@ PATH
       httparty (~> 0.20)
       nokogiri (~> 1.13)
       parallel (~> 1.22)
-      require_all (~> 3.0)
       selenium-devtools (~> 0.103.1)
       selenium-webdriver (~> 4.3)
       thor (~> 1.2)
       webdrivers (~> 5.0)
+      zeitwerk (~> 2.6)
 
 GEM
   remote: https://rubygems.org/
@@ -120,12 +120,11 @@ GEM
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    racc (1.6.2)
+    racc (1.7.3)
     rainbow (3.1.1)
     rake (13.0.6)
     rbs (2.6.0)
     regexp_parser (2.5.0)
-    require_all (3.0.0)
     rexml (3.2.5)
     rspec (3.11.0)
       rspec-core (~> 3.11.0)
@@ -183,13 +182,13 @@ PLATFORMS
   x86_64-darwin-23
 
 DEPENDENCIES
-  adulttime_dl!
   pry (~> 0.14.1)
   rake (~> 13.0)
   rbs (~> 2.5)
   rspec (~> 3.0)
   rubocop (~> 1.21)
   typeprof (~> 0.21.2)
+  xxx_download!
 
 BUNDLED WITH
    2.3.14

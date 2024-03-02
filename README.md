@@ -14,7 +14,7 @@ Run the below snippet to clone the project
 
 ```shell
 git clone https://github.com/c477y/adulttime_dl.git
-cd adulttime_dl
+cd xxx_download
 ```
 
 Then, fetch all dependencies
@@ -26,7 +26,7 @@ bundle install
 Finally, run the CLI using the executable
 
 ```shell
-./exe/adulttime_dl help
+./exe/xxx_download help
 ```
 
 ## Download Usage
@@ -52,7 +52,7 @@ generate a new config file by just running the command and don't pass the
 `--config` flag. The CLI will create a config file for you.
 
 ```shell
-$ adulttime_dl download julesjordan
+$ xxx_download download julesjordan
 [INFO ] ----------------------------------------------------------------------------------------------------
 [INFO ] Config option not passed to app and no config file detected in the current directory.
 [INFO ] Generating a blank configuration file to config.yml This app will now exit.
@@ -62,7 +62,7 @@ $ adulttime_dl download julesjordan
 
 ```shell
 Usage:
-  adulttime_dl download _site_
+  xxx_download download _site_
 
 Options:
      [--help], [--no-help]

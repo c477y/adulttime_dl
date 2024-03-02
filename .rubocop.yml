@@ -31,7 +31,7 @@ Metrics/BlockLength:
   IgnoredMethods: [ 'describe', 'context' ]
   Exclude:
     - spec/**/*
-    - adulttime_dl.gemspec
+    - xxx_download.gemspec
 
 Style/OptionalBooleanParameter:
   Enabled: false

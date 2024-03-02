@@ -2,5 +2,5 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in adulttime_dl.gemspec
+# Specify your gem's dependencies in xxx_download.gemspec
 gemspec

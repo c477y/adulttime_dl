@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "adulttime_dl"
+require "xxx_download"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
