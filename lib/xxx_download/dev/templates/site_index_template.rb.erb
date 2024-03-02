@@ -1,0 +1,33 @@
+# frozen_string_literal: true
+
+module XXXDownload
+  module Net
+    class <%= name %>Index < BaseIndex
+      TAG = "<%= name.upcase %>_INDEX"
+      BASE_URI = "FILL_ME_IN"
+      base_uri BASE_URI
+
+      # Delete methods that your site does not support
+
+      def search_by_all_scenes(_url)
+        raise NotImplementedError, "#{self.class.name} does not implement search_by_all_scenes"
+      end
+
+      def search_by_movie(_url)
+        raise NotImplementedError, "#{self.class.name} does not implement search_by_movie"
+      end
+
+      def search_by_actor(_url)
+        raise NotImplementedError, "#{self.class.name} does not implement search_by_actor"
+      end
+
+      def search_by_page(_url)
+        raise NotImplementedError, "#{self.class.name} does not implement search_by_page"
+      end
+
+      def actor_name(_resource)
+        raise NotImplementedError, "#{self.class.name} does not implement actor_name"
+      end
+    end
+  end
+end

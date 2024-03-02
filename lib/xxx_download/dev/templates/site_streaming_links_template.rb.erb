@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+module XXXDownload
+  module Net
+    class <%= name %>StreamingLinks < Base
+
+      BASE_URL = "XXXX"
+      TAG = " <%= name.upcase %>_INDEX"
+
+      def fetch(_scene_data)
+        XXXDownload.logger.info "PENDING"
+        Data::StreamingLinks.new(default: links)
+      end
+    end
+  end
+end

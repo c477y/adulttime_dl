@@ -1,4 +1,4 @@
-module AdultTimeDL
+module XXXDownload
   module Net
     class Query < AlgoliaCredentials
       attr_reader actor_name: untyped

@@ -1,0 +1,43 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.julesjordan.com/trial/dvds/foo.html
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0
+      Accept:
+      - application/json
+      Dnt:
+      - '1'
+      Connection:
+      - keep-alive
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Pragma:
+      - no-cache
+      Expires:
+      - Wed, 11 Jan 1984 05:00:00 GMT
+      Content-Length:
+      - '14'
+      Content-Type:
+      - text/html; charset=UTF-8
+      Accept-Ch:
+      - Sec-CH-UA,Sec-CH-UA-Arch,Sec-CH-UA-Full-Version,Sec-CH-UA-Full-Version-List,Sec-CH-UA-Model,Sec-CH-UA-Platform,Sec-CH-UA-Platform-Version
+    body:
+      encoding: UTF-8
+      string: Page not found
+  recorded_at: Wed, 08 May 2024 22:10:03 GMT
+recorded_with: VCR 6.2.0
