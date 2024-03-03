@@ -28,11 +28,15 @@ module XXXDownload
           if time.year < oldest_year
             XXXDownload.logger.info "[SKIPPING OLDEST_YEAR #{time.year} < #{oldest_year}] #{scene.file_name}"
             true
+          else
+            false
           end
         else
           false
         end
       end
+
+      alias skip_lesbian? skip_lesbian
 
       def blocked_keywords(scene)
         skip_keywords.find do |kw|
@@ -46,10 +50,6 @@ module XXXDownload
 
       def blocked_performer?(performer)
         skip_performers.member?(performer.downcase.gsub(/\W+/i, ""))
-      end
-
-      def skip_lesbian?
-        skip_lesbian
       end
     end
   end

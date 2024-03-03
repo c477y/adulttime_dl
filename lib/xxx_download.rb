@@ -98,22 +98,20 @@ module XXXDownload
 
   # @return [Logger]
   def self.logger
-    set_logger("info") unless defined?(@logger) && test?
-
-    unless defined?(@logger)
-      puts "WARNING: Logging is not initialised properly. Report this to the dev. Level is set to default info"
-      set_logger("info")
-    end
+    raise FatalError, "tried to access logger, but it was not initialised" unless defined?(@logger)
 
     @logger
   end
 
   def self.file_logger
-    @file_logger ||= begin
-      path = File.expand_path(File.join(Dir.pwd, "downloader.log"))
-      XXXDownload.logger.info "[DOWNLOAD LOGS GENERATED TO] #{path}"
-      Logger.new(path, "daily")
-    end
+    @file_logger ||= if test?
+                       XXXDownload.logger.info "[TEST ENV] File logging disabled."
+                       Logger.new(File::NULL)
+                     else
+                       path = File.expand_path(File.join(Dir.pwd, "downloader.log"))
+                       XXXDownload.logger.info "[DOWNLOAD LOGS GENERATED TO] #{path}"
+                       Logger.new(path, "daily")
+                     end
   end
 
   # @return [Data::Config]
@@ -129,16 +127,16 @@ module XXXDownload
   end
 
   def self.set_logger(level) # rubocop:disable Naming/AccessorMethodName
+    @logger = XXXDownload::Log.new($stdout, level).logger
     # Also initialise the file logger before we start changing directories mid-execution
     file_logger
-    @logger = XXXDownload::Log.new($stdout, level).logger
   end
 
-  def test?
+  def self.test?
     ENV["RACK_ENV"] == "test"
   end
 
-  def dev?
+  def self.dev?
     ENV["RACK_ENV"].match?(/dev/)
   end
 end

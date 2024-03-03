@@ -22,6 +22,15 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
+  config.before(:all) do
+    level = ENV.fetch("LOG_LEVEL", "fatal")
+    XXXDownload.set_logger(level)
+  end
+
+  config.after(:all) do
+    FileUtils.rm("downloader.log") if File.exist?("downloader.log")
+  end
+
   config.around(:each, type: :file_support) do |example|
     Dir.mktmpdir("support", Dir.pwd) do |dir|
       Dir.chdir(dir) do

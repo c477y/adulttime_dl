@@ -5,7 +5,6 @@ module XXXDownload
     EXTRA = Logger::DEBUG - 2
     TRACE = Logger::DEBUG - 1
 
-
     SEV_LABEL = {
       -2 => "EXTRA",
       -1 => "TRACE",
@@ -50,7 +49,7 @@ module XXXDownload
       end
     end
 
-    def log_level(level)
+    def log_level(level) # rubocop:disable Metrics/CyclomaticComplexity
       case level.upcase
       when "EXTRA" then CustomLogger::EXTRA
       when "TRACE" then CustomLogger::TRACE
@@ -58,6 +57,7 @@ module XXXDownload
       when "INFO"  then CustomLogger::INFO
       when "WARN"  then CustomLogger::WARN
       when "ERROR" then CustomLogger::ERROR
+      when "FATAL" then CustomLogger::FATAL
       else raise "Invalid log level #{level}"
       end
     end
