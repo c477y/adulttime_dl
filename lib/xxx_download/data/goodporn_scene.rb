@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Data
-    class GoodPornScene < Net::Base
+    class GoodpornScene < Net::Base
       attr_reader :url, :doc
 
       include HTTParty

@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Net
-    class ZTODIndex < AlgoliaClient
+    class ZtodIndex < AlgoliaClient
       SCENES_INDEX_NAME = "all_scenes"
       MOVIE_INDEX_NAME = "all_movies"
       ACTOR_INDEX_NAME = "all_actors"

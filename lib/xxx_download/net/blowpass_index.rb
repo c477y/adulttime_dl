@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Net
-    class BlowPassIndex < AlgoliaClient
+    class BlowpassIndex < AlgoliaClient
       SCENES_INDEX_NAME = "all_scenes"
       ACTOR_INDEX_NAME = "all_actors"
 

@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Net
-    class BlowPassStreamingLinks < AlgoliaStreamingLinks
+    class BlowpassStreamingLinks < AlgoliaStreamingLinks
       def initialize(config)
         super(config, Constants::BLOW_PASS_BASE_URL)
       end

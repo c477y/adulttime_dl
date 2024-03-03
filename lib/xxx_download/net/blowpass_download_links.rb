@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Net
-    class BlowPassDownloadLinks < AlgoliaDownloadLinks
+    class BlowpassDownloadLinks < AlgoliaDownloadLinks
       BASE_URL = Constants::BLOW_PASS_BASE_URL
 
       # @param [Data::Config] config

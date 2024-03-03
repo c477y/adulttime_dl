@@ -2,27 +2,39 @@
 
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
+
+# Custom inflections to make Zeitwerk work
+# Avoid creating new inflections unnecessarily
+loader.inflector.inflect(
+  "xxx_download" => "XXXDownload",
+  "urls" => "URLs",
+  "http_generator" => "HTTPGenerator"
+)
+
 loader.setup
 
+require "active_support"
+require "active_support/core_ext"
 require "algolia"
+require "awesome_print"
 require "colorize"
+require "deep_merge/rails_compat"
 require "dry-struct"
 require "dry-types"
 require "dry-validation"
 require "fileutils"
 require "forwardable"
-require "httparty"
 require "http-cookie"
+require "httparty"
 require "nokogiri"
 require "parallel"
 require "set"
 require "thor"
 require "yaml"
-require "active_support"
 
-require "pry" if ENV["RACK_ENV"] =~ "(dev|test)"
+require "pry" if ENV["RACK_ENV"].match?(/(dev.*|test)/)
 
-module XxxDownload
+module XXXDownload
   class FatalError < StandardError; end
 
   class SafeExit < StandardError; end

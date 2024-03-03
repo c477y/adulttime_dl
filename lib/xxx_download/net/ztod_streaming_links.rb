@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Net
-    class ZTODStreamingLinks < AlgoliaStreamingLinks
+    class ZtodStreamingLinks < AlgoliaStreamingLinks
       def initialize(config)
         super(config, Constants::ADULTTIME_BASE_URL)
       end

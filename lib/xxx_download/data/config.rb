@@ -10,9 +10,9 @@ module XXXDownload
       MODULE_NAME = {
         "adulttime" => "AdultTime",
         "archangel" => "ArchAngel",
-        "blowpass" => "BlowPass",
+        "blowpass" => "Blowpass",
         "cumlouder" => "CumLouder",
-        "goodporn" => "GoodPorn",
+        "goodporn" => "Goodporn",
         "houseofyre" => "HouseOFyre",
         "julesjordan" => "JulesJordan",
         "loveherfilms" => "LoveHerFilms",
@@ -39,11 +39,12 @@ module XXXDownload
       ].freeze
 
       def initialize(attributes)
-        attributes[:cookie_file] = File.expand_path(attributes[:cookie_file]) if attributes[:cookie_file]
+        attributes[:exec_path] = Dir.pwd
         super(attributes)
       end
 
       attribute :site, Types::String
+      attribute? :exec_path, Types::String
       attribute :download_filters, DownloadFilters
       attribute :cookie_file, Types::String.optional
       attribute :store, Types::String
@@ -51,7 +52,6 @@ module XXXDownload
       attribute :download_dir, Types::String
       attribute :quality, QUALITY
       attribute :parallel, Types::Integer
-      attribute :verbose, Types::Bool
       attribute? :dry_run, Types::Bool.optional
       attribute :downloader_flags, Types::String.default("")
       attribute? :urls, URLs

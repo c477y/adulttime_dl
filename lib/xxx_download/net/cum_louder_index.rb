@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "xxx-download/data/cum_louder_scene"
-
 module XXXDownload
   module Net
     class CumLouderIndex < BaseIndex

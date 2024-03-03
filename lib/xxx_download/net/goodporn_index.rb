@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-require "xxx-download/data/good_porn_scene"
-require "active_support/core_ext/string/inflections"
-
 module XXXDownload
   module Net
-    class GoodPornIndex < BaseIndex
+    class GoodpornIndex < BaseIndex
       def search_by_actor(url)
         all_scenes = fetch_all_scenes(convert_name_to_url(url)) do |doc|
           doc.css(".list-videos .item .thumb-link").map { |x| x["href"] }.compact
@@ -55,7 +52,7 @@ module XXXDownload
       # @return [Array[Data::Scene]]
       def process_scenes(scene_urls)
         scene_urls.map do |url|
-          Data::Scene.new(placeholder_scene_hash.merge(video_link: url, refresher: Data::GoodPornScene))
+          Data::Scene.new(placeholder_scene_hash.merge(video_link: url, refresher: Data::GoodpornScene))
         end
       end
 

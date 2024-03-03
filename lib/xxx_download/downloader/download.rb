@@ -147,7 +147,7 @@ module XXXDownload
         case config.site
         when "julesjordan" then JulesJordanCommand.build(config, scene_data, url)
         when "archangel" then ArchAngelCommand.build(config, scene_data, url)
-        when "goodporn" then GoodPornCommand.build(config, scene_data, url)
+        when "goodporn" then GoodpornCommand.build(config, scene_data, url)
         else
           using_default_link = !scene_data.streaming_links&.default.nil?
           CommandBuilder.new

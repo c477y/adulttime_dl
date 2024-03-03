@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module XXXDownload
-  class CLI < Thor
+  class Cli < Thor
     class StoreSubCommand < Thor
       desc "export", "Exports a datastore file to a yaml file"
       option :store, desc: "Path to the .store file to export"
@@ -25,7 +25,7 @@ module XXXDownload
 
     desc "download _site_", "Bulk download files"
     long_desc <<~LONGDESC
-      Acceptable _site_ names: #{Data::Config::MODULE_NAME.keys.join(", ")}
+      Acceptable _site_ names: #{XXXDownload::Data::Config::MODULE_NAME.keys.join(", ")}
     LONGDESC
     option :help, alias: :h, type: :boolean, default: false
     option :cookie_file, desc: "Path to the file where the cookie is stored"
@@ -34,8 +34,6 @@ module XXXDownload
       "If not provided, a store file will be created by the CLI"
     option :parallel, type: :numeric, default: 1, aliases: :p, desc: "Number of parallel downloads to perform. " \
       "For optimal performance, do not set this to more than 5"
-    option :config, aliases: :c, default: "config.yml", desc: "Path to YAML file with download filters " \
-      "Defaults to config.yml in the current directory"
     option :verbose, type: :boolean, default: false, aliases: :v, desc: "Flag to print verbose logs. " \
       "Useful for debugging"
     def download(site)

@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Net
-    class PornVEIndex < BaseIndex
+    class PornveIndex < BaseIndex
       def search_by_all_scenes(url)
         doc = fetch(url)
         doc.css(".box_bodzy .vid_bloczk")

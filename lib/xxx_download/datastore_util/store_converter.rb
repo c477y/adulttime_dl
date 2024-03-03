@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module XXXDownload
-  module DataStoreUtil
+  module DatastoreUtil
     # Takes a datastore file of type {YAML::Store} or {PStore}
     # and interconverts it to the other type.
     class StoreConverter

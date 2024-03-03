@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Net
-    class GoodPornDownloadLinks < Base
+    class GoodpornDownloadLinks < Base
 
       # @param [Data::Config] config
       def initialize(config)

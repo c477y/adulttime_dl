@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Downloader
-    class GoodPornCommand
+    class GoodpornCommand
       def self.build(config, scene_data, url)
         CommandBuilder.new
                       .with_download_client(config.downloader)

@@ -36,7 +36,7 @@ module XXXDownload
         ::Net::OpenTimeout,
         ::Net::ReadTimeout,
         ::OpenSSL::SSL::SSLError,
-        TooManyRequestsError
+        XXXDownload::TooManyRequestsError
       ].freeze
 
       # rubocop:disable Metrics/CyclomaticComplexity

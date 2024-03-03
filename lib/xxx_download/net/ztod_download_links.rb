@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Net
-    class ZTODDownloadLinks < AlgoliaDownloadLinks
+    class ZtodDownloadLinks < AlgoliaDownloadLinks
       BASE_URL = Constants::ZTOD_BASE_URL
 
       # @param [Data::Config] config

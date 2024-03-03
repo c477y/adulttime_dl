@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Net
-    class PornVEStreamingLinks < Base
+    class PornveStreamingLinks < Base
       include BrowserSupport
 
       def initialize(config)

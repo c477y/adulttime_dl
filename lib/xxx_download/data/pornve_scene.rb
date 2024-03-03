@@ -2,7 +2,7 @@
 
 module XXXDownload
   module Data
-    class PornVEScene < Scene
+    class PornveScene < Scene
       def key
         title
       end

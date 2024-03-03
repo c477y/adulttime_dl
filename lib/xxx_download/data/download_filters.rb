@@ -7,10 +7,10 @@ module XXXDownload
       attribute :skip_performers, Types::CustomSet
       attribute :skip_lesbian, Types::Bool
       attribute :skip_keywords, Types::CustomArray
-      attribute? :oldest_year, Types::Integer.optional
+      attribute :oldest_year, Types::Integer
 
       # @param [Scene] scene
-      def skip?(scene)
+      def skip?(scene) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         if scene.lesbian? && skip_lesbian?
           XXXDownload.logger.info "[SKIP_LESBIAN] #{scene.file_name}"
           true
