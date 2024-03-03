@@ -96,8 +96,16 @@ module XXXDownload
 
   class InternalServerError < APIError; end
 
-  def self.logger(**opts)
-    @logger ||= XXXDownload::Log.new(**opts).logger
+  # @return [Logger]
+  def self.logger
+    set_logger("info") unless defined?(@logger) && test?
+
+    unless defined?(@logger)
+      puts "WARNING: Logging is not initialised properly. Report this to the dev. Level is set to default info"
+      set_logger("info")
+    end
+
+    @logger
   end
 
   def self.file_logger
@@ -106,5 +114,31 @@ module XXXDownload
       XXXDownload.logger.info "[DOWNLOAD LOGS GENERATED TO] #{path}"
       Logger.new(path, "daily")
     end
+  end
+
+  # @return [Data::Config]
+  def self.config
+    raise FatalError, "tried to access config, but it was not assigned" unless defined?(@config)
+
+    @config
+  end
+
+  # @param [Data::Config] config
+  def self.set_config(config) # rubocop:disable Naming/AccessorMethodName
+    @config = config
+  end
+
+  def self.set_logger(level) # rubocop:disable Naming/AccessorMethodName
+    # Also initialise the file logger before we start changing directories mid-execution
+    file_logger
+    @logger = XXXDownload::Log.new($stdout, level).logger
+  end
+
+  def test?
+    ENV["RACK_ENV"] == "test"
+  end
+
+  def dev?
+    ENV["RACK_ENV"].match?(/dev/)
   end
 end

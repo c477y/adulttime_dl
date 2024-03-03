@@ -2,13 +2,23 @@
 
 module XXXDownload
   class Cli < Thor
-    class StoreSubCommand < Thor
-      desc "export", "Exports a datastore file to a yaml file"
-      option :store, desc: "Path to the .store file to export"
+    LOG_LEVELS = %w[extra trace debug info warn error fatal].freeze
 
-      def export
-        XXXDownload.logger(verbose: options["verbose"])
-        Store.export(options["store"])
+    class StoreSubCommand < Thor
+      desc "export datastore.store", "Exports a datastore file to a yaml file"
+      option :log_level, type: :string, enum: LOG_LEVELS,
+                         default: "info", desc: "Log level. Can be one of #{LOG_LEVELS.join(", ")}"
+      def export(store)
+        XXXDownload.set_logger(options["log_level"])
+        DatastoreUtil::StoreConverter.new(store).export
+      end
+
+      desc "import datastore.store", "Imports a yaml file to a datastore file"
+      option :log_level, type: :string, enum: LOG_LEVELS,
+                         default: "info", desc: "Log level. Can be one of #{LOG_LEVELS.join(", ")}"
+      def import(store)
+        XXXDownload.set_logger(options["log_level"])
+        DatastoreUtil::StoreConverter.new(store).import
       end
     end
 
@@ -34,12 +44,11 @@ module XXXDownload
       "If not provided, a store file will be created by the CLI"
     option :parallel, type: :numeric, default: 1, aliases: :p, desc: "Number of parallel downloads to perform. " \
       "For optimal performance, do not set this to more than 5"
-    option :verbose, type: :boolean, default: false, aliases: :v, desc: "Flag to print verbose logs. " \
-      "Useful for debugging"
+    option :log_level, type: :string, enum: LOG_LEVELS,
+                       default: "info", desc: "Log level. Can be one of #{LOG_LEVELS.join(", ")}"
     def download(site)
       perform_with_error_handling do
-        XXXDownload.logger(verbose: options["verbose"])
-        XXXDownload.file_logger
+        XXXDownload.set_logger(options["log_level"])
         config = Contract::ConfigGenerator.new(site, options).generate
         client = Client.new(config)
         client.start!
@@ -77,5 +86,8 @@ module XXXDownload
       XXXDownload.logger.debug "\t#{e.backtrace&.join("\n\t")}"
       exit 1
     end
+
+    desc "store SUBCOMMAND ...ARGS", "Manage datastore files"
+    subcommand "store", StoreSubCommand
   end
 end

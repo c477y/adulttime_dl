@@ -20,5 +20,7 @@ shared_context "config provider" do
     config = override_config.deeper_merge(default_config)
     config.deep_transform_keys!(&:to_s)
     File.open("config.yml", "w") { |f| f.write(config.to_yaml) }
+
+    XXXDownload.set_config(config)
   end
 end
