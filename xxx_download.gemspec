@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rbs", "~> 2.5"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rubocop", "~> 1.21"
+  spec.add_development_dependency "simplecov", "~> 0.22.0"
   spec.add_development_dependency "super_diff", "~> 0.11"
   spec.add_development_dependency "typeprof", "~> 0.21.2"
   spec.add_development_dependency "vcr", "~> 6.2"

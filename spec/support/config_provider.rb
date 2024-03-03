@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rspec"
+require "xxx_download/data/config"
 
 shared_context "config provider" do
   # Input: Pass some keys in this hash to override default keys
@@ -21,6 +22,6 @@ shared_context "config provider" do
     config.deep_transform_keys!(&:to_s)
     File.open("config.yml", "w") { |f| f.write(config.to_yaml) }
 
-    XXXDownload.set_config(config)
+    XXXDownload.set_config(XXXDownload::Data::Config.new(config))
   end
 end

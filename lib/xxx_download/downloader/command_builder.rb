@@ -3,68 +3,98 @@
 module XXXDownload
   module Downloader
     class CommandBuilder
+      class BadCommandError < StandardError; end
+
+      def self.build
+        builder = new
+        raise FatalError, "[COMMAND BUILDER] no configuration provided" unless block_given?
+
+        yield builder
+        builder.build
+      end
+
       def initialize
-        @command = String.new
+        command = Command.new
+        @command = command
       end
 
-      def with_download_client(download_client)
-        @download_client = download_client
-        command << download_client
-        self
+      def download_client(client)
+        command.download_client = client
       end
 
-      def with_merge_parts(merge_parts = false)
-        merge_parts ? command << " --merge-output-format mkv" : command
-        self
+      def url(url)
+        command.url = " \"#{url}\""
+      end
+
+      def path(filename, path = "", ext = "%(ext)s")
+        command.path = " -o '#{File.join(path, filename)}.#{ext}'"
+      end
+
+      def merge_parts
+        command.merge_parts = "--merge-output-format mkv"
       end
 
       # Extra arguments for the downloader. Example
       # --external-downloader aria2c --external-downloader-args '-x 7'
-      def with_external_flags(flag)
-        command << " #{flag}"
-        self
+      def external_flags(flag)
+        command.external_flags = flag
       end
 
-      def with_parallism(parallel = 1)
-        return self if download_client == "youtube-dl"
+      def parallel(parallel)
+        return if command.download_client == "youtube-dl"
 
-        command << " --concurrent-fragments #{parallel}"
-        self
+        command.parallel = "--concurrent-fragments #{parallel}"
       end
 
-      def with_path(filename, path = "", ext = "%(ext)s")
-        complete_path = File.join(path, filename)
-        command << " -o '#{complete_path}.#{ext}'"
-        self
+      def quality(max_res = "720")
+        command.quality = " -f 'bestvideo[height<=#{max_res}]+bestaudio/best[height<=#{max_res}]'"
       end
 
-      def with_quality(using_default_link, max_res = "720")
-        command << " -f 'bestvideo[height<=#{max_res}]+bestaudio/best[height<=#{max_res}]'" if using_default_link
-        self
+      def verbose
+        command.verbosity = "--verbose --dump-pages"
       end
 
-      def with_verbosity(verbose)
-        command << " --verbose --dump-pages" if verbose
-        self
-      end
-
-      def with_cookie(file_path, is_required = false)
-        command << " --cookies #{file_path}" if is_required
-        self
-      end
-
-      def with_url(url)
-        command << " \"#{url}\""
-        self
+      def cookie(file_path)
+        command.cookie = "--cookies #{file_path}"
       end
 
       def build
-        command
+        unless command.valid?
+          raise BadCommandError, "[BAD COMMAND GENERATED] Missing #{command.missing_keys.join(", ")}."
+        end
+
+        command.build
       end
 
       private
 
-      attr_reader :download_client, :command
+      attr_reader :command
+    end
+
+    class Command
+      def initialize
+        @command = ""
+      end
+
+      attr_accessor :download_client
+
+      attr_writer :url, :cookie, :path, :verbosity,
+                  :external_flags, :merge_parts, :parallel, :quality
+
+      def build
+        [@download_client, @url, @cookie, @path, @verbosity,
+         @external_flags, @merge_parts, @parallel, @quality].compact.map(&:strip).join(" ")
+      end
+
+      def valid?
+        MANDATORY_KEYS.all? { |key| instance_variable_get("@#{key}").present? }
+      end
+
+      def missing_keys
+        MANDATORY_KEYS.select { |key| instance_variable_get("@#{key}").nil? }
+      end
+
+      MANDATORY_KEYS = %i[download_client url path].freeze
     end
   end
 end
