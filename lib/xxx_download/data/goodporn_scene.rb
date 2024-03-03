@@ -7,21 +7,6 @@ module XXXDownload
 
       include HTTParty
 
-      # TITLE_REGEX = %r{
-      #   (?<network_name>[\w\s_'"!?():]+)    # Network Name
-      #   \s-\s                            # Separator
-      #   (?<title>[\w\s_'"!?.#-]+)        # Title
-      #   \s-\s                            # Separator
-      #   (?<date>\d{2}/\d{2}/\d{4})       # Release Date MM/DD/YYYY
-      #   }x.freeze
-      #
-      # TITLE_REGEX_2 = %r{
-      #   -\s                              # Separator
-      #   (?<title>[\w\s_'"!?.#-():]+)        # Title
-      #   \s-\s                            # Separator
-      #   (?<date>\d{2}/\d{2}/\d{4})       # Release Date
-      # }x.freeze
-
       # EXAMPLE:
       # MP4 1080p, 752.36 Mb
       # MP4 2160p, 2.51 Gb
@@ -34,7 +19,7 @@ module XXXDownload
         (?<resolution>\d{3,4}p)          # Resolution
         ,\s                              # Separator
         (?<size>\w+)                     # File size
-        /x.freeze
+        /x
 
       def initialize(url, _cookie)
         @url = url
@@ -129,8 +114,6 @@ module XXXDownload
                              Time.strptime(split_text.last.strip, "%m/%d/%Y").strftime("%Y-%m-%d")
                            when /\d{8}/
                              Time.strptime(split_text.last, "%m%d%Y").strftime("%Y-%m-%d")
-                           else
-                             nil
                            end
             hash["title"] = split_text[1..-2].join("-").strip
             hash

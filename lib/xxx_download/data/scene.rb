@@ -9,30 +9,45 @@ module XXXDownload
         "fhd" => %w[1080p]
       }.freeze
 
-      attribute :clip_id, Types::Integer.default(-1)
+      LAZY_PLACEHOLDER_ATTRIBUTES = {
+        lazy: true,
+        title: "__LAZY__",
+        network_name: "__LAZY__",
+        collection_tag: "__LAZY__"
+      }.freeze
+
+      def initialize(attributes)
+        if attributes[:lazy] && attributes[:refresher].nil?
+          raise XXXDownload::FatalError, "Lazy evaluated scenes must have a refresher"
+        end
+
+        super(attributes)
+      end
+
+      # Scenes can be resolved lazily. This can be useful if download/streaming links have an expiry
+      # In such cases, you can explicitly mark a scene as lazy and pass in two mandatory attributes:
+      # - video_link: the URL to the scene
+      # - refresher: a class that can refresh the scene data. This class must implement a `refresh` method
+      attribute :lazy, Types::Bool
+      attribute :video_link, Types::String
+      attribute? :refresher, Types.Instance(Class)
+
+      attribute? :clip_id, Types::Integer
       attribute :title, Types::String
       attribute :actors, Types::Array.of(Actor).default([].freeze)
-      attribute? :release_date, Types::String.optional
-      attribute :network_name, Types::String.optional
+      attribute :network_name, Types::String
+      attribute :collection_tag, Types::String.default("C")
+
+      attribute? :release_date, Types::String
       attribute? :movie_title, Types::String
       attribute? :download_sizes, Types::Array.of(Types::String)
       attribute? :streaming_links, StreamingLinks
       attribute? :downloading_links, StreamingLinks
-      attribute :collection_tag, Types::String.default("C")
-      attribute :is_downloaded, Types::Bool.default(false)
-      attribute :is_streamable, Types::Bool.default(true)
-      attribute? :video_link, Types::String
-      attribute? :refresher, Types.Instance(Class)
+
+      alias lazy? lazy
 
       def key
-        clip_id == -1 ? title : clip_id.to_s
-      end
-
-      # @param [Boolean] value
-      # @return [Scene]
-      def mark_downloaded(value)
-        new(is_downloaded: value)
-        # Scene.new(to_hash.merge(is_downloaded: value))
+        clip_id.nil? ? title : clip_id.to_s
       end
 
       # @param [Data::StreamingLinks] links
@@ -42,18 +57,10 @@ module XXXDownload
         # Scene.new(to_hash.merge(streaming_links: links))
       end
 
-      # @return [Scene]
-      def non_streamable
-        new(is_streamable: false)
-        # Scene.new(to_hash.merge(is_streamable: false))
-      end
+      def refresh
+        return self if refresher.nil?
 
-      def refresh_required?
-        title == "PLACEHOLDER"
-      end
-
-      def refresh(cookie)
-        refresher.nil? ? self : refresher.new(video_link, cookie).process
+        refresher.new(video_link).refresh
       end
 
       # @param [String] quality: one of "sd", "hd" or "fhd"
@@ -78,50 +85,61 @@ module XXXDownload
         actors.map(&:name).sort
       end
 
-      def actor_gender_unknown?
+      def gender_unknown_actors?
         actors.select { |x| x.gender == "unknown" }.any?
       end
 
       def lesbian?
-        male_actors.empty?
+        female_actors.present? && male_actors.blank? && !gender_unknown_actors?
       end
 
-      def downloaded?
-        is_downloaded
-      end
-
-      def non_streamable?
-        !is_streamable
-      end
-
+      #
+      # Generate a file name for the scene
+      #
+      # @return [String]
       def file_name
-        initial_name = if release_date.presence
-                         "#{release_date} [T] #{title} [#{collection_tag}] #{network_name}"
-                       else
-                         "#{title} [#{collection_tag}] #{network_name}"
-                       end
-        if actor_gender_unknown?
-          final = safely_add_actors(initial_name, all_actors, prefix: "[A]")
+        initial_name = []
+        initial_name << release_date if release_date.present?
+        initial_name << "[T]"
+        initial_name << title
+        initial_name << "[#{collection_tag}]"
+        initial_name << (movie_title.present? ? movie_title : network_name)
+
+        if gender_unknown_actors?
+          initial_name << "[A]"
+          actor_s = safe_actor_string(all_actors, MAX_FILENAME_LEN - initial_name.join(" ").length)
+          initial_name << actor_s
         else
-          with_female = safely_add_actors(initial_name, female_actors, prefix: "[F]")
-          final = safely_add_actors(with_female, male_actors, prefix: "[M]")
+          female_actor_s = safe_actor_string(female_actors, MAX_FILENAME_LEN - initial_name.join(" ").length)
+          initial_name << "[F] #{female_actor_s}" unless female_actor_s.empty?
+          male_actor_s = safe_actor_string(male_actors, MAX_FILENAME_LEN - initial_name.join(" ").length)
+          initial_name << "[M] #{male_actor_s}" unless male_actor_s.empty?
         end
-        clean(final)
+
+        initial_name = initial_name.join(" ")
+        clean(initial_name)
       end
 
       private
 
-      def safely_add_actors(fixed_str, actors, max_len = 150, prefix:)
-        return fixed_str if actors.length.zero?
+      # Some file systems don't play nice with long file names
+      MAX_FILENAME_LEN = 240
 
-        name = "#{fixed_str} #{prefix} #{actors.join(", ")}"
-        return name if name.length < max_len
+      # @param [Array[String]] actors
+      # @param [Integer] max_allowed_len
+      def safe_actor_string(actors, max_allowed_len)
+        return "" if actors.empty?
 
-        safely_add_actors(fixed_str, actors[0...-1], prefix: prefix)
+        name = actors.join(", ")
+        return name if name.length < max_allowed_len
+
+        safe_actor_string(actors[0...-1], max_allowed_len)
       end
 
       def clean(str)
-        str.gsub(/[^\s\w\[\].,\-_]+/i, "").gsub(/\s{2,}/, " ").strip
+        str
+          .gsub(/[^\s\w\[\].,\-_]+/i, "") # remove non-alphanumeric characters
+          .gsub(/\s{2,}/, " ").strip # remove extra spaces
       end
     end
   end
