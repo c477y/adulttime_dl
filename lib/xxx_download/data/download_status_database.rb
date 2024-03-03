@@ -11,28 +11,47 @@ module XXXDownload
         path = File.join(Dir.pwd, store_file)
         XXXDownload.logger.info "[DATABASE_INIT] #{path}"
 
-        @store = YAML::Store.new path
+        @store = PStore.new(path)
         @semaphore = semaphore
       end
 
+      # @param key [String] The key to check in the database.
+      # @return [Boolean] Returns true if the key is present in the database, false otherwise.
       def downloaded?(key)
-        semaphore.synchronize do
-          store.transaction(true) do
-            scene_data = store.fetch(key, nil)
-            return true if scene_data&.downloaded?
+        benchmark("downloaded?") do
+          semaphore.synchronize do
+            store.transaction(true) do
+              scene_data = store.fetch(key, nil)
+              return scene_data.present?
+            end
           end
-          false
         end
+        false
       end
 
-      def save_download(scene_data, is_downloaded: false)
-        semaphore.synchronize do
-          XXXDownload.logger.debug "[DATABASE_ADD] #{scene_data.file_name} : #{is_downloaded}"
-          store.transaction do
-            new_scene_data = scene_data.mark_downloaded(is_downloaded)
-            store[new_scene_data.key] = new_scene_data
+      # @param scene_data [XXXDownload::Data::Scene] The data of the scene to be stored in the database.
+      # @return [Boolean] Returns true after successfully storing the scene data.
+      def save_download(scene_data)
+        benchmark("save_download") do
+          semaphore.synchronize do
+            XXXDownload.logger.debug "[DATABASE_ADD] #{scene_data.file_name}"
+            store.transaction do
+              store[scene_data.key] = scene_data
+            end
           end
         end
+        true
+      end
+
+      private
+
+      def benchmark(opr = "unnamed")
+        raise "#benchmark called without block" unless block_given?
+
+        resp = nil
+        time = Benchmark.measure { resp = yield }
+        XXXDownload.logger.extra "[BENCHMARK] #{self.class.name}##{opr}: #{time.real.round(3)}s"
+        resp
       end
     end
   end
