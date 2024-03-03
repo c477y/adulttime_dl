@@ -7,6 +7,7 @@ shared_context "config provider" do
   # Input: Pass some keys in this hash to override default keys
   let(:override_config) { {} }
   let(:override_opts) { {} }
+  let(:site) { "goodporn" }
 
   # Output: Access config
   let(:config) { XXXDownload::Contract::ConfigGenerator.new(site, override_opts).generate }
@@ -20,6 +21,7 @@ shared_context "config provider" do
     default_config = XXXDownload::Contract::Default.cleaned_config
     config = override_config.deeper_merge(default_config)
     config.deep_transform_keys!(&:to_s)
+    config.merge!("site" => site)
     File.open("config.yml", "w") { |f| f.write(config.to_yaml) }
 
     XXXDownload.set_config(XXXDownload::Data::Config.new(config))

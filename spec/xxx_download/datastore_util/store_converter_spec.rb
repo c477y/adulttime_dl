@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 require "rspec"
-require "xxx-download/datastore_util/store_converter"
+require "pstore"
+require "yaml/store"
 
-RSpec.describe XXXDownload::DataStoreUtil::StoreConverter, type: :file_support do
+RSpec.describe XXXDownload::DatastoreUtil::StoreConverter, type: :file_support do
 
   let(:file) { "test.store" }
   let(:seed_data) { { "key" => "value" } }
