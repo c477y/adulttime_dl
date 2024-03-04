@@ -26,10 +26,10 @@ module XXXDownload
       # e.g. for sites that use HLS streaming will require a custom command
       # @param [XXXDownload::Data::Scene] scene_data
       # @return [String] a command to run in shell to download a scene
-      def command(scene_data)
+      def command(scene_data, url)
         XXXDownload::Downloader::CommandBuilder.build_basic do |b|
           b.path(scene_data.file_name, config.download_dir)
-          b.url(scene_data.scene_link)
+          b.url(url)
         end
       end
 
