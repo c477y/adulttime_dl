@@ -51,7 +51,7 @@ module XXXDownload
 
         def release_date(doc)
           date = doc.css(".player-scene-description")
-                        .find { |x| x.text.strip.downcase.start_with?("date") }
+                    .find { |x| x.text.strip.downcase.start_with?("date") }
           return unless date
 
           date = date.text.downcase.gsub("date:", "").strip
@@ -125,7 +125,7 @@ module XXXDownload
       end
 
       def fetch(actor_page)
-        http_resp = HTTParty.get(actor_page, headers: headers, follow_redirects: false)
+        http_resp = HTTParty.get(actor_page, headers:, follow_redirects: false)
         resp = handle_response!(http_resp, return_raw: true)
         doc = Nokogiri::HTML(resp.body)
         return doc unless doc.title.end_with?("Members Login")

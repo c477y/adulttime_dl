@@ -78,7 +78,7 @@ module XXXDownload
       end
 
       def fetch(url)
-        http_resp = HTTParty.get(url, headers: headers, follow_redirects: false)
+        http_resp = HTTParty.get(url, headers:, follow_redirects: false)
         resp = handle_response!(http_resp, return_raw: true)
         Nokogiri::HTML(resp.body)
       end

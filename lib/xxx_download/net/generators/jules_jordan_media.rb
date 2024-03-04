@@ -40,7 +40,7 @@ module XXXDownload
           aggregated_response.concat(actors)
           XXXDownload.logger.debug "Aggregating #{actors.length} actor links. " \
                                             "Extracted #{aggregated_response.length} so far."
-          recursive_actors_fetch(aggregated_response: aggregated_response, current_page: current_page + 1)
+          recursive_actors_fetch(aggregated_response:, current_page: current_page + 1)
         end
 
         def recursive_movies_fetch(aggregated_response: [], current_page: 1)
@@ -54,7 +54,7 @@ module XXXDownload
           aggregated_response.concat(movies)
           XXXDownload.logger.debug "Aggregating #{movies.length} actor links. " \
                                             "Extracted #{aggregated_response.length} so far."
-          recursive_movies_fetch(aggregated_response: aggregated_response, current_page: current_page + 1)
+          recursive_movies_fetch(aggregated_response:, current_page: current_page + 1)
         end
 
         def fetch(url)

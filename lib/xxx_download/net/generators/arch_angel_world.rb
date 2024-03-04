@@ -34,7 +34,7 @@ module XXXDownload
           aggregated_response.concat(entities)
           XXXDownload.logger.debug "Aggregating #{entities.length} links. " \
                                             "Extracted #{aggregated_response.length} so far."
-          recursive_fetch(endpoint, aggregated_response: aggregated_response, current_page: current_page + 1)
+          recursive_fetch(endpoint, aggregated_response:, current_page: current_page + 1)
         end
       end
     end

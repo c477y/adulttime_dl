@@ -106,7 +106,7 @@ module XXXDownload
           GRAPHQL
         }.to_json
 
-        resp = handle_response!(self.class.post(GRAPHQL_ENDPOINT, body: body))
+        resp = handle_response!(self.class.post(GRAPHQL_ENDPOINT, body:))
         resp.dig("data", "version", "version")
       end
 

@@ -19,7 +19,7 @@ module XXXDownload
       # @return [Data::StreamingLinks, NilClass]
       def fetch(scene_data)
         path = STREAMING_URL_PATH.gsub("%clip_id%", scene_data.clip_id.to_s)
-        resp = handle_response!(self.class.get(path, headers: headers))
+        resp = handle_response!(self.class.get(path, headers:))
         return nil if resp == []
 
         if resp.is_a?(Array) && resp.first&.keys&.sort == %w[format url]

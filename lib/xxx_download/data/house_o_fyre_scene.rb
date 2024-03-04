@@ -19,7 +19,7 @@ module XXXDownload
         \s\(                             # Separator
         (?<size>[\w\s.]+)                # File size
         \)                               # Separator
-        /x.freeze
+        /x
       # rubocop:enable Lint/MixedRegexpCaptureTypes
 
       def initialize(url, cookie)
@@ -82,7 +82,6 @@ module XXXDownload
       def downloading_link(sub_doc)
         hash = {}
 
-
         sub_doc&.css("a")&.map do |x|
           hash["res_#{resolution(x)}"] = x["href"]
           hash["default"] << x["href"]
@@ -90,7 +89,7 @@ module XXXDownload
       end
 
       def fetch
-        http_resp = HTTParty.get(url, headers: headers, follow_redirects: false)
+        http_resp = HTTParty.get(url, headers:, follow_redirects: false)
         resp = handle_response!(http_resp, return_raw: true)
         Nokogiri::HTML(resp.body)
       end
@@ -101,4 +100,3 @@ module XXXDownload
     end
   end
 end
-

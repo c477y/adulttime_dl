@@ -17,7 +17,7 @@ module XXXDownload
         path = SCENE_DOWNLOAD_LINK
                .gsub("%clip_id%", scene_data.clip_id.to_s)
                .gsub("%resolution%", scene_data.available_resolution(config.quality))
-        response = self.class.get(path, follow_redirects: false, headers: headers)
+        response = self.class.get(path, follow_redirects: false, headers:)
         case response.code
         when 302 then check_download_link!(response)
         when 404 then nil
@@ -49,7 +49,7 @@ module XXXDownload
       def check_download_link!(response)
         if response.headers["location"].include?("/login")
           endpoint = "#{response.request.base_uri}#{response.request.path}"
-          raise RedirectedError.new(endpoint: endpoint,
+          raise RedirectedError.new(endpoint:,
                                     code: response.code,
                                     body: response.parsed_response,
                                     headers: response.headers)

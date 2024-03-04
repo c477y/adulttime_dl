@@ -56,8 +56,10 @@ RSpec.describe XXXDownload::Contract::ConfigGenerator, type: :file_support do
           allow(Open3).to receive(:capture3).and_return(["", "", double(success?: false)])
         end
 
-        it { expect { generate }.to raise_error(XXXDownload::FatalError,
-                                                /\[downloader\] is not installed or unavailable on \$PATH/) }
+        it {
+          expect { generate }.to raise_error(XXXDownload::FatalError,
+                                             /\[downloader\] is not installed or unavailable on \$PATH/)
+        }
       end
 
       context "with performer URL" do

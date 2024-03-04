@@ -5,7 +5,6 @@ require "pstore"
 require "yaml/store"
 
 RSpec.describe XXXDownload::DatastoreUtil::StoreConverter, type: :file_support do
-
   let(:file) { "test.store" }
   let(:seed_data) { { "key" => "value" } }
 

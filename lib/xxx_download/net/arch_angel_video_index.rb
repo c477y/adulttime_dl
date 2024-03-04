@@ -24,7 +24,9 @@ module XXXDownload
         def make_scene_data_from_scene(doc, url)
           Data::UnknownActorGenderScene.new(
             title: doc.css(".title h2").first&.text&.strip,
-            actors: doc.css(".info p a").map(&:text).map(&:strip).map { |x| Data::Actor.new(name: x, gender: "unknown") },
+            actors: doc.css(".info p a").map(&:text).map(&:strip).map do |x|
+                      Data::Actor.new(name: x, gender: "unknown")
+                    end,
             network_name: "ArchAngel",
             video_link: url
           )

@@ -47,7 +47,7 @@ module XXXDownload
       end
 
       def fetch(actor_page)
-        resp = handle_response!(HTTParty.get(actor_page, headers: headers), return_raw: true)
+        resp = handle_response!(HTTParty.get(actor_page, headers:), return_raw: true)
         Nokogiri::HTML(resp.body)
       end
 

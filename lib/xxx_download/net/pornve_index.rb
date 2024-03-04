@@ -31,7 +31,7 @@ module XXXDownload
       end
 
       def fetch(actor_page)
-        resp = handle_response!(HTTParty.get(actor_page, headers: headers), return_raw: true)
+        resp = handle_response!(HTTParty.get(actor_page, headers:), return_raw: true)
         Nokogiri::HTML(resp.body)
       end
 
@@ -39,10 +39,9 @@ module XXXDownload
         default_headers.merge(
           "Accept" => "*/*",
           "Connection" => "keep-alive",
-          "DNT" => "1",
+          "DNT" => "1"
         )
       end
     end
   end
 end
-

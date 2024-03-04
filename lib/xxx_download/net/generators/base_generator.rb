@@ -4,7 +4,6 @@ module XXXDownload
   module Net
     module Generators
       class BaseGenerator < Base
-
         attr_reader :config
 
         def actors(_female_only)
@@ -18,4 +17,3 @@ module XXXDownload
     end
   end
 end
-

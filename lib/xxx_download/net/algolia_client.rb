@@ -50,7 +50,7 @@ module XXXDownload
       rescue Algolia::AlgoliaHttpError => e
         XXXDownload.logger.error "[ALGOLIA ERROR] #{e.message}"
         refresh_algolia
-        with_retry(*parameters, current_attempt: current_attempt + 1, max_attempts: max_attempts, &block)
+        with_retry(*parameters, current_attempt: current_attempt + 1, max_attempts:, &block)
       end
 
       def movie_index
@@ -78,7 +78,6 @@ module XXXDownload
 
       def make_struct(hits)
         hits.map do |hit|
-
           Data::Scene.new(hit)
         rescue Dry::Struct::Error => e
           XXXDownload.logger.error "Unable to parse record due to #{e.message}"
@@ -107,7 +106,7 @@ module XXXDownload
         if refresh
           @algolia_config = begin
             app_id, api_key = algolia_credentials
-            c = Algolia::Search::Config.new(application_id: app_id, api_key: api_key)
+            c = Algolia::Search::Config.new(application_id: app_id, api_key:)
             c.set_extra_header("Referer", referrer(config.site))
             c
           end

@@ -47,4 +47,3 @@ module XXXDownload
     end
   end
 end
-

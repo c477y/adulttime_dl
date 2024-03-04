@@ -267,7 +267,7 @@ RSpec.describe XXXDownload::Data::Scene do
         {
           lazy: true,
           video_link: "https://example.com",
-          refresher: refresher,
+          refresher:,
           **described_class::LAZY_PLACEHOLDER_ATTRIBUTES
         }
       end

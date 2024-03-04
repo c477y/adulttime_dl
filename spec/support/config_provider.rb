@@ -55,7 +55,7 @@ shared_context "fake scene provider" do
         title: "Fake Scene",
         actors: [
           { name: "Actor 1", gender: "female" },
-          { name: "Actor 2", gender: "male" },
+          { name: "Actor 2", gender: "male" }
         ],
         network_name: "Fake Network",
         collection_tag: "N",

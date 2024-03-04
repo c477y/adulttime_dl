@@ -47,7 +47,7 @@ module XXXDownload
       end
 
       def fetch_webpage(url)
-        resp = handle_response!(HTTParty.get(url, headers: headers), return_raw: true)
+        resp = handle_response!(HTTParty.get(url, headers:), return_raw: true)
         Nokogiri::HTML(resp.body)
       end
 
@@ -62,4 +62,3 @@ module XXXDownload
     end
   end
 end
-

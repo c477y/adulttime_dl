@@ -3,7 +3,6 @@
 module XXXDownload
   module Net
     class CumLouderDownloadLinks < Base
-
       def initialize
         super()
       end
@@ -14,4 +13,3 @@ module XXXDownload
     end
   end
 end
-

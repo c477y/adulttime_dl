@@ -23,7 +23,7 @@ module XXXDownload
       end
 
       def capture_links(video_link, play_button: nil, headless: false, ext: ".m3u8")
-        request(headless: headless) do |web_driver, waiter|
+        request(headless:) do |web_driver, waiter|
           web_driver.intercept do |request, &continue|
             uri = URI.parse(request.url)
             links << request.url if uri.path.end_with?(ext)
@@ -79,7 +79,7 @@ module XXXDownload
       def set_cookie
         driver.get(default_options[:url])
         default_options[:cookie].each_pair do |key, value|
-          driver.manage.add_cookie(name: key, value: value)
+          driver.manage.add_cookie(name: key, value:)
         end
         XXXDownload.logger.debug "[ADD COOKIE] #{default_options[:url]}"
       end

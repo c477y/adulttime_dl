@@ -27,7 +27,7 @@ module XXXDownload
       private
 
       # RESOLUTION_STR = /-\s+-\s(?<resolution>\w+)\s-\sSCENE/x.freeze
-      RESOLUTION_STR = /.*(4k|1080p|720p|480p|360p|mobile).*/i.freeze
+      RESOLUTION_STR = /.*(4k|1080p|720p|480p|360p|mobile).*/i
       RES_MAP = {
         "4k" => "4k",
         "1080p" => "fhd",
@@ -54,7 +54,7 @@ module XXXDownload
       end
 
       def fetch_webpage(url)
-        http_resp = HTTParty.get(url, headers: headers, return_raw: true)
+        http_resp = HTTParty.get(url, headers:, return_raw: true)
         resp = handle_response!(http_resp, return_raw: true)
         doc = Nokogiri::HTML(resp.body)
         if doc.title.strip == "New Device Activation"

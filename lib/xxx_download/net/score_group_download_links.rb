@@ -31,7 +31,7 @@ module XXXDownload
       attr_reader :config
 
       def fetch_webpage(url)
-        resp = handle_response!(HTTParty.get(url, headers: headers), return_raw: true)
+        resp = handle_response!(HTTParty.get(url, headers:), return_raw: true)
         Nokogiri::HTML(resp.body)
       end
 

@@ -71,8 +71,8 @@ module XXXDownload
 
     def downloader
       @downloader ||= Downloader::Download.new(store: download_status_store,
-                                               config: config,
-                                               semaphore: semaphore)
+                                               config:,
+                                               semaphore:)
     end
 
     def scenes_index

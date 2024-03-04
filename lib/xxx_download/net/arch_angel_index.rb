@@ -59,7 +59,7 @@ module XXXDownload
 
       def fetch(url)
         http_resp = HTTParty.get(url,
-                                 headers: headers,
+                                 headers:,
                                  follow_redirects: false,
                                  logger: XXXDownload.logger,
                                  log_level: :debug)
@@ -78,4 +78,3 @@ module XXXDownload
     end
   end
 end
-
