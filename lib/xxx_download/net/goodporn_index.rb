@@ -15,7 +15,6 @@ module XXXDownload
           doc.css(".list-videos .item .thumb-link").map { |x| x["href"] }.compact
         end
         process_scenes(all_scenes)
-
       end
 
       # @param [String] url

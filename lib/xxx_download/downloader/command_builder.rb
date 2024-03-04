@@ -5,6 +5,29 @@ module XXXDownload
     class CommandBuilder
       class BadCommandError < StandardError; end
 
+      #
+      # Generate a command that can use used for direct downloads
+      # Provide a block that configures the mandatory parameters
+      # 1. path
+      # 2. url
+      # @yield [XXXDownload::Downloader::CommandBuilder] builder
+      # @return [String] a command to run in shell to download a scene
+      # rubocop:disable Layout/LineLength
+      def self.build_basic
+        builder = new
+        builder.download_client(XXXDownload.config.downloader)
+        builder.cookie(XXXDownload.config.cookie_file)              if XXXDownload.config.downloader_requires_cookie?
+        builder.verbose                                             if %w[debug trace extra].include?(XXXDownload.logger.level.to_s.downcase)
+        builder.parallel(XXXDownload.config.parallel)               if XXXDownload.config.parallel
+        builder.external_flags(XXXDownload.config.downloader_flags) if XXXDownload.config.downloader_flags
+
+        raise FatalError, "[COMMAND BUILDER] no configuration provided" unless block_given?
+
+        yield builder
+        builder.build
+      end
+      # rubocop:enable Layout/LineLength
+
       def self.build
         builder = new
         raise FatalError, "[COMMAND BUILDER] no configuration provided" unless block_given?
