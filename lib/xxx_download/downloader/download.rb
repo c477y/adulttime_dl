@@ -5,7 +5,7 @@ require "open3"
 module XXXDownload
   module Downloader
     class Download
-      extend Forwardable
+      include XXXDownload::Utils
 
       # @param [Data::DownloadStatusDatabase] store
       # @param [Data::Config] config
@@ -20,39 +20,39 @@ module XXXDownload
       # Download a file using scene_data
       #
       # @param [Data::Scene] scene_data
-      # @return [FalseClass, TrueClass]
-      def download(scene_data)
-        scene_data = scene_data.refresh(config.cookie) if scene_data.refresh_required?
+      # @param [Proc] proc A block that accepts `scene_data` and `url`
+      #   and returns a `command` string
+      def download(scene_data, proc)
+        @command_generator = proc
+        scene_data = scene_data.refresh if scene_data.lazy?
 
-        if store.downloaded?(scene_data.key)
-          XXXDownload.logger.info "[ALREADY DOWNLOADED] #{scene_data.file_name}"
-          return
-        end
-
-        return if file_exists?(scene_data)
+        return if already_downloaded?(scene_data)
 
         return if config.skip_scene?(scene_data)
 
+        # Try to download file using direct download
+        # If that fails, try to stream the video and download the HLS stream
         download_using_video_url(scene_data) || download_using_stream(scene_data)
       end
 
       private
 
-      attr_reader :client, :store, :config, :semaphore
+      attr_reader :client, :store, :config, :semaphore, :command_generator
 
-      def_delegators :@config, :streaming_link_fetcher, :download_link_fetcher
+      delegate :streaming_link_fetcher, :download_link_fetcher, to: :config
 
-      def refresh_data(scene_data)
-        store.save_download(scene_data, is_downloaded: store.downloaded?(scene_data.key))
-      end
-
-      def file_exists?(scene_data)
-        complete_fn = "#{scene_data.file_name}.mp4"
-        if File.file?(complete_fn) && File.exist?(complete_fn)
-          store.save_download(scene_data, is_downloaded: true)
+      #
+      # Check if the file has already been downloaded
+      # Looks in the local datastore file and in Stash app (if configured)
+      #
+      # @param [XXXDownload::Data::Scene] scene_data
+      # @return [Boolean]
+      def already_downloaded?(scene_data)
+        if store.downloaded?(scene_data.key)
+          XXXDownload.logger.info "[ALREADY DOWNLOADED] #{scene_data.file_name}"
           return true
         elsif (scene = stash_app&.scene(scene_data))
-          store.save_download(scene_data, is_downloaded: true)
+          store.save_download(scene_data)
           XXXDownload.logger.info "[STASH: FILE EXISTS] #{scene_data.title}"
           XXXDownload.logger.debug "TITLE: #{scene["title"]}"
           XXXDownload.logger.debug "PATH: #{scene["files"]&.first&.[]("path")}"
@@ -68,7 +68,6 @@ module XXXDownload
           begin
             return nil if config.stash_app&.url.nil?
 
-            require "xxx-download/net/stash_app"
             app = Net::StashApp.new(config)
             app.setup_credentials!
             app
@@ -80,7 +79,7 @@ module XXXDownload
         url = download_link_fetcher.fetch(scene_data)
         return false if url.nil?
 
-        command = generate_command(scene_data, url)
+        command = command_generator.call(scene_data, url)
         if config.dry_run?
           XXXDownload.logger.info "WILL DOWNLOAD #{command}"
         else
@@ -98,7 +97,7 @@ module XXXDownload
 
         scene_data = scene_data.add_streaming_links(streaming_links)
         url = scene_data.streaming_links.send(config.quality.to_sym)
-        command = generate_command(scene_data, url)
+        command = command_generator.call(scene_data, url)
         if config.dry_run?
           XXXDownload.logger.info "WILL DOWNLOAD #{command}"
         else
@@ -112,7 +111,7 @@ module XXXDownload
       end
 
       # @param [Data::Scene] scene_data
-      # @return [TrueClass, FalseClass]
+      # @return [Boolean]
       def start_download(scene_data, command)
         XXXDownload.logger.debug command
         Open3.popen2e(command) do |_, stdout_and_stderr, thread|
@@ -125,40 +124,17 @@ module XXXDownload
 
           exit_status = thread.value
           if exit_status != 0
-            store.save_download(scene_data, is_downloaded: false)
+            store.save_download(scene_data)
             XXXDownload.logger.error "[DOWNLOAD_FAIL] #{scene_data.file_name} -- #{output.strip}"
-            false
+            return false
           else
-            valid_file_size!(scene_data)
-            store.save_download(scene_data, is_downloaded: true)
+            valid_file_size?(scene_data)
+            store.save_download(scene_data)
             XXXDownload.logger.info "[DOWNLOAD_COMPLETE] #{scene_data.file_name}"
-            true
+            return true
           end
         end
-      rescue FileSizeTooSmallError => e
-        XXXDownload.logger.warn e.message
         false
-      end
-
-      # @param [Data::Scene] scene_data
-      # @param [String] url
-      # @return [String]
-      def generate_command(scene_data, url)
-        case config.site
-        when "julesjordan" then JulesJordanCommand.build(config, scene_data, url)
-        when "archangel" then ArchAngelCommand.build(config, scene_data, url)
-        when "goodporn" then GoodpornCommand.build(config, scene_data, url)
-        else
-          using_default_link = !scene_data.streaming_links&.default.nil?
-          CommandBuilder.new
-                        .with_download_client(client)
-                        .with_merge_parts(false)
-                        .with_path(scene_data.file_name, config.download_dir)
-                        .with_external_flags(config.downloader_flags)
-                        .with_verbosity(config.verbose)
-                        .with_cookie(config.cookie_file, config.downloader_requires_cookie?)
-                        .with_url(url).build
-        end
       end
 
       # @param [Data::Scene] scene_data

@@ -32,7 +32,7 @@ RSpec.configure do |config|
   end
 
   config.around(:each, type: :file_support) do |example|
-    Dir.mktmpdir("support", Dir.pwd) do |dir|
+    Dir.mktmpdir("temp_test_dir_", Dir.pwd) do |dir|
       Dir.chdir(dir) do
         example.run
       end

@@ -3,7 +3,6 @@
 module XXXDownload
   module Net
     class BaseIndex < Base
-
       def search_by_all_scenes(_url)
         raise NotImplementedError, "#{self.class.name} does not implement search_by_all_scenes"
       end

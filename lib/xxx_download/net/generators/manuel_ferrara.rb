@@ -6,8 +6,8 @@ module XXXDownload
       class ManuelFerrara < JulesJordanMedia
         BASE_URL = "https://manuelferrara.com"
 
-        def initialize(config)
-          super(config, BASE_URL)
+        def initialize
+          super(BASE_URL)
         end
       end
     end

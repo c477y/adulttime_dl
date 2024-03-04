@@ -5,9 +5,8 @@ module XXXDownload
     class ZtodDownloadLinks < AlgoliaDownloadLinks
       BASE_URL = Constants::ZTOD_BASE_URL
 
-      # @param [Data::Config] config
-      def initialize(config)
-        super(config, BASE_URL)
+      def initialize
+        super(BASE_URL)
       end
     end
   end

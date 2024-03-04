@@ -7,9 +7,8 @@ module XXXDownload
 
       BASE_URL = "https://www.loveherfilms.com"
 
-      def initialize(config)
-        cookie(BASE_URL, config.cookie)
-        @config = config
+      def initialize
+        cookie(BASE_URL, XXXDownload.config.cookie)
         super()
       end
 

@@ -5,9 +5,8 @@ module XXXDownload
     class BlowpassDownloadLinks < AlgoliaDownloadLinks
       BASE_URL = Constants::BLOW_PASS_BASE_URL
 
-      # @param [Data::Config] config
-      def initialize(config)
-        super(config, BASE_URL)
+      def initialize
+        super(BASE_URL)
       end
     end
   end

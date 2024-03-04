@@ -5,10 +5,7 @@ module XXXDownload
     class AlgoliaDownloadLinks < Base
       include HTTParty
 
-      # @param [Data::Config] config
-      def initialize(config, base_uri)
-        @cookie = config.cookie
-        @config = config
+      def initialize(base_uri)
         self.class.base_uri(base_uri)
         self.class.logger XXXDownload.logger, :debug
         super()
@@ -30,9 +27,15 @@ module XXXDownload
 
       private
 
-      attr_reader :cookie, :config
-
       SCENE_DOWNLOAD_LINK = "/movieaction/download/%clip_id%/%resolution%/mp4"
+
+      def cookie
+        XXXDownload.config.cookie
+      end
+
+      def config
+        XXXDownload.config
+      end
 
       def headers
         default_headers.merge(

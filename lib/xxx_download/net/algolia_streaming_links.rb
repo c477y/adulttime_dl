@@ -7,16 +7,12 @@ module XXXDownload
 
       STREAMING_URL_PATH = "/media/streamingUrls/%clip_id%"
 
-      attr_reader :cookie
-
       follow_redirects false
 
-      # @param [Data::Config] config
-      def initialize(config, base_url)
+      def initialize(base_url)
         super()
         self.class.base_uri(base_url)
         self.class.logger XXXDownload.logger, :debug
-        @cookie = config.cookie
       end
 
       # @param [Data::Scene] scene_data
@@ -44,6 +40,10 @@ module XXXDownload
       end
 
       private
+
+      def cookie
+        XXXDownload.cookie
+      end
 
       def headers
         default_headers.merge(

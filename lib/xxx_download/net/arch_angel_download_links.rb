@@ -9,9 +9,7 @@ module XXXDownload
       ARCH_ANGEL_VIDEO = "archangelvideo.com"
       ARCH_ANGEL_WORLD = "archangelworld.com"
 
-      # @param [Data::Config] config
-      def initialize(config)
-        @config = config
+      def initialize
         self.class.logger XXXDownload.logger, :debug
         super()
       end

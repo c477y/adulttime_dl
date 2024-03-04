@@ -3,39 +3,53 @@
 module XXXDownload
   module Data
     class Config < Base
-      extend Forwardable
-
       SUPPORTED_DOWNLOAD_CLIENTS = Types::String.enum("youtube-dl", "yt-dlp")
+
       QUALITY = Types::String.enum("fhd", "hd", "sd")
+
+      # rubocop:disable Layout/HashAlignment
       MODULE_NAME = {
-        "adulttime" => "AdultTime",
-        "archangel" => "ArchAngel",
-        "blowpass" => "Blowpass",
-        "cumlouder" => "CumLouder",
-        "goodporn" => "Goodporn",
-        "houseofyre" => "HouseOFyre",
-        "julesjordan" => "JulesJordan",
-        "loveherfilms" => "LoveHerFilms",
+        "adulttime"     => "AdultTime",
+        "archangel"     => "ArchAngel",
+        "blowpass"      => "Blowpass",
+        "cumlouder"     => "CumLouder",
+        "goodporn"      => "Goodporn",
+        "houseofyre"    => "HouseOFyre",
+        "julesjordan"   => "JulesJordan",
+        "loveherfilms"  => "LoveHerFilms",
         "manuelferrara" => "JulesJordan",
-        "pornve" => "PornVE",
-        "scoregroup" => "ScoreGroup",
-        "sxyporn" => "SxyPorn",
-        "ztod" => "ZTOD"
+        "pornve"        => "Pornve",
+        "scoregroup"    => "ScoreGroup",
+        "ztod"          => "Ztod"
       }.freeze
+      # rubocop:enable Layout/HashAlignment
+
       STREAMING_LINKS_SUFFIX = "StreamingLinks"
       DOWNLOAD_LINKS_SUFFIX = "DownloadLinks"
       INDEX_SUFFIX = "Index"
+
+      # Sites that only support downloads using direct links
+      # The playback option in these sites just stream the direct
+      # download
       STREAMING_UNSUPPORTED_SITE = %w[
         archangel
         cumlouder
         goodporn
+        houseofyre
         julesjordan
         manuelferrara
         scoregroup
       ].freeze
+
+      # Sites that only support streaming. This may be because downloading
+      # is not allowed by the site OR the download option is behind a paywall
       DOWNLOADING_UNSUPPORTED_SITE = %w[
         loveherfilms
         pornve
+      ].freeze
+
+      COOKIE_REQUIRED_TO_DOWNLOAD_SITE = %w[
+        loveherfilms
       ].freeze
 
       def initialize(attributes)
@@ -66,10 +80,10 @@ module XXXDownload
         attribute? :api_token,             Types::String.optional
       end
 
-      def_delegators :urls, :performers, :movies, :scenes
+      delegate :performers, :movies, :scenes, to: :urls
 
       def cookie
-        return unless File.exist?(cookie_file)
+        return unless File.exist?(File.join(exec_path, cookie_file))
 
         jar = HTTP::CookieJar.new
         jar.load(cookie_file, :cookiestxt)
@@ -81,13 +95,13 @@ module XXXDownload
       end
 
       def streaming_link_fetcher
-        return Net::NOOPDownloadLinks.new if STREAMING_UNSUPPORTED_SITE.include?(site)
+        return Net::NoopLinkFetcher.new if STREAMING_UNSUPPORTED_SITE.include?(site)
 
         generate_class(site, STREAMING_LINKS_SUFFIX)
       end
 
       def download_link_fetcher
-        return Net::NOOPDownloadLinks.new if DOWNLOADING_UNSUPPORTED_SITE.include?(site)
+        return Net::NoopLinkFetcher.new if DOWNLOADING_UNSUPPORTED_SITE.include?(site)
 
         generate_class(site, DOWNLOAD_LINKS_SUFFIX)
       end
@@ -97,27 +111,12 @@ module XXXDownload
       end
 
       def downloader_requires_cookie?
-        ["loveherfilms"].include?(site)
+        COOKIE_REQUIRED_TO_DOWNLOAD_SITE.include?(site)
       end
 
-      # @param [Data::Scene] scene
+      # @param [XXXDownload::Data::Scene] scene
       def skip_scene?(scene)
         download_filters.skip?(scene)
-      end
-
-      def to_pretty_h
-        to_h.tap do |hash|
-          urls = {
-            performers: "#{performers.length} items",
-            movies: "#{movies.length} items",
-            scenes: "#{scenes.length} items"
-          }
-          hash[:urls] = urls
-        end
-      end
-
-      def inspect
-        to_pretty_h.inspect
       end
 
       # Get the site-specific configuration for the current site
@@ -128,10 +127,9 @@ module XXXDownload
       private
 
       def generate_class(site, suffix)
-        klass = "XXXDownload::Net::#{MODULE_NAME[site]}#{suffix}"
-        Object.const_get(klass).new(self)
-      rescue StandardError => e
-        raise FatalError, "#{e.class} #{e.message}"
+        "XXXDownload::Net::#{MODULE_NAME[site]}#{suffix}".constantize.new
+      rescue NameError => _e
+        raise XXXDownload::FatalError, "[INIT FAILURE] #{"XXXDownload::Net::#{MODULE_NAME[site]}#{suffix}"}"
       end
     end
   end

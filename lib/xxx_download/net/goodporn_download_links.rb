@@ -3,13 +3,6 @@
 module XXXDownload
   module Net
     class GoodpornDownloadLinks < Base
-
-      # @param [Data::Config] config
-      def initialize(config)
-        @config = config
-        super()
-      end
-
       def fetch(scene_data)
         scene_data.downloading_links.send(@config.quality)
       end

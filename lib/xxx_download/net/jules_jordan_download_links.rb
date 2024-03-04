@@ -5,9 +5,7 @@ module XXXDownload
     class JulesJordanDownloadLinks < Base
       include HTTParty
 
-      # @param [Data::Config] config
-      def initialize(config)
-        @config = config
+      def initialize
         self.class.logger XXXDownload.logger, :debug
         super()
       end

@@ -8,8 +8,8 @@ module XXXDownload
         ACTORS_ENDPOINT = "/models/%page%/name/"
         MOVIES_ENDPOINT = "/dvds/dvds_page_%page%.html"
 
-        def initialize(config)
-          super(config, BASE_URL)
+        def initialize
+          super(BASE_URL)
         end
 
         def actors(_female_only = nil)

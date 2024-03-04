@@ -4,9 +4,7 @@ module XXXDownload
   module Net
     class CumLouderDownloadLinks < Base
 
-      # @param [Data::Config] config
-      def initialize(config)
-        @config = config
+      def initialize
         super()
       end
 

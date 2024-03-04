@@ -7,11 +7,6 @@ module XXXDownload
 
         attr_reader :config
 
-        def initialize(config)
-          @config = config
-          super()
-        end
-
         def actors(_female_only)
           raise NotImplementedError, "#{self.class.name} does not implement actors"
         end

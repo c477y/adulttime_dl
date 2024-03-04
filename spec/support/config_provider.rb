@@ -24,6 +24,44 @@ shared_context "config provider" do
     config.merge!("site" => site)
     File.open("config.yml", "w") { |f| f.write(config.to_yaml) }
 
+    # write placeholder data in a cookie file
+    if config["cookie_file"].present?
+      File.open(config["cookie_file"], "w") do |file|
+        cookie_data = <<~COOKIE
+          # Netscape HTTP Cookie File
+          # https://curl.haxx.se/rfc/cookie_spec.html
+          # This is a generated file!  Do not edit.
+
+          #HttpOnly_example.com	TRUE	/	FALSE	9999999999	cookie_name	cookie_value
+        COOKIE
+        file.write(cookie_data)
+      end
+    end
+
+    # set the config in the application namespace
     XXXDownload.set_config(XXXDownload::Data::Config.new(config))
+  end
+end
+
+shared_context "fake scene provider" do
+  let(:override_scene_params) { {} }
+
+  let(:scene) do
+    XXXDownload::Data::Scene.new(
+      {
+        lazy: false,
+        video_link: "https://example.com",
+        clip_id: 1,
+        title: "Fake Scene",
+        actors: [
+          { name: "Actor 1", gender: "female" },
+          { name: "Actor 2", gender: "male" },
+        ],
+        network_name: "Fake Network",
+        collection_tag: "N",
+        release_date: "2020-01-01",
+        movie_title: "Fake Movie"
+      }.merge(override_scene_params)
+    )
   end
 end

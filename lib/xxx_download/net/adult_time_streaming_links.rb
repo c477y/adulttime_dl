@@ -3,8 +3,8 @@
 module XXXDownload
   module Net
     class AdultTimeStreamingLinks < AlgoliaStreamingLinks
-      def initialize(config)
-        super(config, Constants::ADULTTIME_BASE_URL)
+      def initialize
+        super(Constants::ADULTTIME_BASE_URL)
       end
     end
   end
