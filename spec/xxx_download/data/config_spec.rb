@@ -134,7 +134,6 @@ RSpec.describe XXXDownload::Data::Config, type: :file_support do
 
   context "when class generation is called with invalid arguments" do
     it "raises an error" do
-      binding.pry
       expect { config.send(:generate_class, "foo", "bar") }
         .to raise_error(XXXDownload::FatalError, "[INIT FAILURE] XXXDownload::Net::bar")
     end
