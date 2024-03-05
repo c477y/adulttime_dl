@@ -22,6 +22,10 @@ module XXXDownload
         convert_name_to_url(url).gsub(%r{/$}, "").split("/").last&.titleize
       end
 
+      def as_url(name)
+        convert_name_to_url(name)
+      end
+
       private
 
       def convert_name_to_url(name)

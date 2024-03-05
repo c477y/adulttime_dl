@@ -87,6 +87,10 @@ module XXXDownload
         klass.new(endpoint:, code: response.code,
                   body: response.parsed_response, headers: response.headers)
       end
+
+      def config
+        XXXDownload.config
+      end
     end
   end
 end

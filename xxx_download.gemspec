@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "super_diff", "~> 0.11"
   spec.add_development_dependency "typeprof", "~> 0.21.2"
   spec.add_development_dependency "vcr", "~> 6.2"
+  spec.add_development_dependency "webmock", "~> 3"
 
   spec.add_runtime_dependency "activesupport"
   spec.add_runtime_dependency "algolia"

@@ -25,24 +25,24 @@ module XXXDownload
         XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_movie(url)
         Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
-        cleanup_logs
       end
     end
 
     def process_performer
-      config.performers.map do |url|
-        XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
-        dir_name = dir_name(url).presence
+      config.performers.map do |entity|
+        XXXDownload.logger.info "[PROCESSING ENTITY] #{entity}".colorize(:cyan)
+        dir_name = dir_name(entity).presence
         path = if dir_name.present?
+                 XXXDownload.logger.trace "[CREATING SUB-DIRECTORY] #{dir_name}"
                  Dir.mkdir(dir_name) unless Dir.exist?(dir_name)
                  File.join(Dir.pwd, dir_name)
                else
                  Dir.pwd
                end
-        scenes = scenes_index.search_by_actor(url)
+        scenes = scenes_index.search_by_actor(entity)
+        XXXDownload.logger.trace "[CHANGING DIRECTORY] #{path}"
         Dir.chdir(path) do
           Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
-          # cleanup_logs
         end
 
         Dir.rmdir(dir_name) if Dir.empty?(dir_name)
@@ -61,12 +61,7 @@ module XXXDownload
         XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_all_scenes(url)
         Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data) }
-        cleanup_logs
       end
-    end
-
-    def cleanup_logs
-      ::FileUtils.remove_file("downloader.log") if File.exist?("downloader.log")
     end
 
     def downloader

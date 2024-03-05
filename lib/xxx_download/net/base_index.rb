@@ -15,8 +15,22 @@ module XXXDownload
         raise NotImplementedError, "#{self.class.name} does not implement search_by_actor"
       end
 
-      def actor_name(_url)
+      #
+      # Return the name of the performer from the given entity
+      #
+      def actor_name(_entity)
         raise NotImplementedError, "#{self.class.name} does not implement actor_name"
+      end
+
+      #
+      # Users can pass an actor's name instead of their complete URL
+      # In such cases, convert the actor name into a URL
+      # Some sites may not use the actor name in their URL, in those cases
+      # return the _entity as is if it matches the URL format
+      # otherwise raise a {XXXDownload:FatalError}
+      #
+      def as_url(_entity)
+        raise NotImplementedError, "#{self.class.name} does not implement as_url"
       end
 
       #
@@ -30,18 +44,6 @@ module XXXDownload
           b.path(scene_data.file_name, config.download_dir)
           b.url(url)
         end
-      end
-
-      private
-
-      attr_reader :config
-
-      def placeholder_scene_hash
-        {
-          title: "PLACEHOLDER",
-          actors: [],
-          network_name: "PLACEHOLDER"
-        }
       end
     end
   end
