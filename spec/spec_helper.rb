@@ -11,10 +11,17 @@ SimpleCov.start
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
 VCR.configure do |config|
-  config.cassette_library_dir = "fixtures/vcr_cassettes"
+  config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   config.hook_into :webmock
+
   config.filter_sensitive_data("user") { `echo $HOME`.chomp }
   config.filter_sensitive_data("username") { `whoami`.chomp }
+
+  config.before_record do |interaction|
+    %w[Report-To Nel Server Cf-Ray Cf-Cache-Status].each do |h|
+      interaction.response.headers.delete(h)
+    end
+  end
 end
 
 RSpec.configure do |config|

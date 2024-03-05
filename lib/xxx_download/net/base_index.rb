@@ -3,16 +3,24 @@
 module XXXDownload
   module Net
     class BaseIndex < Base
+      # Downloads {XXXDownload::Data::URLs.scenes}
       def search_by_all_scenes(_url)
         raise NotImplementedError, "#{self.class.name} does not implement search_by_all_scenes"
       end
 
+      # Downloads {XXXDownload::Data::URLs.movies}
       def search_by_movie(_url)
         raise NotImplementedError, "#{self.class.name} does not implement search_by_movie"
       end
 
+      # Downloads {XXXDownload::Data::URLs.performers}
       def search_by_actor(_url)
         raise NotImplementedError, "#{self.class.name} does not implement search_by_actor"
+      end
+
+      # Downloads {XXXDownload::Data::URLs.page}
+      def search_by_page(_url)
+        raise NotImplementedError, "#{self.class.name} does not implement search_by_page"
       end
 
       #
@@ -20,17 +28,6 @@ module XXXDownload
       #
       def actor_name(_entity)
         raise NotImplementedError, "#{self.class.name} does not implement actor_name"
-      end
-
-      #
-      # Users can pass an actor's name instead of their complete URL
-      # In such cases, convert the actor name into a URL
-      # Some sites may not use the actor name in their URL, in those cases
-      # return the _entity as is if it matches the URL format
-      # otherwise raise a {XXXDownload:FatalError}
-      #
-      def as_url(_entity)
-        raise NotImplementedError, "#{self.class.name} does not implement as_url"
       end
 
       #

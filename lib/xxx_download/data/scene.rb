@@ -9,12 +9,14 @@ module XXXDownload
         "fhd" => %w[1080p]
       }.freeze
 
-      LAZY_PLACEHOLDER_ATTRIBUTES = {
+      LAZY = {
         lazy: true,
         title: "__LAZY__",
         network_name: "__LAZY__",
         collection_tag: "__LAZY__"
       }.freeze
+
+      NOT_LAZY = { lazy: false }.freeze
 
       def initialize(attributes)
         if attributes[:lazy] && attributes[:refresher].nil?
@@ -30,7 +32,7 @@ module XXXDownload
       # - refresher: a class that can refresh the scene data. This class must implement a `refresh` method
       attribute :lazy, Types::Bool
       attribute :video_link, Types::String
-      attribute? :refresher, Types.Instance(Class)
+      attribute? :refresher, Types.Instance(Net::Refreshers::BaseRefresh)
 
       attribute? :clip_id, Types::Integer
       attribute :title, Types::String

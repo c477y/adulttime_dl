@@ -3,13 +3,24 @@
 module XXXDownload
   module Net
     class GoodpornIndex < BaseIndex
-      def search_by_actor(url)
-        all_scenes = fetch_all_scenes(convert_name_to_url(url)) do |doc|
+      def initialize
+        super
+
+        self.class.base_uri BASE_URI
+      end
+
+      # @param [String] resource
+      # @return [Array[Data::Scene]]
+      def search_by_actor(resource)
+        path = convert_resource_to_path(resource)
+        all_scenes = fetch_all_scenes(path) do |doc|
           doc.css(".list-videos .item .thumb-link").map { |x| x["href"] }.compact
         end
         process_scenes(all_scenes)
       end
 
+      # @param [String] url
+      # @return [Array[Data::Scene]]
       def search_by_movie(url)
         all_scenes = fetch_all_scenes(url) do |doc|
           doc.css(".list-videos .item .thumb-link").map { |x| x["href"] }.compact
@@ -17,31 +28,38 @@ module XXXDownload
         process_scenes(all_scenes)
       end
 
-      # @param [String] url
-      def actor_name(url)
-        convert_name_to_url(url).gsub(%r{/$}, "").split("/").last&.titleize
-      end
-
-      def as_url(name)
-        convert_name_to_url(name)
+      # @param [String] resource
+      # @return [String]
+      def actor_name(resource)
+        resource.slice!(-1) if resource.end_with?("/") # remove trailing slash if present
+        resource.split("/").last.gsub("-", " ").titleize # remove the last part of the URL and convert to title case
       end
 
       private
 
-      def convert_name_to_url(name)
-        with_dash = name.downcase.gsub(" ", "-")
-        with_slash = with_dash.end_with?("/") ? "#{with_dash}/" : with_dash
-        "https://www.goodporn.to/tags/#{with_slash}" unless with_slash.start_with?("https://www.goodporn.to/tags/")
+      BASE_URI = "https://goodporn.to"
+      TAG = "GOODPORN"
+
+      # @param [String] resource can be a complete URL
+      #     e.g. (https://goodporn.to/tags/alexa-grace/) or just the name (alexa grace)
+      # @return [String] path to the resource
+      #     e.g. /tags/alexa-grace/
+      def convert_resource_to_path(resource)
+        if resource.start_with?(BASE_URI)
+          resource.gsub(BASE_URI, "").tap { |r| r << "/" unless r.end_with?("/") }
+        else
+          "/tags/#{resource.downcase.gsub(" ", "-")}/"
+        end
       end
 
       def fetch_all_scenes(url, &block)
         scene_links = []
         page = 1
         loop do
-          XXXDownload.logger.info "[FETCH PAGE] #{page}"
-          doc = fetch?(url, page)
+          XXXDownload.logger.info "[#{TAG}] [FETCHING PAGE #{page}]"
+          doc = fetch(url, page)
           if doc.nil?
-            XXXDownload.logger.debug "[REACHED END OF PAGES]"
+            XXXDownload.logger.debug "[#{TAG}] [NO MORE SCENES]"
             break
           end
 
@@ -55,21 +73,20 @@ module XXXDownload
       # @return [Array[Data::Scene]]
       def process_scenes(scene_urls)
         scene_urls.map do |url|
-          Data::Scene.new(placeholder_scene_hash.merge(video_link: url, refresher: Data::GoodpornScene))
+          Data::Scene.new(
+            video_link: url,
+            refresher: Refreshers::GoodPorn.new(url),
+            **Data::Scene::LAZY
+          )
         end
       end
 
-      def fetch?(url, page = 1)
-        fetch!(url, page)
+      def fetch(path, page = 1)
+        XXXDownload.logger.trace "[#{TAG}] [FETCH] #{path} [PAGE: #{page}]"
+        http_resp = handle_response!(return_raw: true) { self.class.get(path, query: { from: page }) }
+        Nokogiri::HTML(http_resp.body)
       rescue XXXDownload::NotFoundError
         nil
-      end
-
-      def fetch!(url, page = 1)
-        http_resp = HTTParty.get(url, query: { from: page }, headers: default_headers, logger: XXXDownload.logger,
-                                      log_level: :debug)
-        resp = handle_response!(http_resp, return_raw: true)
-        Nokogiri::HTML(resp.body)
       end
     end
   end
