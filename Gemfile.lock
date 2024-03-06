@@ -15,6 +15,7 @@ PATH
       httparty (~> 0.20)
       nokogiri (~> 1.13)
       parallel (~> 1.22)
+      progressbar (~> 1.13)
       selenium-devtools (~> 0.103.1)
       selenium-webdriver (~> 4.3)
       thor (~> 1.2)
@@ -134,6 +135,7 @@ GEM
       racc
     patience_diff (1.2.0)
       optimist (~> 3.0)
+    progressbar (1.13.0)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)

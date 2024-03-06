@@ -1,13 +1,20 @@
 # frozen_string_literal: true
 
+require "pstore"
+require "yaml/store"
+require "progressbar"
+
 module XXXDownload
   module DatastoreUtil
     # Takes a datastore file of type {YAML::Store} or {PStore}
     # and interconverts it to the other type.
     class StoreConverter
+      include Utils
+
       # @param [String] file
       def initialize(file)
         @file = file
+        raise FatalError, "File #{file} does not exist" unless valid_file?(file)
       end
 
       # Exports the PStore datastore file to a YAML::Store file
@@ -26,9 +33,14 @@ module XXXDownload
         XXXDownload.logger.info "[CONVERT] Exporting #{file} to #{new_file}"
         store.transaction do
           new_store.transaction do
-            store.roots.each { |key| new_store[key] = store[key] }
+            progressbar = ProgressBar.create(title: "Export Progress", total: store.roots.length)
+            store.roots.each do |key|
+              progressbar.increment
+              new_store[key] = store[key]
+            end
           end
         end
+        XXXDownload.logger.info "[PROCESS COMPLETED]"
         new_file
       end
 
@@ -46,9 +58,14 @@ module XXXDownload
         XXXDownload.logger.info "[CONVERT] Exporting #{file} to #{new_file}"
         store.transaction do
           new_store.transaction do
-            store.roots.each { |key| new_store[key] = store[key] }
+            progressbar = ProgressBar.create(title: "Import Progress", total: store.roots.length)
+            store.roots.each do |key|
+              progressbar.increment
+              new_store[key] = store[key]
+            end
           end
         end
+        XXXDownload.logger.info "[PROCESS COMPLETED]"
         new_file
       end
 
@@ -58,7 +75,6 @@ module XXXDownload
 
       def pstore?
         store = pstore
-        # binding.pry
         store.transaction { store.roots }
         true
       rescue TypeError => e

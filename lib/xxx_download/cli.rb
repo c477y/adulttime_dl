@@ -18,7 +18,7 @@ module XXXDownload
                          default: "info", desc: "Log level. Can be one of #{LOG_LEVELS.join(", ")}"
       def import(store)
         XXXDownload.set_logger(options["log_level"])
-        DatastoreUtil::StoreConverter.new(store).import
+        Cli.perform_with_error_handling { DatastoreUtil::StoreConverter.new(store).import }
       end
     end
 
@@ -74,12 +74,14 @@ module XXXDownload
     #   XXXDownload.logger.debug "\t#{e.backtrace.join("\n\t")}"
     #   exit 1
     # end
-    def perform_with_error_handling(&block)
+
+    def self.perform_with_error_handling(&block)
       block.call
     rescue Interrupt
       say "Exiting...", :green
       exit 1
-    rescue SafeExit
+    rescue SafeExit => e
+      XXXDownload.logger.info e.message
       exit 0
     rescue StandardError, FatalError => e
       XXXDownload.logger.fatal "#{e.class} - #{e.message}"

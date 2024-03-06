@@ -50,6 +50,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "http-cookie", "~> 1.0"
   spec.add_runtime_dependency "nokogiri", "~> 1.13"
   spec.add_runtime_dependency "parallel", "~> 1.22"
+  spec.add_runtime_dependency "progressbar", "~> 1.13"
   spec.add_runtime_dependency "selenium-devtools", "~> 0.103.1"
   spec.add_runtime_dependency "selenium-webdriver", "~> 4.3"
   spec.add_runtime_dependency "thor", "~> 1.2"
