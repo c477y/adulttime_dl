@@ -8,10 +8,7 @@ module XXXDownload
       include XXXDownload::Utils
 
       # @param [Data::DownloadStatusDatabase] store
-      # @param [Data::Config] config
-      def initialize(store:, config:, semaphore:)
-        @config = config
-        @client = config.downloader
+      def initialize(store:, semaphore:)
         @store = store
         @semaphore = semaphore
       end
@@ -37,7 +34,7 @@ module XXXDownload
 
       private
 
-      attr_reader :client, :store, :config, :semaphore, :command_generator
+      attr_reader :store, :semaphore, :command_generator
 
       delegate :streaming_link_fetcher, :download_link_fetcher, to: :config
 
@@ -187,6 +184,14 @@ module XXXDownload
       rescue FileSizeTooSmallError => e
         XXXDownload.logger.warn e.message
         false
+      end
+
+      def client
+        config.downloader
+      end
+
+      def config
+        XXXDownload.config
       end
     end
   end

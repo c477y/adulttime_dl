@@ -33,7 +33,6 @@ module XXXDownload
         XXXDownload.logger.info "[PROCESSING ENTITY] #{entity}".colorize(:cyan)
         dir_name = dir_name(entity).presence
         path = if dir_name.present?
-                 XXXDownload.logger.trace "[CREATING SUB-DIRECTORY] #{dir_name}"
                  Dir.mkdir(dir_name) unless Dir.exist?(dir_name)
                  File.join(Dir.pwd, dir_name)
                else
@@ -45,7 +44,7 @@ module XXXDownload
           Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data, generator) }
         end
 
-        Dir.rmdir(dir_name) if Dir.empty?(dir_name)
+        Dir.rmdir(dir_name) if dir_name.present? && Dir.empty?(dir_name)
       end
     end
 
@@ -65,9 +64,7 @@ module XXXDownload
     end
 
     def downloader
-      @downloader ||= Downloader::Download.new(store: download_status_store,
-                                               config:,
-                                               semaphore:)
+      @downloader ||= Downloader::Download.new(store: download_status_store, semaphore:)
     end
 
     def scenes_index
