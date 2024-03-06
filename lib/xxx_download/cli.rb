@@ -47,10 +47,12 @@ module XXXDownload
     option :log_level, type: :string, enum: LOG_LEVELS,
                        default: "info", desc: "Log level. Can be one of #{LOG_LEVELS.join(", ")}"
     def download(site)
-      perform_with_error_handling do
+      Cli.perform_with_error_handling do
         XXXDownload.set_logger(options["log_level"])
         config = Contract::ConfigGenerator.new(site, options).generate
-        client = Client.new(config)
+        XXXDownload.set_config(config)
+
+        client = Client.new
         client.start!
       end
     end
@@ -78,14 +80,18 @@ module XXXDownload
     def self.perform_with_error_handling(&block)
       block.call
     rescue Interrupt
-      say "Exiting...", :green
+      XXXDownload.logger.info "Exiting..."
       exit 1
     rescue SafeExit => e
       XXXDownload.logger.info e.message
       exit 0
-    rescue StandardError, FatalError => e
+    rescue FatalError => e
       XXXDownload.logger.fatal "#{e.class} - #{e.message}"
       XXXDownload.logger.debug "\t#{e.backtrace&.join("\n\t")}"
+      exit 1
+    rescue StandardError => e
+      XXXDownload.logger.fatal "#{e.class} - #{e.message}"
+      XXXDownload.logger.fatal "\t#{e.backtrace&.join("\n\t")}"
       exit 1
     end
 

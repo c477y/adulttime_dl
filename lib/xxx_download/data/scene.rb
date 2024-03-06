@@ -62,7 +62,7 @@ module XXXDownload
       def refresh
         return self if refresher.nil?
 
-        refresher.new(video_link).refresh
+        refresher.refresh
       end
 
       # @param [String] quality: one of "sd", "hd" or "fhd"

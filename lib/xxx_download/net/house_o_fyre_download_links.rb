@@ -4,7 +4,7 @@ module XXXDownload
   module Net
     class HouseOFyreDownloadLinks < Base
       def fetch(scene_data)
-        scene_data.downloading_links.send(@config.quality)
+        scene_data.downloading_links.send(config.quality)
       end
     end
   end

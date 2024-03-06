@@ -2,11 +2,7 @@
 
 module XXXDownload
   class Client
-    attr_reader :config
-
-    # @param [Data::Config] config
-    def initialize(config)
-      @config = config
+    def initialize
       download_status_store
     end
 
@@ -81,6 +77,10 @@ module XXXDownload
 
     def download_status_store
       @download_status_store ||= Data::DownloadStatusDatabase.new(config.store, semaphore)
+    end
+
+    def config
+      XXXDownload.config
     end
   end
 end

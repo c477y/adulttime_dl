@@ -19,43 +19,54 @@ module XXXDownload
       #                  otherwise the parsed response
       # @param [Proc] block a block which runs the HTTParty request
       # @return [HTTParty::Response]
-      def handle_response!(return_raw:, &block)
+      # @raise [XXXDownload::APIError]
+      def handle_response!(return_raw: false, &block)
         handle_response_with_retry!(return_raw:, &block)
       end
 
       private
 
+      ERROR_CODE_MAP = {
+        302 => RedirectedError,
+        400 => BadRequestError,
+        401 => UnauthorizedError,
+        403 => ForbiddenError,
+        404 => NotFoundError,
+        429 => TooManyRequestsError,
+        500 => InternalServerError,
+        503 => BadGatewayError
+      }.freeze
+
       # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      # @param [Boolean] return_raw Set this to true if the response is JSON, and false for HTML
+      # @param [Integer] current_attempt
+      # @param [Integer] max_attempts
+      # @param [Proc] block
+      # @return [HTTParty::Response]
+      # @raise [XXXDownload::APIError]
       def handle_response_with_retry!(return_raw: false, current_attempt: 1, max_attempts: 5, &block)
         raise ArgumentError, "expected HTTParty::Response or Proc, invoked with nil" unless block
 
         response = block.call
 
-        case response.code
-        when 200 then return_raw ? response : response.parsed_response
-        when 302 then raise api_error(RedirectedError, response)
-        when 400 then raise api_error(BadRequestError, response)
-        when 401 then raise api_error(UnauthorizedError, response)
-        when 403 then raise api_error(ForbiddenError, response)
-        when 429 then raise api_error(TooManyRequestsError, response)
-        when 404 then raise api_error(NotFoundError, response)
-        when 500 then raise api_error(InternalServerError, response)
-        when 503 then raise api_error(BadGatewayError, response)
-        else raise api_error(UnhandledError, response)
+        if response.code == 200
+          return return_raw ? response : response.parsed_response
         end
+
+        error_klass = ERROR_CODE_MAP.fetch(response.code, UnhandledError)
+        raise api_error(error_klass, response)
       rescue *RETRIABLE_ERRORS => e
         raise e if current_attempt > max_attempts
 
         if e.instance_of?(TooManyRequestsError)
-          XXXDownload.logger.error "[RATE LIMIT EXCEEDED] Sleeping for 3 minutes. "\
-                                     "Cancel to run the app at a different time."
-          6.times do |counter|
-            sleep(30)
-            XXXDownload.logger.info "[SLEEP ELAPSED] #{counter * 30}s"
-          end
+          run_sleep(30, 6, e)
+        elsif e.instance_of?(SocketError)
+          # Try in rapid succession to check if network is back up
+          run_sleep(5, 15, e)
         else
-          XXXDownload.logger.error "#{e.class}: message:#{e.message}"
+          XXXDownload.logger.error "[#{exception.class}] #{exception.message}"
         end
+
         handle_response_with_retry!(return_raw:,
                                     current_attempt: current_attempt + 1,
                                     max_attempts:,
@@ -73,6 +84,7 @@ module XXXDownload
       end
 
       RETRIABLE_ERRORS = [
+        SocketError,
         ::Net::OpenTimeout,
         ::Net::ReadTimeout,
         ::OpenSSL::SSL::SSLError,
@@ -90,6 +102,19 @@ module XXXDownload
 
       def config
         XXXDownload.config
+      end
+
+      # @param [Integer] sleep_duration
+      # @param [Integer] counter
+      # @param [Exception] exception
+      def run_sleep(sleep_duration, counter, exception)
+        XXXDownload.logger.error "[#{exception.class}] #{exception.message}"
+        XXXDownload.logger.error "Going to sleep for #{counter * sleep_duration} seconds. " \
+                                   "Cancel to run the app at a different time."
+        counter.times do |c|
+          sleep(sleep_duration)
+          XXXDownload.logger.info "[SLEEP ELAPSED] #{c * sleep_duration}s"
+        end
       end
     end
   end

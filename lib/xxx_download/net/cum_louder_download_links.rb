@@ -3,12 +3,8 @@
 module XXXDownload
   module Net
     class CumLouderDownloadLinks < Base
-      def initialize
-        super()
-      end
-
       def fetch(scene_data)
-        scene_data.downloading_links.send(@config.quality)
+        scene_data.downloading_links.send(config.quality)
       end
     end
   end

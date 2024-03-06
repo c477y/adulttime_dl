@@ -52,7 +52,7 @@ module XXXDownload
 
       # @param [Data::Scene] scene_data
       def scene(scene_data)
-        response = handle_response!(self.class.post(GRAPHQL_ENDPOINT, body: find_scene_body(scene_data.title)))
+        response = handle_response! { self.class.post(GRAPHQL_ENDPOINT, body: find_scene_body(scene_data.title)) }
         response.dig("data", "findScenes", "scenes")&.first
       end
 
@@ -106,7 +106,7 @@ module XXXDownload
           GRAPHQL
         }.to_json
 
-        resp = handle_response!(self.class.post(GRAPHQL_ENDPOINT, body:))
+        resp = handle_response! { self.class.post(GRAPHQL_ENDPOINT, body:) }
         resp.dig("data", "version", "version")
       end
 

@@ -75,7 +75,7 @@ module XXXDownload
           XXXDownload.logger.warn "[WARN] No collection tag parsed from scene #{path}" if channel_name.nil?
           ct = COLLECTION_TAG_LOOKUP.fetch(channel_name&.downcase, "GP")
 
-          XXXDownload.logger.debug "[#{TAG}] Collection Tag not configured for #{ct}" if ct == "GP"
+          XXXDownload.logger.debug "[#{TAG}] Collection Tag not configured for #{channel_name}" if ct == "GP"
           ct
         end
 
