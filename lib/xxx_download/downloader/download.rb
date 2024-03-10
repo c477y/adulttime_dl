@@ -134,53 +134,17 @@ module XXXDownload
         false
       end
 
-      # @param [Data::Scene] scene_data
-      def valid_file_size!(scene_data)
-        semaphore.synchronize { unsafe_valid_file_size!(scene_data) }
-      end
-
-      #
-      # This method is not thread safe and will raise a runtime error if
-      # called by multiple threads at once
-      #
-      # @param [Data::Scene] scene_data
-      def unsafe_valid_file_size!(scene_data)
-        # Dir.chdir(config.download_dir) do
-        filename = "#{scene_data.file_name}.mp4"
-        unless File.file?(filename) && File.exist?(filename)
+      def valid_file_size?(scene_data)
+        # replace all non-word characters with `?` for globbing to work
+        search_str = "#{scene_data.file_name.gsub(/[^-\w\s]/, "?")}.*"
+        matching_file = Dir[search_str].first
+        if matching_file.nil?
           XXXDownload.logger.warn "[FILENAME RESOLUTION FAILURE] #{File.join(Dir.pwd, filename)}"
-        end
-        if File.file?(filename) && File.exist?(filename) && File.size?(filename) < 20_000
+        elsif File.size?(matching_file) < 20_000
           size = File.size(filename)
           ::FileUtils.remove_file(filename)
           raise FileSizeTooSmallError.new(filename, size)
         end
-        true
-        #
-        # TODO: Check why this doesn't work
-        #
-        # matching_files = Dir["#{scene_data.file_name}.*"]
-        # filename = matching_files.first
-        #
-        # if matching_files.length > 1
-        #   XXXDownload.logger.warn "[EXPECTED SINGLE MATCH #{scene_data.file_name}] #{matching_files}"
-        #   return
-        # end
-        #
-        # return if filename.nil?
-        #
-        # if File.file?(filename) && File.exist?(filename) && File.size?(filename) < 5000
-        #   size = File.size(filename)
-        #   ::FileUtils.remove_file(filename)
-        #   raise FileSizeTooSmallError.new(filename, size)
-        # end
-        #
-        # true
-        # end
-      end
-
-      def valid_file_size?(scene_data)
-        valid_file_size!(scene_data)
       rescue FileSizeTooSmallError => e
         XXXDownload.logger.warn e.message
         false

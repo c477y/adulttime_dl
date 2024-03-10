@@ -30,6 +30,14 @@ RSpec.describe XXXDownload::Net::Refreshers::GoodPorn do
       expect(@result.to_h.deep_transform_keys(&:to_sym)).to include(expected_attrs)
     end
 
+    it "returns the correct tags" do
+      expected_tags =
+        %w[xandercorvus cocorains piercing muscularman americanman shorthair bigdick bigass curvywoman
+           brunette shaved bigtits cumshot facial kissing sneaky oil blowjob deepthroat facefuck gagging hairpulling
+           spanking tittyfuck assworship cowgirl doggystyle missionary topad 4kvideos brazzersexxtra 2024]
+      expect(@result.tags.to_a).to eq(expected_tags)
+    end
+
     it "returns download links" do
       links = @result.downloading_links
 

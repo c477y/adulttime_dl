@@ -42,8 +42,10 @@ module XXXDownload
         when "FATAL" then "#{"[#{date_format}] [#{severity.ljust(5)}]".to_s.colorize(:red)} #{msg}\n"
         when "ERROR" then "#{"[#{date_format}] [#{severity.ljust(5)}]".to_s.colorize(:light_red)} #{msg}\n"
         when "WARN"  then "#{"[#{date_format}] [#{severity.ljust(5)}]".to_s.colorize(:yellow)} #{msg}\n"
-        when "INFO"  then "#{"[#{date_format}] [#{severity.ljust(5)}]".to_s.colorize(:blue)} #{msg}\n"
-        when "DEBUG" then "#{"[#{date_format}] [#{severity.ljust(5)}]".to_s.colorize(:magenta)} #{msg}\n"
+        when "INFO"  then "#{"[#{date_format}] [#{severity.ljust(5)}]".to_s.colorize(:green)} #{msg}\n"
+        when "DEBUG" then "#{"[#{date_format}] [#{severity.ljust(5)}]".to_s.colorize(:blue)} #{msg}\n"
+        when "TRACE" then "#{"[#{date_format}] [#{severity.ljust(5)}]".to_s.colorize(:light_blue)} #{msg}\n"
+        when "EXTRA" then "#{"[#{date_format}] [#{severity.ljust(5)}]".to_s.colorize(:magenta)} #{msg}\n"
         else "#{"[#{date_format}] [#{severity.ljust(5)}]".to_s.colorize(:cyan)} #{msg}\n"
         end
       end

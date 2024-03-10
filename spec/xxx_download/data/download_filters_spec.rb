@@ -11,6 +11,7 @@ RSpec.describe XXXDownload::Data::DownloadFilters do
       skip_lesbian: false,
       skip_keywords: [],
       oldest_year: 2010,
+      minimum_duration: "10:00",
       **attr_overrides
     }
   end
@@ -67,6 +68,15 @@ RSpec.describe XXXDownload::Data::DownloadFilters do
 
     context "when scene's release date is older than oldest_year" do
       let(:attr_overrides) { { oldest_year: 2024 } }
+
+      it "returns true" do
+        expect(subject.skip?(scene)).to be true
+      end
+    end
+
+    context "when scene's duration is shorter than minimum_duration" do
+      let(:attr_overrides) { { minimum_duration: "20:00" } }
+      let(:overrides) { { duration: "00:30" } }
 
       it "returns true" do
         expect(subject.skip?(scene)).to be true

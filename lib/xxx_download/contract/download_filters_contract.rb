@@ -45,6 +45,7 @@ module XXXDownload
           optional(:skip_keywords).maybe(array[:string])
           optional(:oldest_year).maybe(:integer)
           optional(:skip_lesbian).maybe(:bool)
+          optional(:minimum_duration).maybe(:string)
         end
 
         optional(:cookie_file).maybe(:string)
@@ -96,6 +97,19 @@ module XXXDownload
         else
           key.failure("does not exist or cannot be read") unless valid_file?(value)
         end
+      end
+
+      rule(download_filters: :oldest_year) do
+        key.failure("must be a valid year") if value < 1980 || value > Time.now.year
+      end
+
+      rule(download_filters: :minimum_duration) do
+        invalid_format_msg = "must be a valid duration in the format MM:SS"
+        key.failure(invalid_format_msg) unless value.match?(/\d{2}:\d{2}/)
+        invalid_duration_msg = "must be more than 00 and less than 60"
+        mm = value.split(":").first.to_i
+        ss = value.split(":").last.to_i
+        key.failure(invalid_duration_msg) if mm.negative? || mm > 59 || ss.negative? || ss > 59
       end
 
       rule(:downloader) do

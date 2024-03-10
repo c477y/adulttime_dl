@@ -5,23 +5,24 @@ module XXXDownload
     module Refreshers
       class GoodPorn < BaseRefresh
         def initialize(path)
-          @path = path
+          @path = path.gsub(Net::GoodpornIndex::BASE_URI, "")
           self.class.base_uri Net::GoodpornIndex::BASE_URI
           super()
         end
 
         def refresh
-          # binding.pry
           resp = handle_response!(return_raw: true) { self.class.get(path, headers: default_headers) }
           @doc = Nokogiri::HTML(resp.body)
           scene = {}.tap do |h|
             h[:title] = title
             h[:actors] = actors
-            h[:release_date] = release_date?
+            h[:release_date] = release_date? if release_date?
             h[:network_name] = network_name
             h[:download_sizes] = download_sizes
             h[:downloading_links] = downloading_links
             h[:collection_tag] = collection_tag
+            h[:tags] = tags
+            h[:duration] = duration
             h[:is_streamable] = false # Force use download strategy
             h[:video_link] = File.join(self.class.base_uri, path)
           end
@@ -51,7 +52,7 @@ module XXXDownload
         COLLECTION_TAG_LOOKUP = {
           "babes" => "BB",
           "brazzers" => "BZ",
-          "digitalplayground" => "DP",
+          "digital playground" => "DP",
           "dogfart network" => "DGF",
           "evil angel" => "EA",
           "mofos" => "MOF",
@@ -77,6 +78,33 @@ module XXXDownload
 
           XXXDownload.logger.debug "[#{TAG}] Collection Tag not configured for #{channel_name}" if ct == "GP"
           ct
+        end
+
+        # @return [NilClass, Array[String]]
+        def tags
+          doc.css(".info .item")
+             .find { |x| x.text.strip.start_with?("Tags:") }
+             &.css("a")
+             &.map { |x| x.text.strip.downcase }
+        end
+
+        # @return [NilClass, String]
+        def duration
+          d = doc.css(".info .item span")
+                 .find { |x| x.text.strip.start_with?("Duration:") }
+                 &.css("em")
+                 &.text&.strip
+          if d.nil?
+            XXXDownload.logger.warn "[#{TAG}] No duration parsed from scene #{title}"
+            return
+          end
+
+          unless d.match?(/\d{1,2}:\d{2}/)
+            XXXDownload.logger.warn "[#{TAG}] [#{d}] Invalid duration parsed #{title}"
+            return
+          end
+
+          d
         end
 
         # @return [Array[String]]

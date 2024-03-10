@@ -33,7 +33,12 @@ module XXXDownload
           cn05: "newline",
           c11: "[Boolean] Skip downloading scenes with only female actors",
           c12: "This only works with certain sites that provide gender information for performers",
-          "skip_lesbian" => false
+          "skip_lesbian" => false,
+
+          cn06: "newline",
+          c13: "[String] Minimum duration of scene to download in MM:SS format",
+          c14: "e.g. '10:00' for 10 minutes",
+          "minimum_duration" => "10:00"
         },
 
         cn06: "newline",

@@ -44,7 +44,7 @@ module XXXDownload
       "If not provided, a store file will be created by the CLI"
     option :parallel, type: :numeric, default: 1, aliases: :p, desc: "Number of parallel downloads to perform. " \
       "For optimal performance, do not set this to more than 5"
-    option :log_level, type: :string, enum: LOG_LEVELS,
+    option :log_level, type: :string, enum: LOG_LEVELS, aliases: :l,
                        default: "info", desc: "Log level. Can be one of #{LOG_LEVELS.join(", ")}"
     def download(site)
       Cli.perform_with_error_handling do

@@ -40,6 +40,8 @@ module XXXDownload
       attribute :network_name, Types::String
       attribute :collection_tag, Types::String.default("C")
 
+      attribute? :tags, Types::CustomSet
+      attribute? :duration, Types::String
       attribute? :release_date, Types::String
       attribute? :movie_title, Types::String
       attribute? :download_sizes, Types::Array.of(Types::String)

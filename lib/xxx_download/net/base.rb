@@ -49,6 +49,21 @@ module XXXDownload
 
         response = block.call
 
+        # Log all output to file for debugging
+        # Tag all log entities with an ID because the file is written to
+        # by multiple threads
+        id = SecureRandom.uuid
+        XXXDownload.logger.debug "[HTTP RESPONSE RECORDED] ID #{id}"
+        XXXDownload.file_logger.info "------- #{id} START HTTP LOG -------"
+        endpoint = "#{response.request.base_uri}#{response.request.path}"
+        XXXDownload.file_logger.info "------- #{id} REQUEST URL: #{response.request.http_method} #{endpoint}"
+        XXXDownload.file_logger.info "------- #{id} REQUEST HEADERS: #{response.request.options[:headers]}"
+        XXXDownload.file_logger.info "------- #{id} REQUEST BODY: #{response.request.options[:body]}"
+
+        XXXDownload.file_logger.info "------- #{id} RESPONSE HEADERS: #{response.headers}"
+        XXXDownload.file_logger.info "------- #{id} RESPONSE BODY: #{response.body}"
+        XXXDownload.file_logger.info "------- #{id} END HTTP LOG -------"
+
         if response.code == 200
           return return_raw ? response : response.parsed_response
         end

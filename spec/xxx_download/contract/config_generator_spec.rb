@@ -75,6 +75,26 @@ RSpec.describe XXXDownload::Contract::ConfigGenerator, type: :file_support do
           it { expect(generate.urls.performers).to be_empty }
         end
       end
+
+      context "with invalid minimum year" do
+        let(:override_config) { { "download_filters" => { "oldest_year" => 1900 } } }
+
+        it { expect { generate }.to raise_error(XXXDownload::FatalError, /must be a valid year/) }
+      end
+
+      describe "minimum_duration" do
+        context "with incorrect string" do
+          let(:override_config) { { "download_filters" => { "minimum_duration" => "xyz" } } }
+
+          it { expect { generate }.to raise_error(XXXDownload::FatalError, /must be a valid duration/) }
+        end
+
+        context "with incorrect duration" do
+          let(:override_config) { { "download_filters" => { "minimum_duration" => "60:61" } } }
+
+          it { expect { generate }.to raise_error(XXXDownload::FatalError, /must be more than 00 and less than 60/) }
+        end
+      end
     end
   end
 end

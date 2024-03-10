@@ -35,6 +35,13 @@ module XXXDownload
         resource.split("/").last.gsub("-", " ").titleize # remove the last part of the URL and convert to title case
       end
 
+      def command(scene_data, url)
+        XXXDownload::Downloader::CommandBuilder.build_basic do |b|
+          b.path(scene_data.file_name, config.download_dir, "mp4")
+          b.url(url)
+        end
+      end
+
       private
 
       BASE_URI = "https://goodporn.to"
