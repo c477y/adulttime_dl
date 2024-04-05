@@ -10,5 +10,10 @@
 # rspec failure tracking
 .rspec_status
 
+# log files not cleaned up by rspec
+downloader.log
+
 .idea
 .vscode
+*temp_test_dir_*
+.ruby-lsp

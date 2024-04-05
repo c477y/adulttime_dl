@@ -1,4 +1,4 @@
-module AdultTimeDL
+module XXXDownload
   class FatalError < StandardError
   end
 

@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+module XXXDownload
+  module Net
+    class <%= name %>StreamingLinks < Base
+
+      BASE_URL = "XXXX"
+      TAG = " <%= name.upcase %>_INDEX"
+
+      # @param [Data::Scene]
+      # @return [Data::StreamingLinks]
+      # noinspection RubyMismatchedReturnType
+      def fetch(scene_data)
+        XXXDownload.logger.info "PENDING #{scene_data}"
+        Data::StreamingLinks.new(default: links)
+      end
+    end
+  end
+end

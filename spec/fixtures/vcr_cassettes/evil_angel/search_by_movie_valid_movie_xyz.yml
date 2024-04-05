@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://tsmkfa364q-dsn.algolia.net/1/indexes/all_scenes/query
+    body:
+      encoding: UTF-8
+      string: '{"query":"","hitsPerPage":1000,"filters":"movie_id:fff"}'
+    headers:
+      User-Agent:
+      - Algolia for Ruby (2.3.4), Ruby (3.1.3)
+      Content-Type:
+      - application/json; charset=utf-8
+      Referer:
+      - https://www.evilangel.com
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '402'
+      Connection:
+      - keep-alive
+      X-Alg-Pt:
+      - '1'
+      Accept-Encoding:
+      - deflate, gzip
+      Cache-Control:
+      - no-store
+      Access-Control-Allow-Origin:
+      - "*"
+      Timing-Allow-Origin:
+      - "*"
+      X-Content-Type-Options:
+      - nosniff
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Content-Disposition:
+      - inline; filename=a.txt
+    body:
+      encoding: UTF-8
+      string: '{"hits":[],"nbHits":0,"page":0,"nbPages":0,"hitsPerPage":1000,"exhaustiveNbHits":true,"exhaustiveTypo":true,"exhaustive":{"nbHits":true,"typo":true},"query":"","params":"hitsPerPage=1000&filters=movie_id%3Afff&validUntil=1716081504&restrictIndices=all%2A&filters=segment%3Aevilangel+AND+%28NOT+site_id%3A426%29","processingTimeMS":1,"processingTimingsMS":{"_request":{"roundTrip":22}},"serverTimeMS":1}'
+  recorded_at: Sat, 18 May 2024 22:18:24 GMT
+recorded_with: VCR 6.2.0

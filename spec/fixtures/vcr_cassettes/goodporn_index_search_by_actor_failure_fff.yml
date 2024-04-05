@@ -1,0 +1,66 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://goodporn.to/tags/fff/?from=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0
+      Accept:
+      - application/json
+      Dnt:
+      - '1'
+      Connection:
+      - keep-alive
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Tue, 05 Mar 2024 22:52:35 GMT
+      Content-Type:
+      - text/html; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Powered-By:
+      - PHP/7.4.33
+      X-Frame-Options:
+      - SAMEORIGIN
+      Set-Cookie:
+      - PHPSESSID=onh4hmt4o7dpb449ghglgb443p; path=/; domain=.goodporn.to; secure;
+        SameSite=None
+      - kt_qparams=tag%3Dfff%26from%3D1; expires=Wed, 06-Mar-2024 22:52:35 GMT; Max-Age=86400;
+        path=/; domain=.goodporn.to; secure; SameSite=None
+      Expires:
+      - Thu, 19 Nov 1981 08:52:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate
+      Pragma:
+      - no-cache
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+        <head>
+        <title>404 Not Found</title>
+        <script type="text/javascript">window.location='/404.php';</script>
+        </head>
+        <body>
+        <h1>Not Found</h1>
+        The requested URL was not found on this server.
+        <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v84a3a4012de94ce1a686ba8c167c359c1696973893317" integrity="sha512-euoFGowhlaLqXsPWQ48qSkBSCFs3DPRyiwVu3FjR96cMPx+Fr+gpWRhIafcHwqwCqWS42RZhIudOvEI+Ckf6MA==" data-cf-beacon='{"rayId":"85fdad63e8ea6543","version":"2024.2.4","r":1,"token":"61865d5da35740a78007603fab7a89cf","b":1}' crossorigin="anonymous"></script>
+        </body>
+        </html>
+  recorded_at: Tue, 05 Mar 2024 22:52:35 GMT
+recorded_with: VCR 6.2.0
