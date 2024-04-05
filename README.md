@@ -1,5 +1,10 @@
 # AdultTimeDL
 
+> [!IMPORTANT]
+> The main branch of this repository is contains a lot of bugs because of lack
+> of any tests. If you want to use this tool, please use the
+> [v0.3.0](https://github.com/c477y/adulttime_dl/tree/v0.3.0) branch.
+
 Bulk download porn videos from premium websites
 
 ## Installation
