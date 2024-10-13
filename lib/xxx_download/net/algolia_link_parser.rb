@@ -10,11 +10,11 @@ module XXXDownload
       module ClassMethods
         def entity_name(url)
           path = URI(url).path
-          path.split("/")&.[](-2)&.gsub("-", " ")
+          path.split("/")&.[](-2)&.gsub("-", " ") || url
         rescue URI::InvalidURIError => e
           # Assume the user passed in the actor name instead of the actor URL
           XXXDownload.logger.trace("#{self.class.name} #{__method__} #{e.message}")
-          url.gsub(/\s/, "-")
+          url.gsub("-", " ")
         end
 
         def entity_id(url)

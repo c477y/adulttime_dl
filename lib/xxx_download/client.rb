@@ -49,7 +49,7 @@ module XXXDownload
       config.scenes.map do |url|
         XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_all_scenes(url)
-        Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data, generator) }
+        Parallel.map(scenes, in_threads: 5) { |scene_data| downloader.download(scene_data, generator) }
       end
     end
 
