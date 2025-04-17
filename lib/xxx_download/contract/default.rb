@@ -60,7 +60,7 @@ module XXXDownload
         cn08: "newline",
         c18: "[String] Name of downloader tool to use. Currently supports youtube-dl and yt-dlp",
         c19: "Ensure that the downloader is available in your $PATH",
-        "downloader" => "youtube-dl",
+        "downloader" => "yt-dlp",
 
         cn09: "newline",
         c20: "[String] Directory to download scenes. '.' means current directory",

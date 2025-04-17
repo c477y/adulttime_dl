@@ -12,7 +12,9 @@ RSpec.describe XXXDownload::Downloader::CommandBuilder, type: :file_support do
 
   context "with no mandatory keys specified" do
     let(:builder) do
-      described_class.build(&:merge_parts)
+      described_class.build do |builder|
+        builder.external_flags "--test-external-flags"
+      end
     end
 
     it {
@@ -38,13 +40,14 @@ RSpec.describe XXXDownload::Downloader::CommandBuilder, type: :file_support do
 
   context "with all keys specified" do
     let(:expected_command) do
-      "youtube-dl \"https://www.example.com\" --cookies test_cookie -o '/test.%(ext)s' " \
+      "yt-dlp \"https://www.example.com\" --cookies test_cookie -o '/test.%(ext)s' " \
         "--verbose --dump-pages --test-external-flags --merge-output-format mkv " \
+        "--concurrent-fragments 2 " \
         "-f 'bestvideo[height<=1080]+bestaudio/best[height<=1080]'"
     end
     let(:builder) do
       described_class.build do |builder|
-        builder.download_client("youtube-dl")
+        builder.download_client("yt-dlp")
         builder.path("test")
         builder.url("https://www.example.com")
         builder.merge_parts
@@ -86,16 +89,17 @@ RSpec.describe XXXDownload::Downloader::CommandBuilder, type: :file_support do
 
       it "returns a command string" do
         expect(builder)
-          .to eq("youtube-dl \"https://www.example.com\" " \
+          .to eq("yt-dlp \"https://www.example.com\" " \
                  "-o '/test.%(ext)s' --external-downloader aria2c " \
-                 "--external-downloader-args \"-j 8 -s 8 -x 8 -k 5M\"")
+                 "--external-downloader-args \"-j 8 -s 8 -x 8 -k 5M\" " \
+                 "--concurrent-fragments 1")
       end
     end
 
     context "when mandatory keys are missing" do
       let(:builder) do
         described_class.build_basic do |b|
-          b.download_client("youtube-dl")
+          b.download_client("yt-dlp")
         end
       end
 

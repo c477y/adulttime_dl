@@ -28,7 +28,11 @@ module XXXDownload
 
       SUPPORTED_SITES_SPELL_CHECKER = DidYouMean::SpellChecker.new(dictionary: SUPPORTED_SITES)
 
-      SUPPORTED_DOWNLOADERS = %w[youtube-dl yt-dlp].freeze
+      SUPPORTED_DOWNLOADERS = [
+        Constants::CLIENT_YOUTUBE_DL,
+        Constants::CLIENT_YT_DLP,
+        Constants::CLIENT_WGET
+      ].freeze
       AVAILABLE_QUALITIES = %w[4k fhd hd sd].freeze
 
       json do # rubocop:disable Metrics/BlockLength

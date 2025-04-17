@@ -3,7 +3,11 @@
 module XXXDownload
   module Data
     class Config < Base
-      SUPPORTED_DOWNLOAD_CLIENTS = Types::String.enum("youtube-dl", "yt-dlp")
+      SUPPORTED_DOWNLOAD_CLIENTS = Types::String.enum(
+        Constants::CLIENT_YOUTUBE_DL,
+        Constants::CLIENT_YT_DLP,
+        Constants::CLIENT_WGET
+      )
 
       QUALITY = Types::String.enum("fhd", "hd", "sd")
 

@@ -20,8 +20,6 @@ module XXXDownload
 
       def initialize
         self.class.logger ::XXXDownload.logger, :trace
-      rescue NoMethodError => e
-        binding.pry
       end
 
       #

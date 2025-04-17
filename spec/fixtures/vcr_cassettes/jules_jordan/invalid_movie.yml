@@ -39,5 +39,5 @@ http_interactions:
     body:
       encoding: UTF-8
       string: Page not found
-  recorded_at: Wed, 08 May 2024 22:10:03 GMT
+  recorded_at: Thu, 17 Apr 2025 21:11:58 GMT
 recorded_with: VCR 6.2.0

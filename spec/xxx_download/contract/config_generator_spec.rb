@@ -54,7 +54,7 @@ RSpec.describe XXXDownload::Contract::ConfigGenerator, type: :file_support do
         it { expect(generate.download_filters.skip_lesbian).to eq(true) }
       end
 
-      context "when youtube-dl is not installed" do
+      context "when yt-dlp is not installed" do
         before do
           allow(Open3).to receive(:capture3).and_return(["", "", double(success?: false)])
         end

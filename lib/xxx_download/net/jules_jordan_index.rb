@@ -65,15 +65,19 @@ module XXXDownload
       end
 
       def scene_link(url)
-        url.gsub(BASE_URI, "")
-           .gsub(%r{/(members|trial)}, "")
+        uri = URI(url)
+        uri.path.gsub(%r{/(members|trial)}, "")
       end
 
       def fetch(url)
-        path = url.gsub(BASE_URI, "") # remove the base URL
-                  .gsub("/members", "/trial") # remove the member part to bypass auth. Refresher handles authentication
+        uri = URI(url)
+        # This is susceptible to break in countries that do not allow trail
+        # page to be accessed due to age-verification systems
+        path = uri.path.gsub("/members", "/trial")
         resp = handle_response!(return_raw: true) { self.class.get(path, follow_redirects: false) }
         Nokogiri::HTML(resp.body)
+      rescue URI::InvalidURIError => e
+        raise FatalError, "[#{TAG}] Invalid URL `#{url}` - #{e.message}"
       end
     end
   end

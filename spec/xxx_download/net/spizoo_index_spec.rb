@@ -10,7 +10,7 @@ RSpec.describe XXXDownload::Net::SpizooIndex, type: :file_support do
   let(:placeholder_cookie) { false }
   let(:cookie_str) { ENV.fetch("SPIZOO_COOKIE_STR", "cookie") }
   before do
-    # Comment this lines if you have live-credentials to a membership account
+    # Comment this line if you have live-credentials to a membership account
     # This will spawn the browser and ask the user for credentials
     allow(subject).to receive(:request_cookie).and_return(cookie_str)
   end

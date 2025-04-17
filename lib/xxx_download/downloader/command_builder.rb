@@ -16,6 +16,7 @@ module XXXDownload
       def self.build_basic
         builder = new
         builder.download_client(XXXDownload.config.downloader)
+        builder.add_default_flags
         builder.cookie(XXXDownload.config.cookie_file)              if XXXDownload.config.downloader_requires_cookie?
         builder.verbose                                             if %w[debug trace extra].include?(XXXDownload.logger.level.to_s.downcase)
         builder.parallel(XXXDownload.config.parallel)               if XXXDownload.config.parallel
@@ -50,35 +51,83 @@ module XXXDownload
       end
 
       def path(filename, path = "", ext = "%(ext)s")
-        command.path = " -o '#{File.join(path, filename)}.#{ext}'"
+        command.path = case command.download_client
+                       when Constants::CLIENT_WGET
+                         " -O '#{File.join(path, filename)}.mp4'"
+                       else
+                         " -o '#{File.join(path, filename)}.#{ext}'"
+                       end
       end
 
       def merge_parts
-        command.merge_parts = "--merge-output-format mkv"
+        case command.download_client
+        when Constants::CLIENT_WGET
+          command.merge_parts = nil
+        when Constants::CLIENT_YOUTUBE_DL, Constants::CLIENT_YT_DLP
+          command.merge_parts = "--merge-output-format mkv"
+        else
+          raise FatalError, "[COMMAND BUILDER] Unknown downloader #{command.download_client}"
+        end
       end
 
-      # Extra arguments for the downloader. Example
-      # --external-downloader aria2c --external-downloader-args '-x 7'
       def external_flags(flag)
         command.external_flags = flag
       end
 
-      def parallel(parallel)
-        return if command.download_client == "youtube-dl"
+      def add_default_flags
+        case command.download_client
+        when Constants::CLIENT_WGET
+          command.defaults = "--continue --tries=5 --retry-connrefused --waitretry=5 --timeout=60"
+        when Constants::CLIENT_YOUTUBE_DL, Constants::CLIENT_YT_DLP
+          command.defaults = nil
+        else
+          raise FatalError, "[COMMAND BUILDER] Unknown downloader #{command.download_client}"
+        end
+      end
 
-        command.parallel = "--concurrent-fragments #{parallel}"
+      # Parallel downloads are only supported by yt-dlp
+      def parallel(parallel)
+        case command.download_client
+        when Constants::CLIENT_YT_DLP
+          command.parallel = "--concurrent-fragments #{parallel}"
+        when Constants::CLIENT_YOUTUBE_DL, Constants::CLIENT_WGET
+          command.parallel = nil
+        else
+          raise FatalError, "[COMMAND BUILDER] Unknown downloader #{command.download_client}"
+        end
       end
 
       def quality(max_res = "720")
-        command.quality = " -f 'bestvideo[height<=#{max_res}]+bestaudio/best[height<=#{max_res}]'"
+        case command.download_client
+        when Constants::CLIENT_YT_DLP, Constants::CLIENT_YOUTUBE_DL
+          command.quality = "-f 'bestvideo[height<=#{max_res}]+bestaudio/best[height<=#{max_res}]'"
+        when Constants::CLIENT_WGET
+          command.quality = nil
+        else
+          raise FatalError, "[COMMAND BUILDER] Unknown downloader #{command.download_client}"
+        end
       end
 
       def verbose
-        command.verbosity = "--verbose --dump-pages"
+        case command.download_client
+        when Constants::CLIENT_YT_DLP, Constants::CLIENT_YOUTUBE_DL
+          command.verbosity = "--verbose --dump-pages"
+        when Constants::CLIENT_WGET
+          command.verbosity = "--verbose"
+        else
+          raise FatalError, "[COMMAND BUILDER] Unknown downloader #{command.download_client}"
+        end
       end
 
       def cookie(file_path)
-        command.cookie = "--cookies #{file_path}"
+        case command.download_client
+        when Constants::CLIENT_YT_DLP, Constants::CLIENT_YOUTUBE_DL
+          command.cookie = "--cookies #{file_path}"
+        when Constants::CLIENT_WGET
+          command.cookie = "--load-cookies #{file_path}"
+        else
+          raise FatalError, "[COMMAND BUILDER] Unknown downloader #{command.download_client}"
+        end
       end
 
       def build
@@ -101,11 +150,11 @@ module XXXDownload
 
       attr_accessor :download_client
 
-      attr_writer :url, :cookie, :path, :verbosity,
+      attr_writer :url, :cookie, :path, :verbosity, :defaults,
                   :external_flags, :merge_parts, :parallel, :quality
 
       def build
-        [@download_client, @url, @cookie, @path, @verbosity,
+        [@download_client, @url, @cookie, @path, @verbosity, @defaults,
          @external_flags, @merge_parts, @parallel, @quality].compact.map(&:strip).join(" ")
       end
 

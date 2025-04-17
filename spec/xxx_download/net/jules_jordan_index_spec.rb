@@ -3,6 +3,12 @@
 require "rspec"
 
 RSpec.describe XXXDownload::Net::JulesJordanIndex do
+  # include_context "config provider"
+  #
+  # let(:placeholder_cookie) { false }
+  # let(:cookie_str) { ENV.fetch("JULES_JORDAN_COOKIE_STR", "cookie") }
+  # before { allow(XXXDownload.config).to receive(:cookie).and_return(cookie_str) }
+
   subject { described_class.new }
 
   shared_examples "a successful search" do
