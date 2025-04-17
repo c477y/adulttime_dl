@@ -52,7 +52,7 @@ RSpec.describe XXXDownload::Data::Config, type: :file_support do
     let(:sitemap) do
       {
         "loveherfilms" => XXXDownload::Net::LoveHerFilmsStreamingLinks,
-        "pornve" => XXXDownload::Net::PornveStreamingLinks,
+        "pornve" => XXXDownload::Net::PornveStreamingLinks
       }
     end
     described_class::MODULE_NAME.each_pair do |site, _|
