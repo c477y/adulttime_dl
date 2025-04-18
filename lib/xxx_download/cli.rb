@@ -35,7 +35,7 @@ module XXXDownload
 
     desc "download _site_", "Bulk download files"
     long_desc <<~LONGDESC
-      Acceptable _site_ names: #{XXXDownload::Data::Config::MODULE_NAME.keys.join(", ")}
+      Acceptable _site_ names: #{XXXDownload::Data::Config::MODULE_NAME.keys.sort.join(", ")}
     LONGDESC
     option :help, alias: :h, type: :boolean, default: false
     option :cookie_file, desc: "Path to the file where the cookie is stored"

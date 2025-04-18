@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "thor", "~> 1.2"
   spec.add_runtime_dependency "zeitwerk", "~> 2.6"
 
-  spec.add_runtime_dependency "selenium-devtools", "= 0.123.0"
-  spec.add_runtime_dependency "selenium-webdriver", "= 4.19.0"
+  spec.add_runtime_dependency "selenium-devtools", "= 0.135.0"
+  spec.add_runtime_dependency "selenium-webdriver", "= 4.31.0"
   spec.metadata["rubygems_mfa_required"] = "true"
 end

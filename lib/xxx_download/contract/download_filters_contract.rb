@@ -18,6 +18,7 @@ module XXXDownload
         "julesjordan",
         "loveherfilms", # needs fixing
         "manuelferrara",
+        "pornfidelity",
         "pornve", # deprecated
         "rickysroom",
         "s3xus",

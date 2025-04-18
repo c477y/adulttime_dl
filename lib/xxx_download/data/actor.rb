@@ -7,6 +7,10 @@ module XXXDownload
 
       attribute :name, Types::String
       attribute :gender, GENDERS
+
+      def self.unknown(name) = new(name:, gender: "unknown")
+      def self.male(name) = new(name:, gender: "male")
+      def self.female(name) = new(name:, gender: "female")
     end
   end
 end

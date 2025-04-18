@@ -32,6 +32,11 @@ module XXXDownload
       end
 
       #
+      # Perform any cleanup actions. E.g., close browsers
+      #
+      def cleanup = nil
+
+      #
       # This is a default implementation to generate a download command
       # Override this and add a custom implementation if required.
       # e.g. for sites that use HLS streaming will require a custom command
@@ -52,6 +57,21 @@ module XXXDownload
           end
         else raise FatalError, "[#{TAG}] Unknown strategy #{strategy}"
         end
+      end
+
+      #
+      # Helper method to make HTTP requests using HTTParty
+      #
+      # @param [String] url
+      # @param [Boolean] follow_redirects
+      # @return [Nokogiri::XML::Document]
+      # @raise [FatalError] if the URL is invalid
+      def page(url, follow_redirects: false)
+        uri = URI(url)
+        resp = handle_response!(return_raw: true) { self.class.get(uri.path, follow_redirects:) }
+        Nokogiri::HTML(resp.body)
+      rescue URI::InvalidURIError => e
+        raise FatalError, "[#{TAG}] Invalid URL `#{url}` - #{e.message}"
       end
     end
   end

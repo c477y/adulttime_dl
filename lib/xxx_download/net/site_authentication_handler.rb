@@ -13,7 +13,7 @@ module XXXDownload
       # @return [Array[HTTP::Cookie], Nil]
       # noinspection RubyMismatchedReturnType
       def authenticate(login_url, &block)
-        request do |driver, wait|
+        request do
           driver.get(login_url)
           wait.until { block.call(driver.manage.all_cookies) }
 

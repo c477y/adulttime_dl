@@ -13,6 +13,8 @@ module XXXDownload
       process_scenes
       process_page
       XXXDownload.logger.info "[PROCESS COMPLETE]"
+    ensure
+      cleanup_index
     end
 
     private
@@ -60,6 +62,8 @@ module XXXDownload
         Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data, generator) }
       end
     end
+
+    def cleanup_index = scenes_index.cleanup
 
     def create_sub_directory(name)
       return Dir.pwd unless name.present?

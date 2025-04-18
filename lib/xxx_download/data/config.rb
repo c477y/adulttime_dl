@@ -23,6 +23,7 @@ module XXXDownload
         "julesjordan"   => "JulesJordan",
         "loveherfilms"  => "LoveHerFilms",
         "manuelferrara" => "ManuelFerrara",
+        "pornfidelity"  => "Pornfidelity",
         "pornve"        => "Pornve",
         "rickysroom"    => "RickysRoom",
         "s3xus"         => "S3xus",
@@ -49,6 +50,7 @@ module XXXDownload
         houseofyre
         julesjordan
         manuelferrara
+        pornfidelity
         rickysroom
         s3xus
         scoregroup

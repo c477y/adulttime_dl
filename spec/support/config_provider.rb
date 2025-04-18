@@ -2,12 +2,15 @@
 
 require "rspec"
 require "xxx_download/data/config"
+require_relative "cookie_utils"
 
 shared_context "config provider" do
   # Input: Pass some keys in this hash to override default keys
   let(:override_config) { {} }
   let(:override_opts) { {} }
   let(:site) { "goodporn" }
+
+  let(:override_cookie) { nil }
   let(:placeholder_cookie) { true }
 
   # Output: Access config
@@ -32,7 +35,7 @@ shared_context "config provider" do
     File.write("config.yml", config.to_yaml)
 
     # write placeholder data in a cookie file
-    if placeholder_cookie
+    if placeholder_cookie && override_cookie.nil?
       File.open(config["cookie_file"], "w") do |file|
         cookie_data = <<~COOKIE
           # Netscape HTTP Cookie File
@@ -44,6 +47,22 @@ shared_context "config provider" do
         file.write(cookie_data)
       end
     end
+
+    if override_cookie
+      raise "override_cookie should be a hash" unless override_cookie.is_a?(Hash)
+      unless override_cookie.key?("domain") && override_cookie["domain"].is_a?(String)
+        raise "override_cookie should contain a key 'domain' with a string value"
+      end
+      raise "override_cookie['domain'] should start with a ." unless override_cookie["domain"].start_with?(".")
+      unless override_cookie.key?("cookie") && override_cookie["cookie"].is_a?(String)
+        raise "override_cookie should contain a key 'cookie' with a string value"
+      end
+
+      CookieUtils.cookie_string_to_netscape_file(override_cookie["cookie"],
+                                                 override_cookie["domain"],
+                                                 config["cookie_file"])
+    end
+
 
     # set the config in the application namespace
     XXXDownload.set_config(XXXDownload::Data::Config.new(config))

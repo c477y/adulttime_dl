@@ -117,7 +117,7 @@ module XXXDownload
         def handle_new_device_activation
           wait_timeout(1_000)
           cookie(self.class.base_uri, @cookies)
-          request do |driver, wait|
+          request do
             driver.get(self.class.base_uri + path)
 
             wait.until { new_device_activation_complete?(driver.title) }
