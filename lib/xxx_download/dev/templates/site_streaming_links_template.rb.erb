@@ -7,8 +7,11 @@ module XXXDownload
       BASE_URL = "XXXX"
       TAG = " <%= name.upcase %>_INDEX"
 
-      def fetch(_scene_data)
-        XXXDownload.logger.info "PENDING"
+      # @param [Data::Scene]
+      # @return [Data::StreamingLinks]
+      # noinspection RubyMismatchedReturnType
+      def fetch(scene_data)
+        XXXDownload.logger.info "PENDING #{scene_data}"
         Data::StreamingLinks.new(default: links)
       end
     end

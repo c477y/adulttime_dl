@@ -9,24 +9,34 @@ module XXXDownload
 
       # Delete methods that your site does not support
 
-      def search_by_all_scenes(_url)
-        raise NotImplementedError, "#{self.class.name} does not implement search_by_all_scenes"
+      # @param [String] url
+      # @return [Array<Data::Scene>]
+      def search_by_all_scenes(url)
+        raise NotImplementedError, "#{self.class.name} does not implement search_by_all_scenes to handle #{url}"
       end
 
-      def search_by_movie(_url)
-        raise NotImplementedError, "#{self.class.name} does not implement search_by_movie"
+      # @param [String] url
+      # @return [Array<Data::Scene>]
+      def search_by_movie(url)
+        raise NotImplementedError, "#{self.class.name} does not implement search_by_movie to handle #{url}"
       end
 
-      def search_by_actor(_url)
-        raise NotImplementedError, "#{self.class.name} does not implement search_by_actor"
+      # @param [String] url
+      # @return [Array<Data::Scene>]
+      def search_by_actor(url)
+        raise NotImplementedError, "#{self.class.name} does not implement search_by_actor to handle #{url}"
       end
 
-      def search_by_page(_url)
-        raise NotImplementedError, "#{self.class.name} does not implement search_by_page"
+      # @param [String] url
+      # @return [Array<Data::Scene>]
+      def search_by_page(url)
+        raise NotImplementedError, "#{self.class.name} does not implement search_by_page to handle #{url}"
       end
 
-      def actor_name(_resource)
-        raise NotImplementedError, "#{self.class.name} does not implement actor_name"
+      # @param [String] resource
+      # @return [String]
+      def actor_name(resource)
+        raise NotImplementedError, "#{self.class.name} does not implement actor_name to handle #{resource}"
       end
     end
   end
