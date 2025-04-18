@@ -1,5 +1,7 @@
 AllCops:
-  TargetRubyVersion: 2.6.0
+  TargetRubyVersion: 3.1.2
+  NewCops: enable
+  SuggestExtensions: false
 
 Style/StringLiterals:
   Enabled: true
@@ -12,26 +14,29 @@ Style/StringLiteralsInInterpolation:
 Layout/LineLength:
   Max: 120
 
-Documentation:
+Style/Documentation:
   Enabled: false
 
 Metrics/MethodLength:
   Enabled: false
 
-Metrics/ParameterLists:
+Metrics/AbcSize:
   Enabled: false
 
-Metrics/AbcSize:
+Metrics/ParameterLists:
   Enabled: false
 
 Metrics/ClassLength:
   Enabled: false
 
 Metrics/BlockLength:
-  IgnoredMethods: [ 'describe', 'context' ]
+  AllowedMethods: [ 'describe', 'context' ]
   Exclude:
     - spec/**/*
-    - adulttime_dl.gemspec
+    - xxx_download.gemspec
 
 Style/OptionalBooleanParameter:
+  Enabled: false
+
+Lint/UnusedMethodArgument:
   Enabled: false

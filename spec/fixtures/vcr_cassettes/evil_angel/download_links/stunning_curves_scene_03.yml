@@ -1,0 +1,99 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://members.evilangel.com/movieaction/download/73344/720p/mp4
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0
+      Accept:
+      - application/json
+      Dnt:
+      - '1'
+      Connection:
+      - keep-alive
+      X-Requested-With:
+      - XMLHttpRequest
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 302
+      message: Moved Temporarily
+    headers:
+      Content-Type:
+      - text/html; charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Gamma-Serve:
+      - pl-php16.gammae.com
+      Content-Security-Policy:
+      - frame-ancestors 'self'
+      X-Frame-Options:
+      - SAMEORIGIN
+      Expires:
+      - Thu, 19 Nov 1981 08:52:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+      Pragma:
+      - no-cache
+      Location:
+      - http://www.evilangel.com/en/login/index/aHR0cHMlM0ElMkYlMkZtZW1iZXJzLmV2aWxhbmdlbC5jb20lMkZtb3ZpZWFjdGlvbiUyRmRvd25sb2FkJTJGNzMzNDQlMkY3MjBwJTJGbXA0
+    body:
+      encoding: UTF-8
+      string: ''
+  recorded_at: Sat, 18 May 2024 23:16:35 GMT
+- request:
+    method: get
+    uri: https://members.evilangel.com/movieaction/download/73344/720p/mp4
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0
+      Accept:
+      - application/json
+      Dnt:
+      - '1'
+      Connection:
+      - keep-alive
+      X-Requested-With:
+      - XMLHttpRequest
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 302
+      message: Moved Temporarily
+    headers:
+      Content-Type:
+      - text/html; charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Gamma-Serve:
+      - pl-php24.gammae.com
+      Content-Security-Policy:
+      - frame-ancestors 'self'
+      X-Frame-Options:
+      - SAMEORIGIN
+      Expires:
+      - Thu, 19 Nov 1981 08:52:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+      Pragma:
+      - no-cache
+      Location:
+      - https://download-evilangel.gammacdn.com/mp4/8/2/1/8/c28128/28128_03_720p.mp4?uh=3c25dc5e3d16b58ae87bb1996fc5577b4331bbe09de57cf61bd237c76d68e316&cui=26812363&response-content-disposition=attachment%3Bfilename%3D%22StunningCurvesScene03_s03_RamonNomar_SamanthaSaint_720p.mp4%22&response-content-type=application%2Foctet-stream&Expires=1716084997&Key-Pair-Id=APKAYNAXREE5V7FEZ74I&Signature=brOdORhKpo~2-rHnpzOdgtIeR9iyzzhVEa3z7CQIu7qdbo93ZvL0UQmDjz69geFj01sunU-qYRBdSOsEWuxW8fIQiek0v0674ARDzisM6krWNiqcseyG9Kx2Le4jlM3XAmoczC4~uJE7mPX1LXdPjekYEO0luzp7gTepJLkj3RJIezBq6KSeb-LObgTNGi4niEdRAfqJmjS2nHcOTxZhFH28v68EdrYnx1Js4Hsoudt5SJKkZRIoSS-MtIssxxjzPBZv31OEkyvGViOuYwEScaB28n~VKgs6ewZWp3Depzn6qNXKLyx~HCKjFRtiR2WRm57rF-J5Uc45LFbOyx8PDA__
+    body:
+      encoding: UTF-8
+      string: ''
+  recorded_at: Sat, 18 May 2024 23:16:36 GMT
+recorded_with: VCR 6.2.0

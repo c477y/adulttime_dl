@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
-require "adulttime_dl"
+require "xxx_download"
 
 def reload!(print: true)
   puts "Reloading ..." if print
