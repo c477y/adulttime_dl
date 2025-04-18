@@ -50,11 +50,12 @@ to be used as the first argument to the `download` command.
 * [archangel](https://www.archangelvideo.com/)
 * [blowpass](https://www.blowpass.com/en)
 * [cumlouder](https://www.cumlouder.com/)
-* [goodporn](https://goodporn.to/)
+* ~~[goodporn](https://goodporn.to/)~~ site has been removed
 * [houseofyre](https://houseofyre.com/)
 * [julesjordan](https://www.julesjordan.com/trial/)
 * [loveherfilms](https://www.loveherfilms.com/tour/)
 * [manuelferrara](https://manuelferrara.com/trial/)
+* [pornfidelity](https://www.pornfidelity.com/)
 * [rickysroom](https://rickysroom.com/)
 * [s3xus](https://s3xus.com/)
 * [scoregroup](https://score-group.com/)
@@ -116,9 +117,14 @@ passing the parameter `--cookie=../path/to/cookie/file.txt`
 #### --downloader=DOWNLOADER
 
 The tool uses external tools to download videos. Currently it supports
-`youtube-dl` or `yt-dlp`. Download youtube-dl from
-[https://youtube-dl.org/](https://youtube-dl.org/) or download `yt-dlp` from
+~~`youtube-dl`~~, `yt-dlp` or `wget`. Download ~~youtube-dl from
+[https://youtube-dl.org/](https://youtube-dl.org/)~~ or download `yt-dlp` from
 [https://github.com/yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp).
+
+> [!IMPORTANT]
+> Prefer using `yt-dlp` since `youtube-dl` has been deprecated.
+> Support for `wget` is experimental and doesn't support resume downloads. Only
+> use it if `yt-dlp` is not working.
 
 You need to ensure that the tool is available in your $PATH. One way to verify
 is executing `which youtube-dl` in your shell. If you don't see an error, you're
