@@ -4,7 +4,6 @@ module XXXDownload
   module Net
     module Refreshers
       class JulesJordan < BaseRefresh
-        include Net::BrowserSupport
         include Net::SiteAuthenticationHandler
         include Utils
 

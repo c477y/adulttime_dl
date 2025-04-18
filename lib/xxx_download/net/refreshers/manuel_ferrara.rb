@@ -4,7 +4,6 @@ module XXXDownload
   module Net
     module Refreshers
       class ManuelFerrara < BaseRefresh
-        include Net::BrowserSupport # handles new device activation
         include Net::SiteAuthenticationHandler
         include Utils
 

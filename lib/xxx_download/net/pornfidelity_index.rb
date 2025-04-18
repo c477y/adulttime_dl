@@ -38,9 +38,15 @@ module XXXDownload
       # @raise [FatalError] If the URL is invalid or does not meet the required conditions.
       def search_by_actor(url)
         verify_urls!(url, "/models")
-        page(url).css(".episode a.card-link")
-                 .map { |x| x["href"] }.uniq
-                 .map { |x| fetch(x) }.compact
+
+        # some cards just have a gallery and no scenes
+        scenes_doc = page(url).css(".episode")
+                              .select { |x| x.css(".media-content .subtitle").last.text.include?("min") }
+
+        scenes_doc.map { |scene| scene.css(".media-content .title a").first.attributes["href"].value }
+                  .uniq
+                  .map { |x| fetch(x) }
+                  .compact
       end
 
       # @param [String] resource

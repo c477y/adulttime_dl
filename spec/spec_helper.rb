@@ -16,7 +16,8 @@ IGNORED_URLS = [
   "localhost",
   "www.adulttime.com",
   "www.evilangel.com",
-  "www.zerotolerancefilms.com"
+  "www.zerotolerancefilms.com",
+  "www.kellymadisonmedia.com"
 ].freeze
 
 VCR.configure do |config|
