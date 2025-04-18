@@ -20,6 +20,7 @@ module XXXDownload
         self.class.headers "Cookie" => cookies
 
         start_browser
+        load_interceptor
 
         super()
       end
@@ -103,24 +104,26 @@ module XXXDownload
         end
       end
 
+      def load_interceptor
+        driver.intercept do |request, &continue|
+          XXXDownload.logger.extra "[#{TAG}] Intercepting request: #{request.url}"
+          uri = URI.parse(request.url)
+          if uri.path&.match?(%r{stream/video/\d+})
+            XXXDownload.logger.debug "[#{TAG}] Intercepted video link: #{request.url}"
+            links << request.url
+          end
+          continue.call(request)
+        rescue Selenium::WebDriver::Error::WebDriverError => e
+          XXXDownload.logger.error "[INTERCEPTOR ERROR] #{e}"
+        end
+      end
+
       # @param [String] video_link
       # @return [Data::Scene, nil]
       # noinspection RubyMismatchedReturnType
       def fetch(video_link)
         scene_data = {}
         request(teardown_browser: false, add_cookies: false) do
-          driver.intercept do |request, &continue|
-            XXXDownload.logger.extra "[#{TAG}] Intercepting request: #{request.url}"
-            uri = URI.parse(request.url)
-            if uri.path&.match?(%r{stream/video/\d+})
-              XXXDownload.logger.debug "[#{TAG}] Intercepted video link: #{request.url}"
-              links << request.url
-            end
-            continue.call(request)
-          rescue Selenium::WebDriver::Error::WebDriverError => e
-            XXXDownload.logger.extra "[INTERCEPTOR ERROR] #{e}"
-          end
-
           navigate_to_video_link!(video_link)
 
           content = driver.find_element(id: "site-content")
@@ -142,7 +145,9 @@ module XXXDownload
           video_link:
         )
         reset_links
-        Data::Scene.new(scene_data)
+        data = Data::Scene.new(scene_data)
+        XXXDownload.logger.info "[#{TAG}] Fetched scene #{data.title}"
+        data
       rescue Selenium::WebDriver::Error::NoSuchWindowError
         raise FatalError, "Browser window was closed"
       end
