@@ -23,6 +23,7 @@ module XXXDownload
         "julesjordan"   => "JulesJordan",
         "loveherfilms"  => "LoveHerFilms",
         "manuelferrara" => "ManuelFerrara",
+        "newsensations" => "NewSensations",
         "pornfidelity"  => "Pornfidelity",
         "pornve"        => "Pornve",
         "rickysroom"    => "RickysRoom",
@@ -50,6 +51,7 @@ module XXXDownload
         houseofyre
         julesjordan
         manuelferrara
+        newsensations
         pornfidelity
         rickysroom
         s3xus

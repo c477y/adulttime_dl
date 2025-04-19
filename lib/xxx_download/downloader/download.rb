@@ -19,11 +19,11 @@ module XXXDownload
       # Download a file using scene_data
       #
       # @param [Data::Scene] scene_data
-      # @param [Proc] proc A block that accepts `scene_data` and `url`
-      #   and returns a `command` string
-      def download(scene_data, proc)
-        @command_generator = proc
-        scene_data = scene_data.refresh if scene_data.lazy?
+      # @param [XXXDownload::Net::BaseIndex] scenes_index
+      def download(scene_data, scenes_index)
+        @scenes_index = scenes_index
+
+        scene_data = scene_data.refresh(web_driver:) if scene_data.lazy?
 
         return false if already_downloaded?(scene_data)
 
@@ -36,9 +36,13 @@ module XXXDownload
 
       private
 
-      attr_reader :store, :semaphore, :command_generator
+      attr_reader :store, :semaphore, :scenes_index
 
       delegate :streaming_link_fetcher, :download_link_fetcher, to: :config
+
+      def web_driver
+        scenes_index.respond_to?(:default_options) ? scenes_index.default_options : nil
+      end
 
       #
       # Check if the file has already been downloaded
@@ -80,7 +84,7 @@ module XXXDownload
         url = download_link_fetcher.fetch(scene_data)
         return false if url.nil?
 
-        command = command_generator.call(scene_data, url, :download)
+        command = scenes_index.command(scene_data, url, :download)
         if config.dry_run?
           XXXDownload.logger.info "#{TAG}: WILL DOWNLOAD #{command}"
           return
@@ -100,7 +104,7 @@ module XXXDownload
 
         scene_data = scene_data.add_streaming_links(streaming_links)
         url = scene_data.streaming_links.send(config.quality.to_sym)
-        command = command_generator.call(scene_data, url, :stream)
+        command = scenes_index.command(scene_data, url, :stream)
         if config.dry_run?
           XXXDownload.logger.info "#{TAG}: WILL DOWNLOAD #{command}"
           return

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    xxx_download (0.3.0.pre.rc1)
+    xxx_download (0.3.0.pre.rc2)
       activesupport
       algolia
       awesome_print (~> 1.9)
@@ -127,8 +127,6 @@ GEM
     net-http-persistent (4.0.2)
       connection_pool (~> 2.2)
     nokogiri (1.16.3-x86_64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.16.3-x86_64-linux)
       racc (~> 1.4)
     optimist (3.1.0)
     parallel (1.24.0)

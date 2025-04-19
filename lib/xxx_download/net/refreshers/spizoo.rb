@@ -21,7 +21,7 @@ module XXXDownload
           super()
         end
 
-        def refresh
+        def refresh(**opts)
           fetch(path)
 
           scene = {}.tap do |h|

@@ -83,6 +83,8 @@ RSpec.describe XXXDownload::Data::Config, type: :file_support do
         "houseofyre" => XXXDownload::Net::HouseOFyreDownloadLinks,
         "julesjordan" => XXXDownload::Net::JulesJordanDownloadLinks,
         "manuelferrara" => XXXDownload::Net::ManuelFerraraDownloadLinks,
+        "newsensations" => XXXDownload::Net::NewSensationsDownloadLinks,
+        "pornfidelity" => XXXDownload::Net::PornfidelityDownloadLinks,
         "rickysroom" => XXXDownload::Net::RickysRoomDownloadLinks,
         "s3xus" => XXXDownload::Net::S3xusDownloadLinks,
         "spizoo" => XXXDownload::Net::SpizooDownloadLinks,
@@ -107,6 +109,14 @@ RSpec.describe XXXDownload::Data::Config, type: :file_support do
   end
 
   describe "scenes_index" do
+    before do
+      # Pornfidelity
+      allow_any_instance_of(XXXDownload::Net::PornfidelityIndex).to receive(:start_browser).and_return(nil)
+      allow_any_instance_of(XXXDownload::Net::PornfidelityIndex).to receive(:load_interceptor).and_return(nil)
+
+      # NewSensations
+      allow_any_instance_of(XXXDownload::Net::NewSensationsIndex).to receive(:start_browser).and_return(nil)
+    end
     let(:sitemap) do
       {
         "adulttime" => XXXDownload::Net::AdultTimeIndex,
@@ -119,6 +129,8 @@ RSpec.describe XXXDownload::Data::Config, type: :file_support do
         "julesjordan" => XXXDownload::Net::JulesJordanIndex,
         "loveherfilms" => XXXDownload::Net::LoveHerFilmsIndex,
         "manuelferrara" => XXXDownload::Net::ManuelFerraraIndex,
+        "newsensations" => XXXDownload::Net::NewSensationsIndex,
+        "pornfidelity" => XXXDownload::Net::PornfidelityIndex,
         "pornve" => XXXDownload::Net::PornveIndex,
         "rickysroom" => XXXDownload::Net::RickysRoomIndex,
         "s3xus" => XXXDownload::Net::S3xusIndex,

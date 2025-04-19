@@ -18,7 +18,7 @@ module XXXDownload
           self.class.headers "Cookie" => cookie
         end
 
-        def refresh
+        def refresh(**opts)
           web_resp = handle_response!(return_raw: true) { self.class.get(path) }
           doc = Nokogiri::HTML(web_resp.body)
           resp = JSON.parse(doc.css("#__NEXT_DATA__").text).dig("props", "pageProps", "content")

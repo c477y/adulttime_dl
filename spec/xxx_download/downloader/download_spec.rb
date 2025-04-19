@@ -10,7 +10,7 @@ RSpec.describe XXXDownload::Downloader::Download, type: :file_support do
 
   let(:semaphore) { Mutex.new }
   let(:store) { XXXDownload::Data::DownloadStatusDatabase.new(config.store, semaphore) }
-  let(:command_generator) { proc {} }
+  let(:scene_index) { instance_double("XXXDownload::Net::BaseIndex") }
 
   describe "#download" do
     context "file already downloaded" do
@@ -18,7 +18,7 @@ RSpec.describe XXXDownload::Downloader::Download, type: :file_support do
         before { store.save_download(scene) }
 
         it "does not download the file again" do
-          expect(downloader.download(scene, command_generator)).to eq(false)
+          expect(downloader.download(scene, scene_index)).to eq(false)
         end
       end
 
@@ -26,7 +26,7 @@ RSpec.describe XXXDownload::Downloader::Download, type: :file_support do
         before { FileUtils.touch("#{scene.file_name}.mp4") }
 
         it "does not download the file again" do
-          expect(downloader.download(scene, command_generator)).to eq(false)
+          expect(downloader.download(scene, scene_index)).to eq(false)
         end
       end
     end
@@ -43,10 +43,11 @@ RSpec.describe XXXDownload::Downloader::Download, type: :file_support do
 
         before do
           allow(downloader).to receive(:start_download).with(scene, anything).and_return(true)
+          allow(scene_index).to receive(:command).and_return("")
         end
 
         it "downloads the file using the download link" do
-          downloader.download(scene, command_generator)
+          downloader.download(scene, scene_index)
           expect(downloader).to have_received(:start_download).with(scene, anything)
         end
       end
@@ -61,13 +62,14 @@ RSpec.describe XXXDownload::Downloader::Download, type: :file_support do
         context "when the streaming link is available" do
           before do
             allow(downloader).to receive(:streaming_link_fetcher).and_return(double(fetch: streaming_link))
+            allow(scene_index).to receive(:command).and_return("")
           end
 
           it "downloads the file using the streaming link" do
             expect(downloader).to receive(:start_download)
               .with(an_instance_of(XXXDownload::Data::Scene), anything)
               .and_return(true)
-            downloader.download(scene, command_generator)
+            downloader.download(scene, scene_index)
           end
         end
 
@@ -77,7 +79,7 @@ RSpec.describe XXXDownload::Downloader::Download, type: :file_support do
           end
 
           it "does not download the file" do
-            expect(downloader.download(scene, command_generator)).to eq(false)
+            expect(downloader.download(scene, scene_index)).to eq(false)
           end
         end
       end

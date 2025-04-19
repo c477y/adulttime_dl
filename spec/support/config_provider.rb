@@ -63,7 +63,6 @@ shared_context "config provider" do
                                                  config["cookie_file"])
     end
 
-
     # set the config in the application namespace
     XXXDownload.set_config(XXXDownload::Data::Config.new(config))
   end

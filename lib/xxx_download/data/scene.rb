@@ -62,10 +62,10 @@ module XXXDownload
         # Scene.new(to_hash.merge(streaming_links: links))
       end
 
-      def refresh
+      def refresh(**opts)
         return self if refresher.nil?
 
-        refresher.refresh
+        refresher.refresh(**opts)
       end
 
       # @param [String] quality: one of "sd", "hd" or "fhd"

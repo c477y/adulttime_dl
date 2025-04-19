@@ -6,6 +6,8 @@ module XXXDownload
   module Net
     module BrowserSupport
       def cookie(url, cookie_str)
+        raise FatalError, "Cookies required" if cookie_str.nil? || cookie_str.empty?
+
         default_options[:url] = url
 
         cookie_hash = HTTParty::CookieHash.new
@@ -82,6 +84,8 @@ module XXXDownload
         XXXDownload.logger.warn "[BROWSER CLOSED] #{e.message}"
       end
 
+      def default_options = @default_options ||= { wait_timeout: 20 }
+
       private
 
       def set_cookie
@@ -93,7 +97,6 @@ module XXXDownload
       end
 
       def cookie_set? = default_options[:url] && default_options[:cookie]
-      def default_options = @default_options ||= { wait_timeout: 20 }
     end
   end
 end
