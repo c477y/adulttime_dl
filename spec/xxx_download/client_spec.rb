@@ -37,6 +37,7 @@ RSpec.describe XXXDownload::Client, type: :file_support do
     allow(scenes_index).to receive(:search_by_all_scenes).and_return([scene])
     allow(scenes_index).to receive(:search_by_page).and_return([scene])
     allow(scenes_index).to receive(:actor_name).and_return("actor_name")
+    allow(scenes_index).to receive(:cleanup).and_return("actor_name")
   end
 
   describe "#start!" do

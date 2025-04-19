@@ -70,21 +70,6 @@ module XXXDownload
 
       private
 
-      # @param [String] url
-      # @param [String] path
-      # @raise [FatalError] if the url is invalid or does not start with BASE_URI
-      def verify_urls!(url, path)
-        uri = URI(url)
-        base_matches = uri.scheme && uri.host && "#{uri.scheme}://#{uri.host}" == BASE_URI
-        raise FatalError, "[#{TAG}] URL must start with #{BASE_URI}" unless base_matches
-
-        return if uri.path&.include?(path)
-
-        XXXDownload.logger.warn "[#{TAG}] URL should be a link to #{path}. You may get unexpected results."
-      rescue URI::InvalidURIError
-        raise FatalError, "[#{TAG}] Invalid URL #{url}"
-      end
-
       # @param [String] video_link
       # @param [Integer] count
       # @param [Integer] max

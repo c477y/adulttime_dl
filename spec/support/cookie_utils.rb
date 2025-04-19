@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CookieUtils
-
   #
   # Converts a cookie string to a Netscape HTTP Cookie File format.
   #

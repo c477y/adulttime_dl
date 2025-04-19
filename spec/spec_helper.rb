@@ -16,6 +16,8 @@ IGNORED_URLS = [
   "localhost",
   "www.adulttime.com",
   "www.evilangel.com",
+  "www.newsensations.com",
+  "newsensations.com",
   "www.zerotolerancefilms.com",
   "www.kellymadisonmedia.com"
 ].freeze

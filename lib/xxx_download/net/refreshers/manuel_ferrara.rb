@@ -25,7 +25,7 @@ module XXXDownload
           super()
         end
 
-        def refresh
+        def refresh(**opts)
           @doc = fetch_doc
           scene = {}.tap do |h|
             h[:title] = title

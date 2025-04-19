@@ -23,7 +23,9 @@ module XXXDownload
       config.movies.map do |url|
         XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_movie(url)
-        Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data, generator) }
+        Parallel.map(scenes, in_threads: config.parallel) do |scene_data|
+          downloader.download(scene_data, scenes_index)
+        end
       end
     end
 
@@ -35,11 +37,15 @@ module XXXDownload
 
         scenes = scenes_index.search_by_actor(entity)
         if current_path == sub_dir
-          Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data, generator) }
+          Parallel.map(scenes, in_threads: config.parallel) do |scene_data|
+            downloader.download(scene_data, scenes_index)
+          end
         else
           XXXDownload.logger.trace "[CHANGING DIRECTORY] #{sub_dir}"
           Dir.chdir(sub_dir)
-          Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data, generator) }
+          Parallel.map(scenes, in_threads: config.parallel) do |scene_data|
+            downloader.download(scene_data, scenes_index)
+          end
           Dir.chdir(current_path)
         end
 
@@ -51,7 +57,7 @@ module XXXDownload
       config.scenes.map do |url|
         XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_all_scenes(url)
-        Parallel.map(scenes, in_threads: 5) { |scene_data| downloader.download(scene_data, generator) }
+        Parallel.map(scenes, in_threads: 5) { |scene_data| downloader.download(scene_data, scenes_index) }
       end
     end
 
@@ -59,7 +65,7 @@ module XXXDownload
       config.page.map do |url|
         XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_page(url)
-        Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data, generator) }
+        Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data, scenes_index) }
       end
     end
 
@@ -85,10 +91,6 @@ module XXXDownload
 
     def scenes_index
       @scenes_index ||= config.scenes_index
-    end
-
-    def generator
-      proc { |s, u, st| scenes_index.command(s, u, st) }
     end
 
     def semaphore

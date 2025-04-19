@@ -3,6 +3,8 @@
 module XXXDownload
   module Net
     class BaseIndex < Base
+      TAG = "BASE_INDEX"
+
       # Downloads {XXXDownload::Data::URLs.scenes}
       # Pass in a link to an individual scene
       def search_by_all_scenes(_url)
@@ -57,6 +59,24 @@ module XXXDownload
           end
         else raise FatalError, "[#{TAG}] Unknown strategy #{strategy}"
         end
+      end
+
+      #
+      # Verify the URL to ensure it belongs to the expected site
+      #
+      # @param [String] url
+      # @param [String] path
+      # @raise [FatalError] if the url is invalid or does not start with BASE_URI
+      def verify_urls!(url, path)
+        uri = URI(url)
+        base_matches = uri.scheme && uri.host && "#{uri.scheme}://#{uri.host}" == self.class.base_uri
+        raise FatalError, "[#{TAG}] URL must start with #{BASE_URI}" unless base_matches
+
+        return if uri.path&.include?(path)
+
+        XXXDownload.logger.warn "[#{TAG}] URL should be a link to #{path}. You may get unexpected results."
+      rescue URI::InvalidURIError
+        raise FatalError, "[#{TAG}] Invalid URL #{url}"
       end
 
       #

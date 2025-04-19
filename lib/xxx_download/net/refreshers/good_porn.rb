@@ -10,7 +10,7 @@ module XXXDownload
           super()
         end
 
-        def refresh
+        def refresh(**opts)
           resp = handle_response!(return_raw: true) { self.class.get(path, headers: default_headers) }
           @doc = Nokogiri::HTML(resp.body)
           scene = {}.tap do |h|

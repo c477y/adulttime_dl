@@ -85,11 +85,6 @@ Description:
 
 #### --cookie-file=COOKIE_FILE
 
-> [!NOTE] Starting with v0.3.0-rc1, `julesjordan`, `manuelferrara`,
-> `rickysroom`, `s3xus`, `spizoo` and `ztod` do not need you to manually fetch the cookies
-> from the website. The tool will automatically spawn a headless browser session
-> that will ask your login credentials and store them in a file for reuse.
-
 If you want to download from a premium website (one that requires a membership),
 you would need to get your session cookie. If you use Mozilla Firefox, you can
 use the extension[
