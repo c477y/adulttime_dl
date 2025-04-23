@@ -16,18 +16,17 @@ module XXXDownload
         @options = options
       end
 
-      # rubocop:disable Layout/LineLength
       def generate
-        default_config = Default.cleaned_config                                     # get the absolute basic config
-        override_from_file = hash_from_config_file.deeper_merge(default_config)     # now merge the config file provided to the CLI
-        override_from_cli_params = override_from_file.deeper_merge(override_values) # now merge the CLI params
-        final_config = override_from_cli_params                                     # for readability
-        valid_config = validate_download_filters!(final_config)
-        config = XXXDownload::Data::Config.new(valid_config)
+        config_from_defaults = Default.cleaned_config
+        config_with_file_overrides = hash_from_config_file.deeper_merge(config_from_defaults)
+        merged_config = config_with_file_overrides.deeper_merge(override_values)
+
+        validated_config = validate_download_filters!(merged_config)
+        config = XXXDownload::Data::Config.new(validated_config)
         XXXDownload.logger.ap config.to_h, :extra
+
         config
       end
-      # rubocop:enable Layout/LineLength
 
       def hash_from_config_file
         @hash_from_config_file ||= XXXDownload::FileUtils.read_yaml(DEFAULT_CONFIG_FILE).merge("site" => site)
@@ -60,6 +59,7 @@ module XXXDownload
           h["parallel"] = options["parallel"] if options["parallel"].present?
           h["quality"] = options["quality"] if options["quality"].present?
           h["verbose"] = options["verbose"] if options["verbose"].present?
+          h["headless"] = options["headless"]
         end
       end
 

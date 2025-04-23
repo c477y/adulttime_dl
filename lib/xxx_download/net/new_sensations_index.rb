@@ -63,6 +63,8 @@ module XXXDownload
         "New Sensations"
       end
 
+      def cleanup = teardown
+
       private
 
       def include_vids?(path) = path.include?("type=vids")
@@ -80,13 +82,22 @@ module XXXDownload
       # @return [Nokogiri::HTML4::Document]
       def fetch(page)
         request(teardown_browser: false, add_cookies: false) do
+          XXXDownload.logger.debug "[#{TAG}] Fetching #{page}"
           driver.get(page)
+          raise FatalError, "[SESSION EXPIRED] Please refresh your cookies and try again" if on_login_page?
+
           content = driver.find_element(class: "content_wrapper")
           html = driver.execute_script("return arguments[0].outerHTML;", content)
           return Nokogiri::HTML(html)
         end
       rescue Selenium::WebDriver::Error::NoSuchWindowError
         raise FatalError, "Browser window was closed"
+      end
+
+      def on_login_page?
+        content = driver.page_source
+        doc = Nokogiri::HTML(content)
+        doc.at_css('form[action="/auth.form"]').present?
       end
     end
   end

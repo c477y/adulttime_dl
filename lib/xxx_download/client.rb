@@ -7,12 +7,16 @@ module XXXDownload
     end
 
     def start!
+      @exception = nil
       XXXDownload.logger.info "[PROCESS START]"
       process_performer
       process_movies
       process_scenes
       process_page
       XXXDownload.logger.info "[PROCESS COMPLETE]"
+    rescue StandardError => e
+      @exception = e
+      raise e
     ensure
       cleanup_index
     end
@@ -23,6 +27,7 @@ module XXXDownload
       config.movies.map do |url|
         XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_movie(url)
+        scenes.each { |x| XXXDownload.logger.ap x.to_h, :extra }
         Parallel.map(scenes, in_threads: config.parallel) do |scene_data|
           downloader.download(scene_data, scenes_index)
         end
@@ -34,21 +39,18 @@ module XXXDownload
         XXXDownload.logger.info "[PROCESSING ENTITY] #{entity}".colorize(:cyan)
         current_path = Dir.pwd
         sub_dir = create_sub_directory(dir_name(entity))
-
         scenes = scenes_index.search_by_actor(entity)
-        if current_path == sub_dir
-          Parallel.map(scenes, in_threads: config.parallel) do |scene_data|
-            downloader.download(scene_data, scenes_index)
-          end
-        else
-          XXXDownload.logger.trace "[CHANGING DIRECTORY] #{sub_dir}"
-          Dir.chdir(sub_dir)
-          Parallel.map(scenes, in_threads: config.parallel) do |scene_data|
-            downloader.download(scene_data, scenes_index)
-          end
-          Dir.chdir(current_path)
-        end
+        scenes.each { |x| XXXDownload.logger.ap x.to_h, :extra }
+        XXXDownload.logger.trace "[CHANGING DIRECTORY] #{sub_dir}"
 
+        # putting this chdir in a block raises a runtime error
+        # because the downloader also has a chdir block
+        # @see {XXXDownload::Downloader::Download#file_downloaded?}
+        Dir.chdir(sub_dir)
+        Parallel.map(scenes, in_threads: config.parallel) do |scene_data|
+          downloader.download(scene_data, scenes_index)
+        end
+        Dir.chdir(current_path)
         Dir.rmdir(sub_dir) if sub_dir.present? && Dir.empty?(sub_dir)
       end
     end
@@ -57,6 +59,7 @@ module XXXDownload
       config.scenes.map do |url|
         XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_all_scenes(url)
+        scenes.each { |x| XXXDownload.logger.ap x.to_h, :extra }
         Parallel.map(scenes, in_threads: 5) { |scene_data| downloader.download(scene_data, scenes_index) }
       end
     end
@@ -65,11 +68,19 @@ module XXXDownload
       config.page.map do |url|
         XXXDownload.logger.info "[PROCESSING URL] #{url}".colorize(:cyan)
         scenes = scenes_index.search_by_page(url)
+        scenes.each { |x| XXXDownload.logger.ap x.to_h, :extra }
         Parallel.map(scenes, in_threads: config.parallel) { |scene_data| downloader.download(scene_data, scenes_index) }
       end
     end
 
-    def cleanup_index = scenes_index.cleanup
+    def cleanup_index
+      if @exception.present?
+        XXXDownload.logger.error "[PROCESS ERROR] #{@exception.message}".colorize(:red)
+        XXXDownload.logger.error @exception.backtrace.join("\n")
+      end
+
+      scenes_index.cleanup
+    end
 
     def create_sub_directory(name)
       return Dir.pwd unless name.present?
@@ -85,24 +96,10 @@ module XXXDownload
       nil
     end
 
-    def downloader
-      @downloader ||= Downloader::Download.new(store: download_status_store, semaphore:)
-    end
-
-    def scenes_index
-      @scenes_index ||= config.scenes_index
-    end
-
-    def semaphore
-      @semaphore ||= Mutex.new
-    end
-
-    def download_status_store
-      @download_status_store ||= Data::DownloadStatusDatabase.new(config.store, semaphore)
-    end
-
-    def config
-      XXXDownload.config
-    end
+    def downloader            = @downloader ||= Downloader::Download.new(store: download_status_store, semaphore:)
+    def scenes_index          = @scenes_index ||= config.scenes_index
+    def semaphore             = @semaphore ||= Mutex.new
+    def download_status_store = @download_status_store ||= Data::DownloadStatusDatabase.new(config.store, semaphore)
+    def config                = XXXDownload.config
   end
 end

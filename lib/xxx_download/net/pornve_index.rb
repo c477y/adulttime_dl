@@ -2,6 +2,7 @@
 
 module XXXDownload
   module Net
+    # @deprecated This Index is no longer supported
     class PornveIndex < BaseIndex
       def search_by_all_scenes(url)
         doc = fetch(url)

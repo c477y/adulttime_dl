@@ -3,6 +3,9 @@
 module XXXDownload
   class Cli < Thor
     LOG_LEVELS = %w[extra trace debug info warn error fatal].freeze
+    RETRIABLE_ERRORS = [
+      ::Net::ReadTimeout
+    ].freeze
 
     class StoreSubCommand < Thor
       desc "export datastore.store", "Exports a datastore file to a yaml file"
@@ -47,8 +50,12 @@ module XXXDownload
                                                                      "more than 5"
     option :log_level, type: :string, enum: LOG_LEVELS, aliases: :l,
                        default: "info", desc: "Log level. Can be one of #{LOG_LEVELS.join(", ")}"
-    def download(site)
-      Cli.perform_with_error_handling do
+    option :headless, type: :boolean, default: false, desc: "Use a headless browser to download the files"
+    option :retry, type: :boolean, default: false, desc: "Retries the process on errors", hide: true
+    def download(site = nil)
+      exit_if_no_site!(site)
+
+      Cli.perform_with_error_handling(rerun: options["retry"]) do
         XXXDownload.set_logger(options["log_level"])
         config = Contract::ConfigGenerator.new(site, options).generate
         XXXDownload.set_config(config)
@@ -75,7 +82,7 @@ module XXXDownload
       end
     end
 
-    def self.perform_with_error_handling(&block)
+    def self.perform_with_error_handling(rerun: false, &block)
       block.call
     rescue Interrupt
       XXXDownload.logger.info "Exiting..."
@@ -86,7 +93,24 @@ module XXXDownload
     rescue StandardError => e
       XXXDownload.logger.fatal "#{e.class} - #{e.message}"
       XXXDownload.logger.fatal "\t#{e.backtrace&.join("\n\t")}"
-      exit 1
+      exit 1 unless rerun
+
+      XXXDownload.logger.debug "[PROCESS RETRY CHECK] #{e.class} - #{e.message}"
+      return unless RETRIABLE_ERRORS.include?(e.class)
+
+      XXXDownload.logger.info "[RETRYING DOWNLOAD PROCESS]"
+      Dir.chdir(CURRENT_DIR)
+      perform_with_error_handling(rerun:, &block)
+    end
+
+    no_commands do
+      def exit_if_no_site!(site)
+        return unless site.nil?
+
+        puts "Specify a site to download from. " \
+             "Supported sites: #{XXXDownload::Data::Config::MODULE_NAME.keys.sort.join(", ")}"
+        exit 1
+      end
     end
 
     desc "store SUBCOMMAND ...ARGS", "Manage datastore files"

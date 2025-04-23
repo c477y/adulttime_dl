@@ -91,9 +91,10 @@ module XXXDownload
       attribute :download_dir, Types::String
       attribute :quality, QUALITY
       attribute :parallel, Types::Integer
-      attribute? :dry_run, Types::Bool.optional
+      attribute? :dry_run, Types::Bool.default(false)
       attribute :downloader_flags, Types::String.default("")
       attribute? :cdp_host, Types::String.optional
+      attribute :headless, Types::Bool
       attribute :pre_download_search_dir, Types::Array.of(Types::String).default([].freeze)
       attribute? :urls, URLs
       attribute? :site_config do
@@ -109,9 +110,10 @@ module XXXDownload
 
       delegate :performers, :movies, :scenes, :page, to: :urls
 
-      def abs_cookie_file_path
-        File.join(exec_path, cookie_file)
-      end
+      alias headless? headless
+      alias dry_run? dry_run
+
+      def abs_cookie_file_path = File.join(exec_path, cookie_file)
 
       def cookie
         return unless File.exist?(abs_cookie_file_path)
@@ -131,10 +133,6 @@ module XXXDownload
         jar = HTTP::CookieJar.new
         cookies.each { |c| jar.add(c) }
         jar.save(abs_cookie_file_path, format: :cookiestxt, session: true)
-      end
-
-      def dry_run?
-        dry_run == true
       end
 
       #
@@ -166,23 +164,15 @@ module XXXDownload
         generate_class(site, DOWNLOAD_LINKS_SUFFIX)
       end
 
-      def scenes_index
-        generate_class(site, INDEX_SUFFIX)
-      end
+      def scenes_index = generate_class(site, INDEX_SUFFIX)
 
-      def downloader_requires_cookie?
-        COOKIE_REQUIRED_TO_DOWNLOAD_SITE.include?(site)
-      end
+      def downloader_requires_cookie? = COOKIE_REQUIRED_TO_DOWNLOAD_SITE.include?(site)
 
       # @param [XXXDownload::Data::Scene] scene
-      def skip_scene?(scene)
-        download_filters.skip?(scene)
-      end
+      def skip_scene?(scene) = download_filters.skip?(scene)
 
       # Get the site-specific configuration for the current site
-      def current_site_config
-        to_h.dig(:site_config, site.to_sym)
-      end
+      def current_site_config = to_h.dig(:site_config, site.to_sym)
 
       private
 

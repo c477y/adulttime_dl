@@ -13,19 +13,22 @@ module XXXDownload
         "blowpass", # needs fixing
         "cumlouder",
         "evilangel",
-        "goodporn",
         "houseofyre", # needs fixing
         "julesjordan",
         "loveherfilms", # needs fixing
         "manuelferrara",
         "newsensations",
         "pornfidelity",
-        "pornve", # deprecated
         "rickysroom",
         "s3xus",
         "scoregroup", # needs fixing
         "spizoo",
         "ztod"
+      ].freeze
+
+      DEPRECATED_SITES = %w[
+        goodporn
+        pornve
       ].freeze
 
       SUPPORTED_SITES_SPELL_CHECKER = DidYouMean::SpellChecker.new(dictionary: SUPPORTED_SITES)
@@ -59,6 +62,7 @@ module XXXDownload
         optional(:downloader_flags).maybe(:string)
         optional(:cdp_host).maybe(:string)
         optional(:pre_download_search_dir).maybe(array[:string])
+        optional(:headless).maybe(:bool)
         optional(:site_config).hash do
           optional(:blowpass).hash do
             optional(:algolia_application_id).maybe(:string)
@@ -78,7 +82,9 @@ module XXXDownload
       end
 
       rule(:site) do
-        unless SUPPORTED_SITES.include?(value)
+        if DEPRECATED_SITES.include?(value)
+          key.failure("#{value} is no longer supported")
+        elsif !SUPPORTED_SITES.include?(value)
           possible_sites = SUPPORTED_SITES_SPELL_CHECKER.correct(value)
           if possible_sites.length == 1
             key.failure("#{value} is not a valid site. Did you mean #{possible_sites.first}?")
@@ -113,12 +119,16 @@ module XXXDownload
 
       rule(:downloader) do
         unless SUPPORTED_DOWNLOADERS.include?(value)
-          key.failure("#{value} is not supported. Provide one of #{SUPPORTED_SITES.join(", ")}")
+          key.failure("#{value} is not supported. Provide one of #{SUPPORTED_DOWNLOADERS.join(", ")}")
+        end
+
+        if value == Constants::CLIENT_YOUTUBE_DL
+          XXXDownload.logger.warn "youtube-dl is deprecated. Please use yt-dlp instead."
         end
 
         stdout, stderr, status = Open3.capture3("#{value} --version")
         if status.success?
-          XXXDownload.logger.info "#{value} installed with version #{stdout.strip}"
+          XXXDownload.logger.debug "#{value} installed with version #{stdout.strip}"
         else
           XXXDownload.logger.fatal "[DOWNLOADER_CHECK_ERROR] #{stderr.strip}"
           key.failure("is not installed or unavailable on $PATH.")
@@ -137,7 +147,9 @@ module XXXDownload
 
       rule(:parallel) do
         key.failure("parallelism cannot be less than 1") if value < 1
-        key.failure("do not set parallelism to more than 5 as it can result in unexpected behaviour") if value > 5
+        if value > 5
+          XXXDownload.logger.warn("Do not set parallelism to more than 5 as it can result in unexpected behaviour")
+        end
       end
     end
   end

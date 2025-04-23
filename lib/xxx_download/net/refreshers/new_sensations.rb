@@ -51,7 +51,7 @@ module XXXDownload
         attr_reader :path, :doc
 
         def title        = doc.css(".flex-container .flex-child h4").text.strip
-        def actors       = doc.css(".update_models a").map(&:text).map(&:strip).map { |x| Data::Actor.unknown(x) }
+        def actors       = doc.css(".update_models a").map(&:text).map { |x| Data::Actor.unknown(x) }
 
         # @return [String, nil]
         def release_date
@@ -112,6 +112,7 @@ module XXXDownload
         # @return [Nokogiri::HTML4::Document]
         def fetch(page)
           request(teardown_browser: false, add_cookies: false) do
+            XXXDownload.logger.debug "[#{TAG}] Fetching #{page}"
             driver.get(page)
             content = driver.find_element(class: "content_wrapper")
             html = driver.execute_script("return arguments[0].outerHTML;", content)

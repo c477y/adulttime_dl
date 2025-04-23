@@ -2,10 +2,10 @@
 
 module XXXDownload
   module Net
+    # @deprecated This class is deprecated as the site is no longer active
     class GoodpornIndex < BaseIndex
       def initialize
         super
-
         self.class.base_uri BASE_URI
       end
 

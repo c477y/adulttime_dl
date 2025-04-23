@@ -7,4 +7,6 @@ $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "thor"
 require "xxx_download"
 
+CURRENT_DIR = Dir.pwd
+
 XXXDownload::Cli.start ARGV

@@ -196,9 +196,11 @@ module XXXDownload
       end
 
       def find_file(scene_data)
+        # extensions for partially downloaded files. used to resume downloads
+        partial_extensions = %w[.part .aria2]
         # replace all non-word characters with `?` for globbing to work
         search_str = "#{scene_data.file_name.gsub(/[^-\w\s]/, "?")}.*"
-        Dir[search_str].first
+        Dir[search_str].reject { |f| partial_extensions.include?(File.extname(f)) }.first
       end
 
       def client

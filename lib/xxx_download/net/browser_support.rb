@@ -58,7 +58,7 @@ module XXXDownload
       end
 
       def setup
-        return if default_options[:driver]
+        return default_options[:driver] if default_options[:driver]
 
         options = Selenium::WebDriver::Chrome::Options.new
 
@@ -72,16 +72,25 @@ module XXXDownload
           return default_options[:driver]
         end
 
-        # options.add_argument("--headless") if XXXDownload.logger.level > XXXDownload::CustomLogger::DEBUG
+        if XXXDownload.config.headless?
+          XXXDownload.logger.debug "[CREATING HEADLESS BROWSER]"
+          options.add_argument("--headless")
+        end
+
         default_options[:driver] ||= Selenium::WebDriver.for(:chrome, options:)
       end
 
       def teardown
-        driver&.close
+        XXXDownload.logger.debug "[CLOSING BROWSER] #{driver.browser}"
+        driver&.quit
         default_options[:driver] = nil
         nil
       rescue Selenium::WebDriver::Error::NoSuchWindowError => e
         XXXDownload.logger.warn "[BROWSER CLOSED] #{e.message}"
+      rescue ::Net::ReadTimeout => e
+        XXXDownload.logger.error "[BROWSER CONNECTION TIMEOUT] Browser is not accessible. " \
+                                 "You may need to manually kill the process."
+        raise e
       end
 
       def default_options = @default_options ||= { wait_timeout: 20 }

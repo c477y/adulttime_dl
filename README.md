@@ -79,7 +79,7 @@ Options:
                                             # Possible values: extra, trace, debug, info, warn, error, fatal
 
 Description:
-  Acceptable _site_ names: adulttime, archangel, blowpass, cumlouder, goodporn, houseofyre, julesjordan, loveherfilms, manuelferrara, pornve, rickysroom, s3xus, scoregroup, spizoo, ztod
+  Acceptable _site_ names: adulttime, archangel, blowpass, cumlouder, houseofyre, julesjordan, loveherfilms, manuelferrara, rickysroom, s3xus, scoregroup, spizoo, ztod
 ```
 
 ### Options

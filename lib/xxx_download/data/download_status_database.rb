@@ -43,6 +43,10 @@ module XXXDownload
         true
       end
 
+      def inspect
+        "[#{self.class.name}] #{store.path}"
+      end
+
       private
 
       def benchmark(opr = "unnamed")

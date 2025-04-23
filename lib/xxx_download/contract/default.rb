@@ -58,7 +58,8 @@ module XXXDownload
         "store" => "adt_download_status.store",
 
         cn08: "newline",
-        c18: "[String] Name of downloader tool to use. Currently supports youtube-dl and yt-dlp",
+        c18: "[String] Name of downloader tool to use. Currently supports yt-dlp (recommended),",
+        c018: "wget (experimental) and youtube-dl(deprecated)",
         c19: "Ensure that the downloader is available in your $PATH",
         "downloader" => "yt-dlp",
 

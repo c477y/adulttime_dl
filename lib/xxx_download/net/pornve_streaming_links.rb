@@ -2,6 +2,7 @@
 
 module XXXDownload
   module Net
+    # @deprecated This Index is no longer supported
     class PornveStreamingLinks < Base
       include BrowserSupport
 

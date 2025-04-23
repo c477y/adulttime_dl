@@ -64,9 +64,7 @@ module XXXDownload
            .join(" ")
       end
 
-      def cleanup
-        teardown
-      end
+      def cleanup = teardown
 
       private
 
@@ -169,7 +167,7 @@ module XXXDownload
       def title(doc)        = node(doc, "Title").text.gsub("Title:", "").strip
       def network_name(doc) = node(doc, "Site").text.strip.match(/^Site: (?<site_name>\w+) #\d+$/)&.[](:site_name) || "Pornfidelity"
       def release_date(doc) = node(doc, "Published")&.text&.gsub("Published:", "")&.strip
-      def actors(doc)       = node(doc, "Starring")&.css("a")&.map { |x| x.text.strip }&.sort&.map { |x| Data::Actor.unknown(x) }
+      def actors(doc)       = node(doc, "Starring")&.css("a")&.map(&:text)&.sort&.map { |x| Data::Actor.unknown(x) }
       # rubocop:enable Layout/LineLength
 
       def cookies
