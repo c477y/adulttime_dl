@@ -17,6 +17,14 @@ module XXXDownload
         collection_tag: "__LAZY__"
       }.freeze
 
+      FAIL = {
+        lazy: false,
+        title: "__FAIL__",
+        network_name: "__FAIL__",
+        collection_tag: "__FAIL__",
+        downloading_links: {}
+      }.freeze
+
       NOT_LAZY = { lazy: false }.freeze
 
       def initialize(attributes)
@@ -26,6 +34,8 @@ module XXXDownload
 
         super(attributes)
       end
+
+      def self.fail_scene(video_link) = new(video_link:, **FAIL)
 
       # Scenes can be resolved lazily. This can be useful if download/streaming links have an expiry
       # In such cases, you can explicitly mark a scene as lazy and pass in two mandatory attributes:
@@ -86,8 +96,11 @@ module XXXDownload
         actors.select { |x| x.gender == "male" }.map(&:name).sort
       end
 
-      def all_actors
-        actors.map(&:name).sort
+      def all_actors(sorted = true)
+        a = actors.map(&:name)
+        return a unless sorted
+
+        a.sort
       end
 
       def gender_unknown_actors?
@@ -108,26 +121,29 @@ module XXXDownload
       # @return [String]
       def file_name
         initial_name = []
-        initial_name << release_date if release_date.present?
-        initial_name << "[T]"
+        initial_name << "#{release_date} [T]" if release_date.present?
         initial_name << title
         initial_name << "[#{collection_tag}]"
         initial_name << (movie_title.present? ? movie_title : network_name)
+        actor_tag_len = 4 # length of [F] or [M] or [A]
 
         if gender_unknown_actors?
           initial_name << "[A]"
-          actor_s = safe_actor_string(all_actors, MAX_FILENAME_LEN - initial_name.join(" ").length)
+          actor_s = safe_actor_string(all_actors, MAX_FILENAME_LEN - initial_name.join(" ").length - actor_tag_len)
           initial_name << actor_s
         else
-          female_actor_s = safe_actor_string(female_actors, MAX_FILENAME_LEN - initial_name.join(" ").length)
+          female_actor_s = safe_actor_string(female_actors,
+                                             MAX_FILENAME_LEN - initial_name.join(" ").length - actor_tag_len)
           initial_name << "[F] #{female_actor_s}" unless female_actor_s.empty?
-          male_actor_s = safe_actor_string(male_actors, MAX_FILENAME_LEN - initial_name.join(" ").length)
+          male_actor_s = safe_actor_string(male_actors,
+                                           MAX_FILENAME_LEN - initial_name.join(" ").length - actor_tag_len)
           initial_name << "[M] #{male_actor_s}" unless male_actor_s.empty?
         end
-
         initial_name = initial_name.join(" ")
         clean(initial_name)
       end
+
+      def fail? = title == "__FAIL__"
 
       private
 
@@ -140,6 +156,7 @@ module XXXDownload
         return "" if actors.empty?
 
         name = actors.join(", ")
+        XXXDownload.logger.error "MAX(#{max_allowed_len}), LEN(#{name.length}) CURRENT NAME #{name}"
         return name if name.length < max_allowed_len
 
         safe_actor_string(actors[0...-1], max_allowed_len)

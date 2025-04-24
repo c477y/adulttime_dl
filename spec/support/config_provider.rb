@@ -8,7 +8,7 @@ shared_context "config provider" do
   # Input: Pass some keys in this hash to override default keys
   let(:override_config) { {} }
   let(:override_opts) { {} }
-  let(:site) { "goodporn" }
+  let(:site) { "cumlouder" }
 
   let(:override_cookie) { nil }
   let(:placeholder_cookie) { true }

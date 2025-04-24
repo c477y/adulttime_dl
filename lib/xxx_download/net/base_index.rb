@@ -70,7 +70,7 @@ module XXXDownload
       def verify_urls!(url, path)
         uri = URI(url)
         base_matches = uri.scheme && uri.host && "#{uri.scheme}://#{uri.host}" == self.class.base_uri
-        raise FatalError, "[#{TAG}] URL must start with #{BASE_URI}" unless base_matches
+        raise FatalError, "[#{TAG}] URL must start with #{self.class.base_uri}" unless base_matches
 
         return if uri.path&.include?(path)
 

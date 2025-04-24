@@ -20,7 +20,7 @@ module XXXDownload
 
       def wait_timeout(seconds) = default_options[:wait_timeout] = seconds
       def links = @links ||= []
-      def reset_links = @links.clear
+      def reset_links = links.clear
       def driver = default_options[:driver]
       def wait = @wait ||= Selenium::WebDriver::Wait.new(timeout: default_options[:wait_timeout])
       def start_browser = setup && set_cookie

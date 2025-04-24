@@ -79,7 +79,6 @@ RSpec.describe XXXDownload::Data::Config, type: :file_support do
         "blowpass" => XXXDownload::Net::BlowpassDownloadLinks,
         "cumlouder" => XXXDownload::Net::CumLouderDownloadLinks,
         "evilangel" => XXXDownload::Net::EvilAngelDownloadLinks,
-        "goodporn" => XXXDownload::Net::GoodpornDownloadLinks,
         "houseofyre" => XXXDownload::Net::HouseOFyreDownloadLinks,
         "julesjordan" => XXXDownload::Net::JulesJordanDownloadLinks,
         "manuelferrara" => XXXDownload::Net::ManuelFerraraDownloadLinks,
@@ -89,6 +88,7 @@ RSpec.describe XXXDownload::Data::Config, type: :file_support do
         "s3xus" => XXXDownload::Net::S3xusDownloadLinks,
         "spizoo" => XXXDownload::Net::SpizooDownloadLinks,
         "scoregroup" => XXXDownload::Net::ScoreGroupDownloadLinks,
+        "thepornbunny" => XXXDownload::Net::ThePornBunnyDownloadLinks,
         "ztod" => XXXDownload::Net::ZtodDownloadLinks
       }
     end
@@ -124,18 +124,17 @@ RSpec.describe XXXDownload::Data::Config, type: :file_support do
         "blowpass" => XXXDownload::Net::BlowpassIndex,
         "cumlouder" => XXXDownload::Net::CumLouderIndex,
         "evilangel" => XXXDownload::Net::EvilAngelIndex,
-        "goodporn" => XXXDownload::Net::GoodpornIndex,
         "houseofyre" => XXXDownload::Net::HouseOFyreIndex,
         "julesjordan" => XXXDownload::Net::JulesJordanIndex,
         "loveherfilms" => XXXDownload::Net::LoveHerFilmsIndex,
         "manuelferrara" => XXXDownload::Net::ManuelFerraraIndex,
         "newsensations" => XXXDownload::Net::NewSensationsIndex,
         "pornfidelity" => XXXDownload::Net::PornfidelityIndex,
-        "pornve" => XXXDownload::Net::PornveIndex,
         "rickysroom" => XXXDownload::Net::RickysRoomIndex,
         "s3xus" => XXXDownload::Net::S3xusIndex,
         "scoregroup" => XXXDownload::Net::ScoreGroupIndex,
         "spizoo" => XXXDownload::Net::SpizooIndex,
+        "thepornbunny" => XXXDownload::Net::ThePornBunnyIndex,
         "ztod" => XXXDownload::Net::ZtodIndex
       }
     end

@@ -36,7 +36,6 @@ to be used as the first argument to the `download` command.
 * [archangel](https://www.archangelvideo.com/)
 * [blowpass](https://www.blowpass.com/en)
 * [cumlouder](https://www.cumlouder.com/)
-* ~~[goodporn](https://goodporn.to/)~~ site has been removed
 * [houseofyre](https://houseofyre.com/)
 * [julesjordan](https://www.julesjordan.com/trial/)
 * [loveherfilms](https://www.loveherfilms.com/tour/)
@@ -47,6 +46,7 @@ to be used as the first argument to the `download` command.
 * [s3xus](https://s3xus.com/)
 * [scoregroup](https://score-group.com/)
 * [spizoo](https://www.spizoo.com/)
+* [thepornbunny](https://www.thepornbunny.com/)
 * [ztod](https://www.zerotolerancefilms.com/en) (Zero Tolerance Films)
 
 The tool will look for a config file whenever it's run. For first run, you can

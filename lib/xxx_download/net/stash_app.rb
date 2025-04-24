@@ -26,8 +26,8 @@ module XXXDownload
     end
 
     class StashApp < Base
-      include HTTParty
       GRAPHQL_ENDPOINT = "/graphql"
+      TAG = "STASH_APP"
 
       def initialize(config)
         @config = config
@@ -51,8 +51,13 @@ module XXXDownload
 
       # @param [Data::Scene] scene_data
       def scene(scene_data)
-        response = handle_response! { self.class.post(GRAPHQL_ENDPOINT, body: find_scene_body(scene_data.title)) }
-        response.dig("data", "findScenes", "scenes")&.first
+        all_first_names = scene_data.all_actors(false).map { |x| x.split.first }.join(" ")
+        query = "#{scene_data.title} #{all_first_names}"
+        XXXDownload.logger.debug "[#{TAG} FIND_SCENE QUERY] #{query}"
+        response = handle_response! { self.class.post(GRAPHQL_ENDPOINT, body: find_scene_body(query)) }
+        result = response.dig("data", "findScenes", "scenes")&.first
+        XXXDownload.logger.ap result, :extra
+        result
       end
 
       private
@@ -64,7 +69,7 @@ module XXXDownload
           operationName: "FindScenes",
           variables: {
             filter: {
-              q: "\"#{title}\"",
+              q: title.to_s,
               page: 1,
               per_page: 40
             }

@@ -19,7 +19,7 @@ module XXXDownload
       def generate
         config_from_defaults = Default.cleaned_config
         config_with_file_overrides = hash_from_config_file.deeper_merge(config_from_defaults)
-        merged_config = config_with_file_overrides.deeper_merge(override_values)
+        merged_config = config_with_file_overrides.deeper_merge!(override_values)
 
         validated_config = validate_download_filters!(merged_config)
         config = XXXDownload::Data::Config.new(validated_config)

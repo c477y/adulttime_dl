@@ -5,7 +5,7 @@ require "rspec"
 RSpec.describe XXXDownload::Contract::ConfigGenerator, type: :file_support do
   describe ".generate" do
     subject(:generate) { described_class.new(site, options).generate }
-    let(:site) { "goodporn" }
+    let(:site) { "cumlouder" }
     let(:options) { {} }
 
     context "when no config file exists" do

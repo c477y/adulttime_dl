@@ -23,6 +23,7 @@ module XXXDownload
         "s3xus",
         "scoregroup", # needs fixing
         "spizoo",
+        "thepornbunny",
         "ztod"
       ].freeze
 

@@ -36,7 +36,9 @@ VCR.configure do |config|
   config.ignore_request do |request|
     uri = URI(request.uri)
 
-    IGNORED_URLS.include?(uri.host) || [9515, 9516].include?(uri.port)
+    IGNORED_URLS.include?(uri.host) ||
+      [9515, 9516].include?(uri.port) ||
+      (uri.host == "www.thepornbunny.com" && uri.path =~ /\video/) # allow requests that require the browser
   end
 
   config.filter_sensitive_data("user") { `echo $HOME`.chomp }

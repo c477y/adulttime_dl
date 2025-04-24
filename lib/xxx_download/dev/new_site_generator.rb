@@ -12,7 +12,7 @@ module XXXDownload
       argument :name, type: :string, desc: "Name of the site to generate. Provide in CamelCase"
       class_option :short_name, type: :string, required: true,
                                 desc: "Short name of the site to invoke the download command"
-      class_option :supports_streaming, default: true, type: :boolean,
+      class_option :supports_streaming, default: false, type: :boolean,
                                         desc: "If the site supports download using streaming. " \
                                               "Keep this true if the site uses HLS streaming"
       class_option :supports_download, default: true, type: :boolean,

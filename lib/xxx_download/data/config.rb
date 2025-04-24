@@ -17,7 +17,6 @@ module XXXDownload
         "archangel"     => "ArchAngel",
         "blowpass"      => "Blowpass",
         "cumlouder"     => "CumLouder",
-        "goodporn"      => "Goodporn",
         "evilangel"     => "EvilAngel",
         "houseofyre"    => "HouseOFyre",
         "julesjordan"   => "JulesJordan",
@@ -25,11 +24,11 @@ module XXXDownload
         "manuelferrara" => "ManuelFerrara",
         "newsensations" => "NewSensations",
         "pornfidelity"  => "Pornfidelity",
-        "pornve"        => "Pornve",
         "rickysroom"    => "RickysRoom",
         "s3xus"         => "S3xus",
         "scoregroup"    => "ScoreGroup",
         "spizoo"        => "Spizoo",
+        "thepornbunny"  => "ThePornBunny",
         "ztod"          => "Ztod"
       }.freeze
       # rubocop:enable Layout/HashAlignment
@@ -57,11 +56,12 @@ module XXXDownload
         s3xus
         scoregroup
         spizoo
+        thepornbunny
         ztod
       ].freeze
 
-      # Sites that only support streaming. This may be because downloading
-      # is not allowed by the site OR the download option is behind a paywall
+      # Sites that only support streaming. This may be because the site
+      # does not allow downloading OR the download option is behind a paywall
       DOWNLOADING_UNSUPPORTED_SITE = %w[
         loveherfilms
         pornve
@@ -94,7 +94,7 @@ module XXXDownload
       attribute? :dry_run, Types::Bool.default(false)
       attribute :downloader_flags, Types::String.default("")
       attribute? :cdp_host, Types::String.optional
-      attribute :headless, Types::Bool
+      attribute :headless, Types::Bool.default(false)
       attribute :pre_download_search_dir, Types::Array.of(Types::String).default([].freeze)
       attribute? :urls, URLs
       attribute? :site_config do

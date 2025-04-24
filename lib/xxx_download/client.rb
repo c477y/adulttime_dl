@@ -9,6 +9,7 @@ module XXXDownload
     def start!
       @exception = nil
       XXXDownload.logger.info "[PROCESS START]"
+      XXXDownload.logger.debug "[PARALLEL DOWNLOAD(s)] #{config.parallel}"
       process_performer
       process_movies
       process_scenes
