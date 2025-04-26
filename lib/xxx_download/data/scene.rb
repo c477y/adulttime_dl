@@ -156,7 +156,6 @@ module XXXDownload
         return "" if actors.empty?
 
         name = actors.join(", ")
-        XXXDownload.logger.error "MAX(#{max_allowed_len}), LEN(#{name.length}) CURRENT NAME #{name}"
         return name if name.length < max_allowed_len
 
         safe_actor_string(actors[0...-1], max_allowed_len)

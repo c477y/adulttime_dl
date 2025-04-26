@@ -2,17 +2,17 @@
 
 require "rspec"
 
-class FakeWebDriverProvider
-  include XXXDownload::Net::BrowserSupport
-
-  def initialize
-    # Uncomment during live-test
-    # start_browser
-    nil
-  end
-end
-
 RSpec.describe XXXDownload::Net::Refreshers::ThePornBunny, type: :file_support do
+  class FakeWebDriverProvider # rubocop:disable Lint/ConstantDefinitionInBlock
+    include XXXDownload::Net::BrowserSupport
+
+    def initialize
+      # Uncomment during live-test
+      # start_browser
+      nil
+    end
+  end
+
   include_context "config provider"
 
   subject { described_class.new(path) }
@@ -56,8 +56,6 @@ RSpec.describe XXXDownload::Net::Refreshers::ThePornBunny, type: :file_support d
       let(:path) { "/video/fff" }
 
       it "returns the expected scene data", :aggregate_failures do
-        pending "Requires browser session"
-
         expect(result).to be_a(XXXDownload::Data::Scene)
         expect(result.fail?).to eq(true)
         expect(result.downloading_links).to be_a(XXXDownload::Data::StreamingLinks)

@@ -2,18 +2,18 @@
 
 require "rspec"
 
-class FakeWebDriverProvider
-  include XXXDownload::Net::BrowserSupport
-
-  def initialize(base_url, cookie)
-    cookie(base_url, cookie)
-
-    # Uncomment during live-test
-    # start_browser
-  end
-end
-
 RSpec.describe XXXDownload::Net::Refreshers::NewSensations, type: :file_support do
+  class FakeWebDriverProvider # rubocop:disable Lint/ConstantDefinitionInBlock
+    include XXXDownload::Net::BrowserSupport
+
+    def initialize(base_url, cookie)
+      cookie(base_url, cookie)
+
+      # Uncomment during live-test
+      # start_browser
+    end
+  end
+
   subject { described_class.new(path) }
 
   include_context "config provider"

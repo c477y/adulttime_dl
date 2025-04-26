@@ -93,6 +93,13 @@ module XXXDownload
         raise e
       end
 
+      # Unsafe teardown. Only used if the browser connection has been lost
+      def teardown!
+        XXXDownload.logger.info "[RESET BROWSER] Browser is not being terminated. " \
+                                "You will need to close it manually."
+        @default_options = { wait_timeout: 20 }
+      end
+
       def default_options = @default_options ||= { wait_timeout: 20 }
 
       private

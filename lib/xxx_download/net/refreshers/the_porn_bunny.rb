@@ -33,9 +33,11 @@ module XXXDownload
             return empty_scene
           end
 
-          to_scene(links.first)
-        ensure
           teardown
+          to_scene(links.first)
+        rescue ::Net::ReadTimeout
+          teardown!
+          refresh
         end
 
         def inspect = "#<#{self.class.name} path=#{path}>"
@@ -105,7 +107,9 @@ module XXXDownload
           download_location = case resp.code
                               when 302 then resp.headers["Location"]
                               else
-                                XXXDownload.logger.warn "[#{TAG}] Unexpected response code: #{resp.code}"
+                                XXXDownload.logger.warn "[#{TAG}] Unexpected response code: #{resp.code} " \
+                                                        "with content type #{resp.headers["Content-Type"]}"
+                                XXXDownload.logger.trace "[#{TAG}] Response body: #{resp.body}"
                                 nil
                               end
           return empty_scene unless download_location.present?

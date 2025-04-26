@@ -25,8 +25,8 @@ module XXXDownload
 
         scene_data = scene_data.refresh(web_driver:) if scene_data.lazy?
 
+        return false if scene_data.fail?
         return false if already_downloaded?(scene_data)
-
         return false if config.skip_scene?(scene_data)
 
         # Try to download file using direct download

@@ -4,7 +4,8 @@ module XXXDownload
   class Cli < Thor
     LOG_LEVELS = %w[extra trace debug info warn error fatal].freeze
     RETRIABLE_ERRORS = [
-      ::Net::ReadTimeout
+      "Net::ReadTimeout",
+      "Selenium::WebDriver::Error::TimeoutError"
     ].freeze
 
     class StoreSubCommand < Thor
@@ -96,7 +97,7 @@ module XXXDownload
       exit 1 unless rerun
 
       XXXDownload.logger.debug "[PROCESS RETRY CHECK] #{e.class} - #{e.message}"
-      return unless RETRIABLE_ERRORS.include?(e.class)
+      return unless RETRIABLE_ERRORS.include?(e.class.name)
 
       XXXDownload.logger.info "[RETRYING DOWNLOAD PROCESS]"
       Dir.chdir(CURRENT_DIR)
