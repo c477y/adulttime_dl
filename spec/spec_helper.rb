@@ -38,6 +38,8 @@ VCR.configure do |config|
   config.ignore_request do |request|
     uri = URI(request.uri)
 
+    next if uri.port == 9999 # stashapp
+
     IGNORED_URLS.include?(uri.host) ||
       [9515, 9516].include?(uri.port) ||
       (uri.host == "www.thepornbunny.com" && uri.path =~ /\video/) # allow requests that require the browser
@@ -58,6 +60,15 @@ VCR.configure do |config|
       interaction.response.headers.delete(h)
       interaction.request.headers.delete(h)
     end
+
+    # allow stash tests to run from both inside and outside docker
+    interaction.request.uri.gsub!(/(?:localhost|host\.docker\.internal):9999/, "STASH_HOST:9999")
+  end
+
+  config.before_playback do |interaction|
+    # Replace placeholder with the current host when playing back
+    current_host = ENV.fetch("DOCKER_ENV", 0).to_i == 1 ? "host.docker.internal:9999" : "localhost:9999"
+    interaction.request.uri.gsub!("STASH_HOST:9999", current_host)
   end
 
   # https://benoittgt.github.io/vcr/#/configuration/preserve_exact_body_bytes

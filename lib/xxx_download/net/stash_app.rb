@@ -2,10 +2,6 @@
 
 require "base64"
 
-# require "xxx_rename/errors"
-# require "xxx_rename/integrations/base"
-# require "xxx_rename/file_utilities"
-
 module XXXDownload
   module Net
     class StashAPIError < StandardError

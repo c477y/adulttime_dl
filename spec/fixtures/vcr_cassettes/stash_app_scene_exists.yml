@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://STASH_HOST:9999/graphql
+    body:
+      encoding: UTF-8
+      string: '{"operationName":"FindScenes","variables":{"filter":{"q":"Madisons
+        Swinging Slut ","page":1,"per_page":40}},"query":"query FindScenes($filter:
+        FindFilterType, $scene_filter: SceneFilterType, $scene_ids: [Int!]) {\n  findScenes(filter:
+        $filter, scene_filter: $scene_filter, scene_ids: $scene_ids) {\n    scenes
+        {\n      title\n      files {\n        path\n      }\n    }\n  }\n}\n"}'
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0
+      Accept:
+      - application/json
+      Dnt:
+      - '1'
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-store
+      Content-Type:
+      - application/json
+      Vary:
+      - Accept-Encoding
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      Content-Length:
+      - '152'
+    body:
+      encoding: ASCII-8BIT
+      base64_string: |
+        eyJkYXRhIjp7ImZpbmRTY2VuZXMiOnsic2NlbmVzIjpbeyJ0aXRsZSI6IiIs
+        ImZpbGVzIjpbeyJwYXRoIjoiL3RtcC9TdGFzaC9NYWRpc29ucyBTd2luZ2lu
+        ZyBTbHV0IFtQRl0gUG9ybmZpZGVsaXR5IFtBXSBLb3J0bmV5IEthbmUsIE1h
+        ZGlzb24ubXA0In1dfV19fX0=
+  recorded_at: Sat, 26 Apr 2025 11:32:43 GMT
+recorded_with: VCR 6.2.0
