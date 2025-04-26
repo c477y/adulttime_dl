@@ -1,7 +1,0 @@
-module XXXDownload
-  module Net
-    class Base
-      def default_headers: () -> { String: String }
-    end
-  end
-end

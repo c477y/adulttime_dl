@@ -2,11 +2,13 @@
 
 require "xxx_download"
 require "simplecov"
+require "simplecov-cobertura"
 require "super_diff/rspec"
 require "vcr"
 require "webmock/rspec"
 
 SimpleCov.start
+SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
 
 Dir["./spec/support/**/*.rb"].each { |f| require f }
 

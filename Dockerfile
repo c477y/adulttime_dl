@@ -9,7 +9,7 @@ RUN apt-get update -y && \
     python3-pip \
     build-essential
 
-RUN pip3 install --upgrade youtube_dl
+RUN python3 -m pip install -U "yt-dlp[default]"
 
 WORKDIR /app
 

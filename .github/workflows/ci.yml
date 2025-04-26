@@ -1,20 +1,20 @@
 name: Tests
-on: [push, pull_request]
+on: [ push, pull_request ]
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Ruby latest
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.1.2
-      - name: Install dependencies
-        run: bundle install
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+      - name: Build Docker image
+        run: docker build -t xxx_download .
       - name: Run tests and collect coverage
-        run: bundle exec rake
+        run: docker run --rm -v ${PWD}/coverage:/app/coverage xxx_download bundle exec rake
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/coverage.xml
         env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_ORG_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
