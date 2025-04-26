@@ -28,8 +28,8 @@ module XXXDownload
       # @param [Proc] block a block which runs the HTTParty request
       # @return [HTTParty::Response]
       # @raise [XXXDownload::APIError]
-      def handle_response!(return_raw: false, handle_errors: true, &block)
-        handle_response_with_retry!(return_raw:, handle_errors:, &block)
+      def handle_response!(return_raw: false, handle_errors: true, &)
+        handle_response_with_retry!(return_raw:, handle_errors:, &)
       end
 
       private

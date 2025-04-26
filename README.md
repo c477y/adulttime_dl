@@ -1,4 +1,4 @@
-# XXXDownload
+# XXXDownload [![Tests](https://github.com/c477y/adulttime_dl/actions/workflows/ci.yml/badge.svg)](https://github.com/c477y/adulttime_dl/actions/workflows/ci.yml)
 
 ## Installation
 

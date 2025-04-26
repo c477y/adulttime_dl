@@ -27,7 +27,6 @@ require "http-cookie"
 require "httparty"
 require "nokogiri"
 require "parallel"
-require "set"
 require "thor"
 require "yaml"
 

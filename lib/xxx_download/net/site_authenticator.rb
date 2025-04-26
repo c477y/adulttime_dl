@@ -16,15 +16,15 @@ module XXXDownload
       # @param [String] cookie_key Check if a user has logged in by checking the presence of a single cookie
       # @param [Proc] block Optional block if you want to pass your own authentication check logic
       # @return [String] cookie string
-      def request_cookie(force_request: false, cookie_key: nil, &block)
+      def request_cookie(force_request: false, cookie_key: nil, &)
         if force_request
           XXXDownload.logger.info "[#{TAG}] Session cookies are requested. Please use your credentials to login again."
-          request_cookies_from_browser(cookie_key, &block)
+          request_cookies_from_browser(cookie_key, &)
         elsif XXXDownload.config.cookie.present?
           XXXDownload.logger.trace "[#{TAG}] Using persisted cookies from config/previous session"
           XXXDownload.config.cookie
         elsif !logged_in?
-          request_cookies_from_browser(cookie_key, &block)
+          request_cookies_from_browser(cookie_key, &)
         end
       end
 

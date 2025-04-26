@@ -1,4 +1,4 @@
-FROM ruby:3.1.3-slim-bullseye
+FROM ruby:3.4.2-slim-bullseye
 
 ENV DOCKER_ENV=1
 
