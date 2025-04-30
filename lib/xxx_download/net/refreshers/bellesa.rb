@@ -3,9 +3,8 @@
 module XXXDownload
   module Net
     module Refreshers
-      # TODO: Remove the Refresh from the class name
-      class <%= name %>Refresh < BaseRefresh
-        TAG = "<%= name.upcase %>_REFRESH"
+      class Bellesa < BaseRefresh
+        TAG = "BELLESA_REFRESH"
 
         # @return [Data::Scene]
         def refresh

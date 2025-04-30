@@ -13,6 +13,7 @@ module XXXDownload
 
       # rubocop:disable Layout/HashAlignment
       MODULE_NAME = {
+        "bellesa"       => "Bellesa",
         "adulttime"     => "AdultTime",
         "archangel"     => "ArchAngel",
         "blowpass"      => "Blowpass",
@@ -43,6 +44,7 @@ module XXXDownload
       STREAMING_UNSUPPORTED_SITE = %w[
         adulttime
         archangel
+        bellesa
         blowpass
         cumlouder
         evilangel

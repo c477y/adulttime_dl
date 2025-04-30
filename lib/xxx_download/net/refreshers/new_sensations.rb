@@ -6,7 +6,6 @@ require "date"
 module XXXDownload
   module Net
     module Refreshers
-      # Remove the Refresh from the class name
       class NewSensations < BaseRefresh
         TAG = "NEW_SENSATIONS_REFRESH"
         include BrowserSupport
