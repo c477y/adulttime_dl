@@ -13,9 +13,9 @@ module XXXDownload
 
       # rubocop:disable Layout/HashAlignment
       MODULE_NAME = {
-        "bellesa"       => "Bellesa",
         "adulttime"     => "AdultTime",
         "archangel"     => "ArchAngel",
+        "bellesa"       => "Bellesa",
         "blowpass"      => "Blowpass",
         "cumlouder"     => "CumLouder",
         "evilangel"     => "EvilAngel",

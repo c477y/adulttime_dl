@@ -34,6 +34,7 @@ to be used as the first argument to the `download` command.
 
 * [adulttime](https://members.adulttime.com)
 * [archangel](https://www.archangelvideo.com/)
+* [bellesa](https://bellesaplus.co)
 * [blowpass](https://www.blowpass.com/en)
 * [cumlouder](https://www.cumlouder.com/)
 * [houseofyre](https://houseofyre.com/)
@@ -68,18 +69,21 @@ Usage:
 
 Options:
       [--help], [--no-help], [--skip-help]
-                                            # Default: false
-      [--cookie-file=COOKIE_FILE]           # Path to the file where the cookie is stored
-      [--downloader=DOWNLOADER]             # Name of the client to use to download. Can be either 'youtube-dl'(default) or 'yt-dlp'
-      [--store=STORE]                       # Path to the .store file which tracks which files have been downloaded. If not provided, a store file will be created by the CLI
-  -p, [--parallel=N]                        # Number of parallel downloads to perform. For optimal performance, do not set this to more than 5
-                                            # Default: 1
-  -l, [--log-level=LOG_LEVEL]               # Log level. Can be one of extra, trace, debug, info, warn, error, fatal
-                                            # Default: info
-                                            # Possible values: extra, trace, debug, info, warn, error, fatal
+                                                        # Default: false
+      [--cookie-file=COOKIE_FILE]                       # Path to the file where the cookie is stored
+      [--downloader=DOWNLOADER]                         # Name of the client to use to download. Can be either 'youtube-dl'(default) or 'yt-dlp'
+      [--store=STORE]                                   # Path to the .store file which tracks which files have been downloaded. If not provided, a store file will be created by the CLI
+  -N, [--parallel=N]                                    # Number of parallel downloads to perform. For optimal performance, do not set this to more than 5
+                                                        # Default: 1
+  -l, [--log-level=LOG_LEVEL]                           # Log level. Can be one of extra, trace, debug, info, warn, error, fatal
+                                                        # Default: info
+                                                        # Possible values: extra, trace, debug, info, warn, error, fatal
+      [--headless], [--no-headless], [--skip-headless]  # Use a headless browser to download the files
+                                                        # Default: false
 
 Description:
-  Acceptable _site_ names: adulttime, archangel, blowpass, cumlouder, houseofyre, julesjordan, loveherfilms, manuelferrara, rickysroom, s3xus, scoregroup, spizoo, ztod
+  Acceptable _site_ names: adulttime, archangel, bellesa, blowpass, cumlouder, evilangel, houseofyre, julesjordan, loveherfilms, manuelferrara, newsensations, pornfidelity, rickysroom, s3xus, scoregroup, spizoo,
+  thepornbunny, ztod
 ```
 
 ### Options

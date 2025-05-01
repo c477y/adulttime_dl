@@ -16,6 +16,7 @@ SPIZOO_COOKIE_STR=${SPIZOO_COOKIE_STR:-cookie}
 S3XUS_COOKIE_STR=${S3XUS_COOKIE_STR:-cookie}
 ZTOD_COOKIE_STR=${ZTOD_COOKIE_STR:-cookie}
 
+echo "Building docker image. This may take some time..."
 docker build --quiet -t xxx_download:0 .
 
 docker run \

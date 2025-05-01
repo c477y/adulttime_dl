@@ -76,6 +76,7 @@ RSpec.describe XXXDownload::Data::Config, type: :file_support do
       {
         "adulttime" => XXXDownload::Net::AdultTimeDownloadLinks,
         "archangel" => XXXDownload::Net::ArchAngelDownloadLinks,
+        "bellesa" => XXXDownload::Net::BellesaDownloadLinks,
         "blowpass" => XXXDownload::Net::BlowpassDownloadLinks,
         "cumlouder" => XXXDownload::Net::CumLouderDownloadLinks,
         "evilangel" => XXXDownload::Net::EvilAngelDownloadLinks,
@@ -121,6 +122,7 @@ RSpec.describe XXXDownload::Data::Config, type: :file_support do
       {
         "adulttime" => XXXDownload::Net::AdultTimeIndex,
         "archangel" => XXXDownload::Net::ArchAngelIndex,
+        "bellesa" => XXXDownload::Net::BellesaIndex,
         "blowpass" => XXXDownload::Net::BlowpassIndex,
         "cumlouder" => XXXDownload::Net::CumLouderIndex,
         "evilangel" => XXXDownload::Net::EvilAngelIndex,
