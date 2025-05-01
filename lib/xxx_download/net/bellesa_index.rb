@@ -14,6 +14,11 @@ module XXXDownload
       GUEST_BASE_URI = "https://www.bellesa.co"
       LOGIN_ENDPOINT = "/login"
 
+      def initialize
+        super
+        self.class.headers "Cookie" => config.cookie
+      end
+
       # @param [String] url
       # @return [Array<Data::Scene>]
       def search_by_all_scenes(url)
@@ -114,13 +119,14 @@ module XXXDownload
         resp.each(&:deep_symbolize_keys!)
         scene_data = []
         resp.map do |h|
+          XXXDownload.logger.ap h, :extra
           scene_data << Data::BellesaApiScene.new(
             id: h[:id],
             posted_on: h[:posted_on],
             title: h[:title],
             tags: h[:tags].split(","),
             source: h[:source],
-            resolutions: h[:resolutions].split(","),
+            resolutions: h[:resolutions].present? ? h[:resolutions].split(",") : %w[720 1080],
             duration: h[:duration],
             content_provider: h[:content_provider].map { |x| { name: x[:name] } },
             performers: h[:performers].map { |x| { name: x[:name] } }

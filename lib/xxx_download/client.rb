@@ -75,11 +75,7 @@ module XXXDownload
     end
 
     def cleanup_index
-      if @exception.present?
-        XXXDownload.logger.error "[PROCESS ERROR] #{@exception.message}".colorize(:red)
-        XXXDownload.logger.error @exception.backtrace.join("\n")
-      end
-
+      XXXDownload.logger.error "[PROCESS ERROR] #{@exception.message}".colorize(:red) if @exception.present?
       scenes_index.cleanup
     end
 
