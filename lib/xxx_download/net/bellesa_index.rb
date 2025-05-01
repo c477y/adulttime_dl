@@ -8,19 +8,12 @@ module XXXDownload
       BASE_URI = "https://bellesaplus.co"
       base_uri BASE_URI
 
-      # headers "x-client-token" => SecureRandom.uuid
-      # headers "Accept-Language" => "en-GB,en;q=0.5"
-      # headers "Priority" => "u=0"
-
       VIDEO_API_PATH = "/api/rest/v1/videos"
 
       # URL for non-members
       GUEST_BASE_URI = "https://www.bellesa.co"
       LOGIN_ENDPOINT = "/login"
 
-      #
-      # e.g. https://bellesaplus.co/videos/10931/episode-129-chantal-quinton
-      #
       # @param [String] url
       # @return [Array<Data::Scene>]
       def search_by_all_scenes(url)
@@ -36,9 +29,6 @@ module XXXDownload
         fetch_video_data(video_id)
       end
 
-      #
-      # e.g. https://bellesaplus.co/videos?providers=bellesa-blind-date
-      #
       # @param [String] url
       # @return [Array<Data::Scene>]
       def search_by_movie(url)
@@ -55,9 +45,6 @@ module XXXDownload
         fetch_scenes_for_provider(provider_name)
       end
 
-      #
-      # e.g. https://bellesaplus.co/videos?performers=chantal-danielle
-      #
       # @param [String] url
       # @return [Array<Data::Scene>]
       def search_by_actor(url)
