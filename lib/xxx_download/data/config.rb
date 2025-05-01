@@ -15,6 +15,7 @@ module XXXDownload
       MODULE_NAME = {
         "adulttime"     => "AdultTime",
         "archangel"     => "ArchAngel",
+        "bellesa"       => "Bellesa",
         "blowpass"      => "Blowpass",
         "cumlouder"     => "CumLouder",
         "evilangel"     => "EvilAngel",
@@ -43,6 +44,7 @@ module XXXDownload
       STREAMING_UNSUPPORTED_SITE = %w[
         adulttime
         archangel
+        bellesa
         blowpass
         cumlouder
         evilangel

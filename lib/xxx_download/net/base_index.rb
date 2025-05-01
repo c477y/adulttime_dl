@@ -64,35 +64,57 @@ module XXXDownload
       #
       # Verify the URL to ensure it belongs to the expected site
       #
-      # @param [String] url
-      # @param [String] path
-      # @raise [FatalError] if the url is invalid or does not start with BASE_URI
-      def verify_urls!(url, path)
-        uri = URI(url)
-        unless hostname(url) == self.class.base_uri
-          raise FatalError, "[#{TAG}] URL must start with #{self.class.base_uri}"
+      # @param [String|URI] uri
+      # @param [String|Regex] path
+      # @raise [FatalError] if the uri is invalid or does not start with BASE_URI
+      def verify_urls!(uri, path)
+        begin
+          uri = URI(uri) unless uri.is_a?(URI)
+        rescue URI::InvalidURIError
+          raise FatalError, "[#{TAG}] Invalid URL #{uri}"
         end
 
-        return if uri.path&.include?(path)
-
-        XXXDownload.logger.warn "[#{TAG}] URL should be a link to #{path}. You may get unexpected results."
-      rescue URI::InvalidURIError
-        raise FatalError, "[#{TAG}] Invalid URL #{url}"
+        validate_hostname!(uri)
+        validate_path!(uri, path)
       end
 
       #
       # Helper method to make HTTP requests using HTTParty
       #
-      # @param [String] url
+      # @param [String] uri
       # @param [Boolean] follow_redirects
       # @return [Nokogiri::XML::Document]
       # @raise [FatalError] if the URL is invalid
-      def page(url, follow_redirects: false)
-        uri = URI(url)
-        resp = handle_response!(return_raw: true) { self.class.get(uri.path, follow_redirects:) }
+      def page(uri, follow_redirects: false)
+        path = begin
+          uri.start_with?(/(http|www)/) ? URI(uri).path : uri
+        rescue URI::InvalidURIError
+          uri
+        end
+
+        resp = handle_response!(return_raw: true) { self.class.get(path, follow_redirects:) }
         Nokogiri::HTML(resp.body)
-      rescue URI::InvalidURIError => e
-        raise FatalError, "[#{TAG}] Invalid URL `#{url}` - #{e.message}"
+      end
+
+      private
+
+      def validate_hostname!(uri)
+        return if hostname(uri) == self.class.base_uri
+
+        raise FatalError, "[#{TAG}] URL must start with #{self.class.base_uri}"
+      end
+
+      def validate_path!(uri, path)
+        case path
+        when String
+          return if uri.path.include?(path)
+        when Regexp
+          return if uri.path.match?(path)
+        else
+          raise FatalError, "[#{TAG}] Invalid path type: expected String or Regexp, got #{path.class}"
+        end
+
+        XXXDownload.logger.warn "[#{TAG}] URL should be a link to #{path}. You may get unexpected results."
       end
     end
   end

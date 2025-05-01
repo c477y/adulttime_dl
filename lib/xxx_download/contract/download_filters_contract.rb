@@ -10,6 +10,7 @@ module XXXDownload
       SUPPORTED_SITES = [
         "adulttime", # needs fixing
         "archangel", # needs fixing
+        "bellesa",
         "blowpass", # needs fixing
         "cumlouder",
         "evilangel",

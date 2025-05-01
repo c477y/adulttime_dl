@@ -94,7 +94,7 @@ RSpec.describe XXXDownload::Net::ThePornBunnyIndex, type: :file_support do
 
       let(:resource) { "http" }
 
-      it { expect { result }.to raise_error(XXXDownload::FatalError, %r{https://www.thepornbunny.com}) }
+      it { expect { result }.to raise_error(URI::InvalidURIError, "Invalid URL: missing scheme or host") }
     end
   end
 end

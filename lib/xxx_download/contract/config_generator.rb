@@ -80,17 +80,17 @@ module XXXDownload
 
         File.open(DEFAULT_CONFIG_FILE, "w") do |file|
           YAML.dump(DEFAULT_CONFIG, line_width: 500, stringify_names: true, canonical: false).each_line do |l|
-            if l.match(/:c(\d+)?:/)
+            if l.match(/c(\d+)?:/)
               # Removes hash key(c00) from the string
               # Adds a # in front of the string
-              l.sub!(/:c(\d+)?:/, "#")
+              l.sub!(/c(\d+)?:/, "#")
               # Removes " from the beginning of the line
               l.sub!(/(^\s*# )["']/, '\1')
               # Removes " from the end of the line
               l.sub!(/["']\s*$/, "")
             end
 
-            l = "\n" if l.match(/:cn(\d)+:/)
+            l = "\n" if l.match(/cn(\d)+:/)
             file.puts l
           end
         end

@@ -21,7 +21,7 @@ RSpec.describe XXXDownload::Net::<%= name %>Index, type: :file_support do
     end
 
     it "returns scenes with a refresher of type XXXDownload::Net::Refreshers::<%= name %>" do
-      # Remove the Refresh from the class name
+      # TODO: Remove the Refresh from the class name
       expect(@result).to all(have_attributes(refresher: be_a(XXXDownload::Net::Refreshers::<%= name %>Refresh)))
     end
   end

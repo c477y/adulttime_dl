@@ -7,6 +7,7 @@ module XXXDownload
 
       def initialize(login_url)
         @login_url = login_url
+        wait_timeout 1_000
       end
 
       TAG = "SITE_AUTHENTICATOR"

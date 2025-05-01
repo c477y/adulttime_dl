@@ -3,7 +3,6 @@
 module XXXDownload
   module Net
     module Refreshers
-      # Remove the Refresh from the class name
       class Spizoo < BaseRefresh
         include Utils
 

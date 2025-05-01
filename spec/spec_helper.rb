@@ -24,15 +24,23 @@ IGNORED_URLS = [
   "www.kellymadisonmedia.com"
 ].freeze
 
+ALLOWED_NON_DOCKER_URLS = [
+  "bellesaplus.co"
+].freeze
+
 VCR.configure do |config|
   config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   config.hook_into :webmock
 
   config.before_http_request(:recordable?) do |request|
-    msg = "Your spec is trying to make a real HTTP request to \"#{request.uri}\" which VCR will store.\n" \
-          "Run your spec inside docker to allow this request to be recorded\n" \
-          "e.g. ./bin/docker_rspec spec/xxx_download/net/ztod_index_spec.rb"
-    raise msg if ENV.fetch("DOCKER_ENV", 0).to_i != 1
+    if ALLOWED_NON_DOCKER_URLS.any? { |x| request.uri.include?(x) }
+      puts "⚠️⚠️⚠️ Request running outside docker #{request.uri} ⚠️⚠️⚠️"
+    else
+      msg = "❌❌❌ Your spec is trying to make a real HTTP request to \"#{request.uri}\" which VCR will store. ❌❌❌\n" \
+            "Run your spec inside docker to allow this request to be recorded\n" \
+            "e.g. ./bin/docker_rspec spec/xxx_download/net/ztod_index_spec.rb"
+      raise msg if ENV.fetch("DOCKER_ENV", 0).to_i != 1
+    end
   end
 
   config.ignore_request do |request|

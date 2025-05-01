@@ -49,13 +49,25 @@ module XXXDownload
         end
 
         inject_into_file "lib/xxx_download/contract/download_filters_contract.rb",
-                         "        #{options[:short_name]}\n",
-                         after: "      SUPPORTED_SITES = %w[\n",
+                         "        \"#{options[:short_name]}\",\n",
+                         after: "      SUPPORTED_SITES = [\n",
                          force: true
         inject_into_file "lib/xxx_download/contract/download_filters_contract.rb",
                          "      # TODO: Sort these lines before you commit!\n",
-                         before: "      SUPPORTED_SITES = %w[\n",
+                         before: "      SUPPORTED_SITES = [\n",
                          force: true
+
+        inject_into_file "bin/docker_rspec",
+                         "# TODO: Sort these lines before you commit!\n",
+                         after: "export DOCKER_CLI_HINTS=false\n"
+
+        inject_into_file "bin/docker_rspec",
+                         "#{name.upcase}_COOKIE_STR=${#{name.upcase}_COOKIE_STR:-cookie}\n",
+                         after: "LOG_LEVEL=${LOG_LEVEL:-extra}\n"
+
+        inject_into_file "bin/docker_rspec",
+                         "  -e #{name.upcase}_COOKIE_STR=\"$#{name.upcase}_COOKIE_STR\" \\\n",
+                         after: "-e LOG_LEVEL=\"$LOG_LEVEL\" \\\n"
       end
 
       def generate_download_links
