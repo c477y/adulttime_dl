@@ -124,6 +124,32 @@ RSpec.describe XXXDownload::Data::Scene do
     end
   end
 
+  describe "key" do
+    let(:base_attributes) do
+      {
+        lazy: false,
+        video_link: "https://example.com",
+        title: "Test Title",
+        collection_tag: "Test Tag",
+        network_name: "Test Network",
+        actors: [{ name: "Test Actor", gender: "female" }, { name: "Test Actor 2", gender: "female" }]
+      }
+    end
+
+    context "when id is present" do
+      let(:attributes) { base_attributes.merge(clip_id: 123) }
+
+      it { expect(subject.key).to eq("123") }
+    end
+
+    context "when id is not present" do
+      let(:attributes) { base_attributes }
+      let(:expected_key) { "as" }
+
+      it { expect(subject.key).to eq("testtitle#testactortestactor2") }
+    end
+  end
+
   describe "lesbian?" do
     context "when all actors are female" do
       let(:attributes) do

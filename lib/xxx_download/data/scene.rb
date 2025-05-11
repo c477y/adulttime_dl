@@ -61,9 +61,7 @@ module XXXDownload
 
       alias lazy? lazy
 
-      def key
-        clip_id.nil? ? title : clip_id.to_s
-      end
+      def key = clip_id.present? ? clip_id.to_s : normalised_key
 
       # @param [Data::StreamingLinks] links
       # @return [Scene]
@@ -166,6 +164,10 @@ module XXXDownload
           .gsub(/[^\s\w\[\].,\-_]+/i, "") # remove non-alphanumeric characters
           .gsub(/\s{2,}/, " ").strip # remove extra spaces
       end
+
+      def normalised_key = "#{normalised_title}##{actor_key}"
+      def normalised_title = title.downcase.gsub(/\W+/i, "")
+      def actor_key = all_actors.join.downcase.gsub(/\W+/i, "")
     end
   end
 end

@@ -85,7 +85,8 @@ module XXXDownload
         c26: "[String] Arguments to pass to external downloader",
         c27: "Check the documentation of youtube-dl or yt-dlp for details",
         c28: "e.g. this accelerates downloads using aria2",
-        "downloader_flags" => "--external-downloader aria2c --external-downloader-args \"-j 8 -s 8 -x 8 -k 5M\"",
+        c028: "--external-downloader aria2c --external-downloader-args \"-j 8 -s 8 -x 8 -k 5M\"",
+        "downloader_flags" => "",
 
         cn17: "newline",
         c29: "[String] Hostname of Chrome DevTools Protocol server",

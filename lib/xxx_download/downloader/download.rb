@@ -23,7 +23,10 @@ module XXXDownload
       def download(scene_data, scenes_index)
         @scenes_index = scenes_index
 
-        scene_data = scene_data.refresh(web_driver:) if scene_data.lazy?
+        if scene_data.lazy?
+          scene_data = scene_data.refresh(web_driver:)
+          XXXDownload.logger.ap scene_data.to_h, :extra
+        end
 
         return false if scene_data.fail?
         return false if already_downloaded?(scene_data)

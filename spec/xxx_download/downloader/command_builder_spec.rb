@@ -90,8 +90,7 @@ RSpec.describe XXXDownload::Downloader::CommandBuilder, type: :file_support do
       it "returns a command string" do
         expect(builder)
           .to eq("yt-dlp \"https://www.example.com\" " \
-                 "-o '/test.%(ext)s' --external-downloader aria2c " \
-                 "--external-downloader-args \"-j 8 -s 8 -x 8 -k 5M\" " \
+                 "-o '/test.%(ext)s'  " \
                  "--concurrent-fragments 1")
       end
     end

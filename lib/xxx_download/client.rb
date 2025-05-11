@@ -4,6 +4,8 @@ module XXXDownload
   class Client
     def initialize
       download_status_store
+
+      HTTParty::Logger.add_formatter("custom", Net::HttpCustomLogger)
     end
 
     def start!

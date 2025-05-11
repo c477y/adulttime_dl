@@ -21,7 +21,9 @@ module XXXDownload
         benchmark("downloaded?") do
           semaphore.synchronize do
             store.transaction(true) do
+              XXXDownload.logger.trace "[DATASTORE LOOKUP] #{key}"
               scene_data = store.fetch(key, nil)
+              XXXDownload.logger.ap scene_data.to_h, :extra
               return scene_data.present?
             end
           end

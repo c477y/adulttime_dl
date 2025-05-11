@@ -139,7 +139,6 @@ module XXXDownload
         end
 
         def handle_new_device_activation
-          wait_timeout(1_000)
           cookie(self.class.base_uri, @cookies)
           request do
             driver.get(self.class.base_uri + path)
@@ -167,6 +166,7 @@ module XXXDownload
         end
 
         def ensure_cookies!
+          wait_timeout(1_000)
           @cookies = request_cookie
           self.class.headers "Cookie" => @cookies
 

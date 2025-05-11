@@ -66,7 +66,7 @@ module XXXDownload
                             "unknown error message format #{body.class}"
                           end
       case code
-      when 302 then "unexpected redirection to #{headers["location"]} with response: #{message_from_body}"
+      when 301, 302 then "unexpected redirection to #{headers["location"]} with response: #{message_from_body}"
       else message_from_body
       end
     end

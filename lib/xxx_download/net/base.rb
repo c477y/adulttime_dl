@@ -19,13 +19,13 @@ module XXXDownload
       headers DEFAULT_HEADERS
 
       def initialize
-        self.class.logger ::XXXDownload.logger, :trace
+        self.class.logger ::XXXDownload.logger, :trace, :custom
       end
 
       #
       # @param [Boolean] return_raw returns the raw {HTTParty::Response} object if set to true,
       #                  otherwise the parsed response
-      # @param [Proc] block a block which runs the HTTParty request
+      # @param [Proc] & a block which runs the HTTParty request
       # @return [HTTParty::Response]
       # @raise [XXXDownload::APIError]
       def handle_response!(return_raw: false, handle_errors: true, &)
